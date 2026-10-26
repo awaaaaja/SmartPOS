@@ -44,7 +44,7 @@ Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; si
 | Operator login REST | `password grant` | **PASS** | access token terbit |
 | Operator baca settings | `GET business_settings` + sesi operator | **PASS** | 1 baris usaha |
 | Trigger harga | PATCH harga produk uji 10000→12000 | **PASS** | `product_price_history` tercatat (dibersihkan sesudah uji) |
-| Build APK debug | `flutter build apk --debug --dart-define=…` | **BERJALAN** | gradle build berjalan; hasil akan dicatat setelah selesai |
+| Build APK debug | `flutter build apk --debug --dart-define=…` | **PASS** | `✓ Built build/app/outputs/flutter-apk/app-debug.apk` (147,6 MB) |
 
 ### Acceptance Criteria
 - [x] `npm run dev`/`build` jalan dengan `.env.example` (QR web).

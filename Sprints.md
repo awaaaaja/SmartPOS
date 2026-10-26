@@ -77,7 +77,7 @@ flowchart LR
 
 | ID | Prioritas | Implementasi langsung | Acceptance criteria | Status |
 |---|---|---|---|---|
-| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` | **PARTIAL** — `npm run dev` terverifikasi (HTTP 200), `flutter analyze`/`test` lulus; `flutter run` butuh perangkat fisik yang belum tersedia |
+| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` | **PARTIAL** — `npm run dev` terverifikasi (HTTP 200), `flutter build apk --debug` lulus (APK 147,6 MB); `flutter run` butuh perangkat fisik yang belum tersedia |
 | S01-02 | P0 | Flutter design tokens: **primary `#930031`**, typography, spacing, card, button, modal, empty/loading/error, Material Icons; animasi transisi yang fungsional dan aksesibel | Widget story/demo untuk tiap komponen | **DONE** — `test/app/theme_test.dart` memastikan brand; komponen diuji di `test/app/shell_test.dart` |
 | S01-03 | P0 | Router dan shell tablet: sidebar landscape, mobile bottom navigation; halaman `Dashboard`, `POS`, `Menu`, `QR`, `Stok`, `Resep`, `Pembelian`, `Biaya`, `Energi`, `Kas`, `Riwayat`, `Laporan`, `Pengaturan` | Tidak ada `Dapur`, `Pesanan`, atau `Pegawai` | **DONE** — 13 halaman jujur (empty state menunggu sprint berikutnya), teruji di shell_test |
 | S01-04 | P0 | Integrasi Supabase Auth **satu akun operator**: login, logout, refresh session | Publik tidak bisa mengakses halaman internal | **DONE** — login/logout/login_page_test lulus; akun `operator@mejeng.id` dibuat & diuji via REST |
@@ -91,7 +91,7 @@ flowchart LR
 **Gate S01:**
 - [x] User flow internal memakai **1 identitas operator**, bukan role switch. (akun tunggal `operator@mejeng.id`, tanpa tabel role/pegawai)
 - [x] QR publik dan operator memiliki jalur akses yang berbeda. (anon hanya `get_public_menu`; data privat tertutup RLS — diuji langsung ke Supabase)
-- [ ] Build Android debug berhasil, layout tablet/HP layak navigasi. (**menunggu**: build APK/debug jalan di perangkat atau emulator; belum ada perangkat di lingkungan ini)
+- [ ] Build Android debug berhasil, layout tablet/HP layak navigasi. (**sebagian** — `flutter build apk --debug` menghasilkan APK; instalasi & navigasi di tablet/HP sungguhan masih menunggu perangkat)
 
 ---
 
