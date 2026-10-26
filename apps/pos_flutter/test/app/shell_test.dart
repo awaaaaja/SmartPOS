@@ -56,14 +56,16 @@ void main() {
     expect(find.byType(NavigationBar), findsNothing);
   });
 
-  testWidgets('tablet: pindah modul menampilkan empty state jujur',
+  testWidgets('tablet: pindah modul Meja & QR menampilkan halaman nyata',
       (tester) async {
     await _setSurface(tester, const Size(1024, 768));
     await tester.pumpWidget(_wrap(const AppShell()));
     await tester.tap(find.text('Meja & QR'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Menyusul: Sprint 03 (meja dan QR)'), findsOneWidget);
+    // Halaman nyata (bukan placeholder): judul + tombol tambah meja.
+    expect(find.text('Meja & QR'), findsWidgets);
+    expect(find.text('Meja baru'), findsOneWidget);
   });
 
   testWidgets('HP portrait: bottom nav 5 item, Lainnya membuka daftar',

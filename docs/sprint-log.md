@@ -1,5 +1,87 @@
 # Sprint Log
 
+## Sprint 03 — Pesanan QR Pelanggan (Draft → Keranjang POS → Bayar)
+Tanggal: 26 Oktober 2026
+Target/tiket: S03-01 … S03-09
+Status: **DONE** — semua tiket lulus dengan bukti nyata (Supabase asli, web build di Chrome, dua "HP" paralel lewat HTTPS aktual via tunnel cloudflared); pengujian perangkat Android ditunda (perangkat tidak tersedia)
+
+### Yang dibangun
+- [x] **S03-01** Pengaturan meja + QR URL HTTPS:
+  migrasi `20261026000009_table_qr_api.sql` (`qr_create_table` /
+  `qr_rotate_token`, token 16 byte acak dari `gen_random_bytes`, plaintext
+  hanya dikembalikan sekali, tersimpan sebagai hash SHA-256 — D-03);
+  `tables_repository.dart` + `qr_page.dart` (daftar meja, switch
+  aktif/nonaktif, rotasi token, dialog QR `qr_flutter` + URL selectable +
+  salin; pesan jujur bila `QR_WEB_URL` kosong/non-HTTPS).
+- [x] **S03-02** Web Vue QR pelanggan (`apps/qr_web`): `App.vue` +
+  `style.css` ditulis ulang — menu publik per kategori, sheet varian
+  (min/max modifier + catatan), keranjang (qty ±, subtotal), submit draft
+  idempoten (`client_key` localStorage, dirotasi setelah sukses), pesan
+  error spesifik (rate_limited / invalid_table_token / product_unavailable),
+  halaman konfirmasi referensi ("Pesanan belum dibayar"), responsive
+  grid 2/3 kolom + bottom bar + sheet; ikon cek SVG tanpa emoji.
+- [x] **S03-03** Backend draft: migrasi `20261026000008_qr_drafts.sql`
+  (tabel `qr_drafts`/`qr_draft_items` dengan snapshot nama+harga+modifier,
+  status PENDING/CLAIMED/EXPIRED/CANCELLED/COMPLETED; RLS aktif tanpa
+  policy = tertutup bahkan untuk operator via REST).
+- [x] **S03-04** Submit publik anon `qr_submit_draft` (SECURITY DEFINER):
+  validasi token, katalog aktif, qty 1–99, rate limit 5 draft/meja/10
+  menit, idempotensi `client_key` unik per meja; harga = snapshot server
+  (memakai helper `pos_line_total` Sprint 02).
+- [x] **S03-05** API operator: `qr_list_drafts` (volatile, lazy-expire),
+  `qr_claim_draft` atomik (sekali claim saja, audit event),
+  `qr_cancel_draft`, `qr_complete_draft`; grants: anon hanya `qr_submit_draft`.
+- [x] **S03-06** Panel "QR Masuk" di dalam layar POS:
+  `qr_inbox_sheet.dart` (daftar draft + subtotal + item snapshot +
+  ambil/batalkan) + badge berangka di baris pencarian katalog (tampil di
+  layout lebar & HP) + polling `qrDraftsProvider` tiap 10 detik.
+- [x] **S03-07** Ambil draft ke keranjang + konflik harga:
+  `_claimDraft` me-refresh katalog (`ref.refresh(productsProvider.future)`)
+  lalu membandingkan snapshot `unitPrice` vs harga terkini; dialog
+  konflik (Pakai harga terkini / Batal); claim server mendahului
+  pemasukan ke keranjang; produk hilang/tidak aktif dilewati + dilaporkan.
+- [x] **S03-08** Bayar memakai checkout Sprint 02 tanpa diubah:
+  setelah sukses, `_completeClaimedDrafts` memanggil `qr_complete_draft`
+  (jejak audit sale_id); draft tidak pernah mengubah omzet.
+- [x] **S03-09** Test: `tests/integration/test_qr_drafts.py` (REST
+  Supabase asli) + widget test `test/features/qr_inbox_sheet_test.dart`
+  (4 test) + `shell_test.dart` diperbarui (halaman Meja & QR nyata).
+
+### Verifikasi
+| Pengujian | Perintah/langkah | Hasil | Bukti |
+|---|---|---|---|
+| Analyze/lint | `flutter analyze` | **PASS** | 0 error/warning (9 info `unnecessary_underscores`, pola lama) |
+| Unit/widget Flutter | `flutter test` | **PASS** | 33/33 (4 baru panel QR Masuk) |
+| Migrasi | `supabase db push` | **PASS** | `0008_qr_drafts`, `0009_table_qr_api` "Finished"; 3 koreksi live tercatat di bawah |
+| Uji REST draft | `python3 tests/integration/test_qr_drafts.py` | **PASS** | **37 PASS, 0 FAIL** |
+| Build web POS | `flutter build web --release --dart-define=…QR_WEB_URL=…` | **PASS** | `✓ Built build/web` |
+| Build web QR | `npm run build` (apps/qr_web) | **PASS** | `✓ built`, dist 299 kB |
+| Buktian UI end-to-end (Chrome) | tablet 1280×800 + dua tab HP 360×740 via HTTPS aktual | **PASS** | 19 screenshot `docs/evidence/sprint03/` |
+
+### Skenario uji wajib (hasil nyata)
+- **2 "HP" submit bersamaan** → dua draft terpisah Q00029 (Meja HP-A, Rp 22.000) dan Q00030 (Meja HP-B, Rp 18.000) — screenshot 06/07.
+- **Draft bukan omzet**: dashboard sebelum claim Rp 79.000; setelah checkout Q00029 → struk MJ-261026-0006 Rp 22.000 (satu sale, tepat +22.000); DB: Q00029 COMPLETED terhubung `sale_id=6` — screenshot 11/12/13.
+- **Konflik harga**: Nasi Goreng diubah 20.000→21.000 setelah draft Q00031 terkirim (snapshot 20.000); klaim → dialog konflik "Rp 20.000 → Rp 21.000" → Pakai harga terkini → struk MJ-261026-0007 Rp 21.000 — screenshot 14/15/16. (Bug ditemukan & diperbaiki saat uji: deteksi konflik memakai cache katalog lama; kini refresh provider sebelum membandingkan.)
+- **Retry idempoten**: key sama → `Q00032` dua kali, `idempotent_replay: true`.
+- **Invalid token**: halaman Vue "QR tidak valid atau sudah diganti" — screenshot 19; REST: `invalid_table_token`.
+- **Rate limit**: percobaan ke-6 per meja dalam 10 menit ditolak `rate_limited`.
+- **Refresh/reconnect**: reload halaman pelanggan → menu reload normal; draft tak terduplikasi.
+- **Rotasi token via UI**: Meja QR HP-B dirotasi → dialog token baru + QR (screenshot 17); URL lama langsung "QR tidak valid" (screenshot 18).
+- **Akses publik tidak sah**: anon ditolak `qr_list_drafts`/`qr_claim_draft`/`qr_cancel_draft`/`qr_complete_draft`/`pos_checkout`; `qr_drafts` via REST operator = `[]` (RLS tertutup — semua akses lewat fungsi definer).
+- **Draft tidak memengaruhi omzet** sampai dibayar (diuji REST: today/all-time revenue identik sebelum–sesudah submit).
+
+### Temuan dan perbaikan saat pengujian
+- Migrasi 0008 gagal push pertama: dua klausa `using` pada `raise exception` harus digabung (`using errcode=…, hint=…`) — diperbaiki sebelum terpasang.
+- Live (migrasi sudah ter-push, dikoreksi via psycopg2 + dicatat): `subtotal`/`item_count` default 0 (insert sebelum dihitung), `qr_list_drafts` `stable`→`volatile` (ber-UPDATE), `claimed_by` bigint→uuid + FK `auth.users` (konsisten `created_by` sales).
+- Bug klien: deteksi konflik harga memakai cache katalog → katalog di-refresh dulu di `_claimDraft`; build ulang & diverifikasi ulang end-to-end.
+- Vite preview memblokir host tunnel (`allowedHosts`) — untuk evidence, `dist` disajikan `python3 -m http.server` (tanpa pemeriksaan host).
+
+### Sisa pekerjaan / risiko
+- URL QR evidence memakai tunnel cloudflared sementara (`QR_WEB_URL` di-build dengan URL itu); **hosting permanen = keputusan user** — saat tunnel mati, QR menampilkan "QR tidak valid" (jujur).
+- Pengujian Android fisik ditunda (perangkat tidak tersedia).
+- S01-08 tetap BLOCKED (menunggu remote GitHub).
+- Fixture uji di DB: Es Teh id 13 kini Rp 10.000, Nasi Goreng id 4 kini Rp 21.000 (riwayat harga tercatat); meja uji `UJI-QR-*` dapat diarsipkan/dihapus lewat SQL bila perlu.
+
 ## Sprint 02 — Katalog & Kasir POS (End-to-End)
 Tanggal: 26 Oktober 2026
 Target/tiket: S02-01 … S02-10

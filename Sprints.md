@@ -128,23 +128,23 @@ flowchart LR
 
 | ID | Prioritas | Implementasi langsung | Acceptance criteria |
 |---|---|---|---|
-| S03-01 | P0 | Editor nomor meja, generate token opaque, rotasi token, URL QR | QR lama invalid setelah rotasi |
-| S03-02 | P0 | Vue web pelanggan: daftar menu, foto, varian, topping, qty, keranjang, identitas meja | Responsif 360px; pelanggan tidak login |
-| S03-03 | P0 | `POST /public/qr-drafts`: validasi token, katalog aktif, qty, rate limit, idempotency | QR hanya menghasilkan draft sementara, bukan sale |
-| S03-04 | P0 | `qr_drafts`, `qr_draft_items`: `PENDING/CLAIMED/EXPIRED/CANCELLED`, expiring link | Duplicate submit tidak menciptakan banyak draft |
-| S03-05 | P0 | Panel **QR Masuk** di dalam UI `Kasir POS`: badge count dan kartu ringkas meja, item, waktu | Panel ada dalam POS, bukan route/tab navigasi tersendiri |
-| S03-06 | P0 | Aksi `Ambil ke Kasir`: validasi ulang harga & item, isi keranjang aktif; cegah silent merge dengan keranjang lama | Checkout tetap memakai S02, draft ditandai CLAIMED |
-| S03-07 | P0 | Realtime event/refresh polling fallback saat notifikasi gagal | Draft yang belum diambil tetap terlihat setelah refresh |
-| S03-08 | P0 | Halaman sukses pelanggan: nomor referensi, instruksi tunggu kasir; **tanpa status dapur/tracking** | Tidak ada timeline preparing/ready/served |
-| S03-09 | P0 | E2E 2 HP submit serentak → POS pilih salah satu → bayar | Draft terisolasi, item pelanggan tidak tercampur |
+| S03-01 | P0 | Editor nomor meja, generate token opaque, rotasi token, URL QR | QR lama invalid setelah rotasi | DONE |
+| S03-02 | P0 | Vue web pelanggan: daftar menu, foto, varian, topping, qty, keranjang, identitas meja | Responsif 360px; pelanggan tidak login | DONE |
+| S03-03 | P0 | `POST /public/qr-drafts`: validasi token, katalog aktif, qty, rate limit, idempotency | QR hanya menghasilkan draft sementara, bukan sale | DONE |
+| S03-04 | P0 | `qr_drafts`, `qr_draft_items`: `PENDING/CLAIMED/EXPIRED/CANCELLED`, expiring link | Duplicate submit tidak menciptakan banyak draft | DONE |
+| S03-05 | P0 | Panel **QR Masuk** di dalam UI `Kasir POS`: badge count dan kartu ringkas meja, item, waktu | Panel ada dalam POS, bukan route/tab navigasi tersendiri | DONE |
+| S03-06 | P0 | Aksi `Ambil ke Kasir`: validasi ulang harga & item, isi keranjang aktif; cegah silent merge dengan keranjang lama | Checkout tetap memakai S02, draft ditandai CLAIMED | DONE |
+| S03-07 | P0 | Realtime event/refresh polling fallback saat notifikasi gagal | Draft yang belum diambil tetap terlihat setelah refresh | DONE |
+| S03-08 | P0 | Halaman sukses pelanggan: nomor referensi, instruksi tunggu kasir; **tanpa status dapur/tracking** | Tidak ada timeline preparing/ready/served | DONE |
+| S03-09 | P0 | E2E 2 HP submit serentak → POS pilih salah satu → bayar | Draft terisolasi, item pelanggan tidak tercampur | DONE |
 
 **Demo:** dari mode QR HP pilih Ayam Kremes + Teh Es → kirim → pindah ke **Kasir POS** → `QR Masuk (1)` → `Ambil ke Kasir` → tunai → struk. Operator sendirian mengurus prosesnya.
 
 **Gate S03:**
-- [ ] Customer tidak bisa mengakses kas, bahan, HPP, atau laporan.
-- [ ] Draft QR belum masuk omzet/stock ledger.
-- [ ] Tidak ada layar kitchen/order management tersembunyi pada aplikasi utama.
-- [ ] Harga berubah antara submit dan ambil ditampilkan sebagai konflik yang harus disetujui operator.
+- [x] Customer tidak bisa mengakses kas, bahan, HPP, atau laporan. (Anon ditolak semua RPC operator; `qr_drafts`/`qr_draft_items` RLS tertutup tanpa policy — dibuktikan REST.)
+- [x] Draft QR belum masuk omzet/stock ledger. (Dashboard Rp 79.000 sebelum claim; hanya naik saat checkout FINAL; test REST 37 PASS.)
+- [x] Tidak ada layar kitchen/order management tersembunyi pada aplikasi utama. (Hanya panel "QR Masuk" di dalam POS; tanpa OrdersPage/KitchenDisplay.)
+- [x] Harga berubah antara submit dan ambil ditampilkan sebagai konflik yang harus disetujui operator. (Dialog konflik "Rp 20.000 → Rp 21.000" + bukti `14-konflik-harga.png`.)
 
 ---
 

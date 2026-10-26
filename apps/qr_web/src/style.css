@@ -42,6 +42,7 @@ button, input { font: inherit; }
   max-width: 720px;
   margin: 0 auto;
   padding: 16px;
+  padding-bottom: 96px; /* ruang bar keranjang */
 }
 
 .card {
@@ -52,15 +53,12 @@ button, input { font: inherit; }
   margin-bottom: 12px;
 }
 
-.state {
-  text-align: center;
-  padding: 40px 16px;
-  color: var(--muted);
-}
+.center { text-align: center; }
+.muted { color: var(--muted); font-size: 13px; }
+.small { font-size: 12px; }
+.error { color: var(--error); font-size: 13px; }
 
-.state.error { color: var(--error); }
-
-.category-title {
+.cat-title {
   font-size: 14px;
   font-weight: 700;
   color: var(--brand);
@@ -69,34 +67,145 @@ button, input { font: inherit; }
   letter-spacing: 0.05em;
 }
 
-.product-row {
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.p-name { font-weight: 600; font-size: 14px; }
+.p-price { color: var(--brand); font-weight: 700; font-size: 14px; }
+.p-var { font-size: 11px; color: var(--muted); }
+
+/* Bar keranjang menempel di bawah (mobile-first) */
+.cart-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Sheet (keranjang & varian) */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(33, 22, 28, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 20;
+}
+
+.sheet {
+  background: var(--surface);
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+.sheet h2 { margin: 0 0 8px; font-size: 17px; }
+
+.cart-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+}
+
+.cart-line {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
 }
 
-.product-row:last-child { border-bottom: 0; }
+.line-main { display: flex; flex-direction: column; gap: 2px; }
+.line-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-weight: 600; }
 
-.price { font-weight: 700; color: var(--brand); white-space: nowrap; }
+.qty { display: inline-flex; align-items: center; gap: 10px; }
+.qty-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 12px 0; font-weight: 700; }
 
-.token-form input {
+.mod-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.btn.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.btn.primary:disabled { opacity: 0.5; cursor: default; }
+
+.btn.ghost {
+  background: transparent;
+  border: 0;
+  color: var(--brand);
+  width: 100%;
+  padding: 12px;
+}
+
+.btn.tiny {
+  padding: 4px 12px;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.btn.wide { width: 100%; margin-top: 10px; }
+
+.input {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
-}
-
-.token-form button {
   margin-top: 10px;
-  width: 100%;
-  padding: 12px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--brand);
-  color: #fff;
-  font-weight: 700;
 }
 
-.token-form button:disabled { opacity: 0.5; }
+/* Konfirmasi */
+.confirm { text-align: center; padding: 28px 16px; }
+.confirm-icon { display: block; margin: 0 auto 8px; }
+.confirm h2 { margin: 0 0 6px; }
+.confirm-ref {
+  font-weight: 700;
+  color: var(--brand);
+  font-size: 18px;
+  margin: 6px 0;
+}
+.confirm-note { font-size: 13px; color: var(--muted); margin: 10px 0 16px; }

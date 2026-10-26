@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,9 @@ import '../../core/formatters.dart';
 import '../../core/models/catalog_models.dart';
 import '../../core/models/sale_models.dart';
 import '../catalog/catalog_repository.dart';
+import '../tables_qr/tables_repository.dart';
 import 'pos_repository.dart';
+import 'qr_inbox_sheet.dart';
 
 /// S02-04/06: Kasir POS satu layar.
 /// Tablet (lebar ≥840dp): katalog + keranjang bersamaan.
@@ -24,12 +27,30 @@ class PosPage extends ConsumerStatefulWidget {
 class _PosPageState extends ConsumerState<PosPage> {
   String _search = '';
   String _categoryFilter = 'Semua';
+  Timer? _pollTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Polling ringan draft QR; panel terbuka atau tidak, badge tetap segar.
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => ref.invalidate(qrDraftsProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final products = ref.watch(productsProvider);
     final categories = ref.watch(categoriesProvider);
     final cart = ref.watch(cartControllerProvider);
+    final drafts = ref.watch(qrDraftsProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -64,10 +85,12 @@ class _PosPageState extends ConsumerState<PosPage> {
                 categoryNames: categoryNames,
                 categoryFilter: _categoryFilter,
                 search: _search,
+                qrBadge: drafts.value?.length ?? 0,
                 onSearch: (v) => setState(() => _search = v),
                 onCategory: (v) =>
                     setState(() => _categoryFilter = v),
                 onPick: (p) => _pickProduct(p),
+                onOpenQr: () => _openQrInbox(),
               );
 
               if (wide) {
@@ -167,12 +190,185 @@ class _PosPageState extends ConsumerState<PosPage> {
     if (receipt == null) return;
     ref.read(cartControllerProvider.notifier).clear();
     ref.invalidate(dashboardSummaryProvider);
+    // Draft yang menopang keranjang ini ditandai selesai (jejak audit).
+    await _completeClaimedDrafts(receipt.saleId);
     if (mounted) {
       await showDialog<void>(
         context: context,
         builder: (_) => _ReceiptDialog(receipt: receipt),
       );
     }
+  }
+
+  // -------------------------------------------------------------------------
+  // S03: Panel QR Masuk di dalam layar POS.
+  // -------------------------------------------------------------------------
+
+  /// Draft yang sudah diambil ke keranjang (menunggu checkout menyelesaikannya).
+  final Set<int> _claimedDraftIds = {};
+
+  Future<void> _openQrInbox() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (_) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: QrInboxSheet(
+          onClaim: (draft) => _claimDraft(draft),
+        ),
+      ),
+    );
+    ref.invalidate(qrDraftsProvider);
+  }
+
+  /// Ambil draft ke keranjang. Harga TIDAK diam-diam dipakai: bila snapshot
+  /// harga pelanggan berbeda dari harga katalog sekarang, operator diminta
+  /// memilih (konflik harga).
+  Future<void> _claimDraft(QrDraft draft) async {
+    // Harga katalog DIREFRESH dulu; deteksi konflik harus memakai harga
+    // terkini, bukan cache lama.
+    final allProducts = await ref.refresh(productsProvider.future);
+    final byId = {for (final p in allProducts) p.id: p};
+
+    final conflicts = <String>[];
+    final unavailable = <String>[];
+    final lines = <CartLine>[];
+
+    for (final item in draft.items) {
+      final product = byId[item.productId];
+      if (product == null || !product.sellable) {
+        unavailable.add(item.productName);
+        continue;
+      }
+      // Harga aktif sekarang = harga dasar + modifier terpilih (harga kini).
+      final mods = product.modifiers
+          .where((m) => item.modifierIds.contains(m.id))
+          .toList();
+      final currentUnit = product.price +
+          mods.fold<int>(0, (sum, m) => sum + m.priceDelta);
+      if (currentUnit != item.unitPrice) {
+        conflicts.add(
+            '${item.productName}: ${formatRupiah(item.unitPrice)} → '
+            '${formatRupiah(currentUnit)}');
+      }
+      lines.add(CartLine(
+        productId: item.productId,
+        productName: product.name,
+        basePrice: product.price,
+        qty: item.qty,
+        note: item.note ?? '',
+        modifierIds: item.modifierIds,
+        modifiers: mods
+            .map((m) => {
+                  'id': m.id,
+                  'name': m.name,
+                  'price_delta': m.priceDelta,
+                })
+            .toList(),
+      ));
+    }
+
+    if (lines.isEmpty) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Tidak ada item valid'),
+          content: Text(unavailable.isEmpty
+              ? 'Seluruh item draft sudah tidak tersedia di katalog.'
+              : 'Item tidak tersedia: ${unavailable.join(', ')}.'),
+          actions: [
+            FilledButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Tutup')),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    final proceed = conflicts.isEmpty
+        ? true
+        : await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Konflik harga'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                      'Harga katalog berubah sejak pesanan QR ${draft.refCode} '
+                      'dikirim. Keranjang memakai harga terkini:'),
+                  const SizedBox(height: 8),
+                  for (final c in conflicts)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text(c, style: const TextStyle(fontSize: 13)),
+                    ),
+                  if (unavailable.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('Dilewati (tidak tersedia): '
+                        '${unavailable.join(', ')}',
+                        style: const TextStyle(
+                            fontSize: 12, color: errorColor)),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Batal'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('Pakai harga terkini'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    if (!proceed || !mounted) return;
+
+    // Klaim di server DULU; batal bila sudah diambil operator lain.
+    QrDraft claimed;
+    try {
+      claimed = await ref.read(qrDraftRepositoryProvider).claim(draft.draftId);
+    } catch (e) {
+      ref.invalidate(qrDraftsProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Draft gagal diambil (mungkin sudah diambil '
+                'operator lain): ${mapErrorToMessage(e)}')));
+      }
+      return;
+    }
+    _claimedDraftIds.add(claimed.draftId);
+
+    final cart = ref.read(cartControllerProvider.notifier);
+    for (final line in lines) {
+      cart.add(line);
+    }
+    ref.invalidate(qrDraftsProvider);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              '${draft.itemCount} item dari ${draft.tableLabel} masuk '
+              'keranjang.')));
+    }
+  }
+
+  Future<void> _completeClaimedDrafts(int saleId) async {
+    for (final id in _claimedDraftIds) {
+      try {
+        await ref.read(qrDraftRepositoryProvider).complete(id, saleId);
+      } catch (_) {
+        // Draft tetap CLAIMED; tidak memengaruhi uang/omzet. Aman dilewati.
+      }
+    }
+    _claimedDraftIds.clear();
   }
 }
 
@@ -186,31 +382,51 @@ class _CatalogPane extends StatelessWidget {
     required this.categoryNames,
     required this.categoryFilter,
     required this.search,
+    required this.qrBadge,
     required this.onSearch,
     required this.onCategory,
     required this.onPick,
+    required this.onOpenQr,
   });
 
   final List<Product> products;
   final List<String> categoryNames;
   final String categoryFilter;
   final String search;
+  final int qrBadge;
   final ValueChanged<String> onSearch;
   final ValueChanged<String> onCategory;
   final ValueChanged<Product> onPick;
+  final VoidCallback onOpenQr;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       children: [
-        TextField(
-          decoration: const InputDecoration(
-            hintText: 'Cari makanan atau minuman...',
-            prefixIcon: Icon(Icons.search_rounded),
-            isDense: true,
-          ),
-          onChanged: onSearch,
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Cari makanan atau minuman...',
+                  prefixIcon: Icon(Icons.search_rounded),
+                  isDense: true,
+                ),
+                onChanged: onSearch,
+              ),
+            ),
+            const SizedBox(width: 10),
+            FilledButton.tonalIcon(
+              onPressed: onOpenQr,
+              icon: Badge(
+                isLabelVisible: qrBadge > 0,
+                label: Text('$qrBadge'),
+                child: const Icon(Icons.qr_code_2_rounded, size: 20),
+              ),
+              label: const Text('QR Masuk'),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         Wrap(
