@@ -32,6 +32,26 @@ void main() {
       expect(message, contains('duplikat'));
     });
 
+    test('stok kurang (P0001 insufficient_stock) memakai pesan Indonesia',
+        () {
+      final message = mapErrorToMessage(const PostgrestException(
+          message: 'insufficient_stock: Tepung Terigu', code: 'P0001'));
+      expect(message, contains('Stok bahan kurang'));
+      expect(message, contains('Tepung Terigu'));
+    });
+
+    test('resep belum ada (P0001 recipe_missing)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+          message: 'recipe_missing', code: 'P0001'));
+      expect(message, contains('Resep belum ada'));
+    });
+
+    test('alasan wajib (P0001 missing_reason)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+          message: 'missing_reason', code: 'P0001'));
+      expect(message, contains('Alasan wajib'));
+    });
+
     test('error tak dikenal tetap aman ditampilkan', () {
       final message = mapErrorToMessage(StateError('boom'));
       expect(message, contains('kesalahan'));

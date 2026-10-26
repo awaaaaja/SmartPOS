@@ -4,7 +4,7 @@
 | Metadata | Nilai |
 |---|---|
 | Tanggal | 26 Oktober 2026 |
-| Status | **TODO**. Seluruh pekerjaan di bawah belum diklaim selesai |
+| Status | **Sprint 01–04 DONE** (bukti di `docs/sprint-log.md` + change log §13); Sprint 05–06 **TODO** |
 | Spesifikasi induk | `PRD.md` versi 2.1 |
 | Produk | Satu aplikasi Flutter untuk **satu operator** + satu web QR pelanggan |
 | UI | Tablet Android landscape prioritas, responsif HP, **brand `#930031`** dan Material Icons tanpa emoji |
@@ -154,17 +154,26 @@ flowchart LR
 
 | ID | Prioritas | Implementasi langsung | Acceptance criteria |
 |---|---|---|---|
-| S04-01 | P0 | Migrasi master `ingredients` + decimal qty, satuan dasar, minimum stock, unit cost | Kg↔g; L↔ml lulus test satuan |
-| S04-02 | P0 | UI `Stok Bahan`: list, cari, status minimum, tambah/ubah, koreksi stok dengan alasan | Perubahan menulis ledger |
-| S04-03 | P0 | Form `Pembelian`: supplier opsional, bahan, qty, harga, tanggal, status received | Saldo bertambah tepat sekali saat diterima |
-| S04-04 | P0 | UI `Resep & HPP`: pilih menu, tambah bahan, takaran, yield per batch, biaya bahan per porsi | Formula sesuai versi resep dan unit cost |
-| S04-05 | P0 | Database recipe_versions/items dan append-only stock_movements | Histori biaya/resep bisa ditelusuri |
-| S04-06 | P0 | Integrasi checkout POS → pemakaian bahan tepat sekali saat sale final; pembelian/waste diposting terpisah | Dua retry checkout tak menggandakan bahan terpakai |
-| S04-07 | P0 | Pengecualian bahan kosong, resep belum ada, dan batch siap jual (gorengan) | Tidak otomatis mengklaim stok akurat untuk menu tanpa resep |
-| S04-08 | P0 | Laporan margin bahan per menu, stok minimum, mutasi terakhir | Margin hanya memakai komponen yang ada datanya |
-| S04-09 | P0 | Unit/integration tests concurrency, rollback dan double-post | UAT-06–08 lulus |
+| S04-01 | P0 | Migrasi master `ingredients` + decimal qty, satuan dasar, minimum stock, unit cost | Kg↔g; L↔ml lulus test satuan | DONE |
+| S04-02 | P0 | UI `Stok Bahan`: list, cari, status minimum, tambah/ubah, koreksi stok dengan alasan | Perubahan menulis ledger | DONE |
+| S04-03 | P0 | Form `Pembelian`: supplier opsional, bahan, qty, harga, tanggal, status received | Saldo bertambah tepat sekali saat diterima | DONE |
+| S04-04 | P0 | UI `Resep & HPP`: pilih menu, tambah bahan, takaran, yield per batch, biaya bahan per porsi | Formula sesuai versi resep dan unit cost | DONE |
+| S04-05 | P0 | Database recipe_versions/items dan append-only stock_movements | Histori biaya/resep bisa ditelusuri | DONE |
+| S04-06 | P0 | Integrasi checkout POS → pemakaian bahan tepat sekali saat sale final; pembelian/waste diposting terpisah | Dua retry checkout tak menggandakan bahan terpakai | DONE |
+| S04-07 | P0 | Pengecualian bahan kosong, resep belum ada, dan batch siap jual (gorengan) | Tidak otomatis mengklaim stok akurat untuk menu tanpa resep | DONE |
+| S04-08 | P0 | Laporan margin bahan per menu, stok minimum, mutasi terakhir | Margin hanya memakai komponen yang ada datanya | DONE |
+| S04-09 | P0 | Unit/integration tests concurrency, rollback dan double-post | UAT-06–08 lulus | DONE |
 
 **Keputusan desain awal:** untuk menu dibuat saat dipesan, konsumsi resep dicatat saat checkout final (model POS sederhana); untuk produk gorengan yang dibuat per batch gunakan produksi batch agar tidak mengurangi bahan dua kali. Bila pemakaian bahan nyata berbeda, koreksi dicatat eksplisit oleh operator.
+
+**Gate S04:**
+- [x] Konversi Kg↔g dan L↔ml lulus. (`inv_to_base` di server; 57 pemeriksaan `test_inventory.py` PASS.)
+- [x] Perubahan menulis ledger append-only. (Semua lewat `inv_post_movement`; trigger tolak UPDATE/DELETE; bukti screenshot ledger PURCHASE/RECIPE/WASTE.)
+- [x] Saldo + tepat sekali saat pembelian diterima. (PO #13: 0→2.000 g, 1 baris ledger, guard `purchase_already_received`.)
+- [x] Formula HPP sesuai versi resep aktif dan unit cost. (UI Rp 1.550 = (200 g×Rp13 + 100 ml×Rp5) ÷ yield 2; versi v3 aktif, riwayat v1–v3.)
+- [x] Dua retry checkout tidak menggandakan bahan. (Key sama → `sale_id` 30 sama, `idempotent_replay: true`, ledger RECIPE tetap 2 baris.)
+- [x] Tidak otomatis mengklaim stok akurat untuk menu tanpa resep. ("resep belum ada"; menu tanpa resep tanpa mutasi RECIPE.)
+- [x] Margin hanya memakai komponen berdata. (Harga jual − HPP resep aktif; menu tanpa resep tidak menampilkan angka HPP/margin.)
 
 ---
 
@@ -309,6 +318,8 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 26 Okt 2026 | 01 | S01-01 | DONE | `flutter run` di HP fisik OPPO CPH2473 | login operator nyata, navigasi portrait+landscape, 5 screenshot di `docs/evidence/sprint01/` | - |
 | 26 Okt 2026 | 01 | (perbaikan) | DONE | fix overflow `module_placeholder.dart` + `module_placeholder_test.dart` | bug ditemukan di landscape HP (`OVERFLOWED BY 112 PIXELS`), fixed, 20/20 test lulus, verifikasi ulang di device | - |
 | 26 Okt 2026 | 02 | S02-01…S02-10 | DONE | migrasi 0005–0007 + API pos server-side + Flutter katalog/POS/riwayat/dashboard | `flutter analyze` 0 error; `flutter test` 29/29; REST integration 73 PASS 0 FAIL; alur E2E web Chrome 18 screenshot di `docs/evidence/sprint02/` | Pengujian HP Android ditunda (perangkat tidak tersedia); S01-08 tetap menunggu remote GitHub |
+| 26 Okt 2026 | 03 | S03-01…S03-09 | DONE | `96c2c08` migrasi 0008–0009 + web Vue QR + panel QR Masuk + draft idempoten | `flutter test` 33/33; REST `test_qr_drafts.py` 37 PASS 0 FAIL; 19 screenshot `docs/evidence/sprint03/` via HTTPS tunnel | Hosting QR permanen = keputusan user; Android fisik ditunda |
+| 27 Okt 2026 | 04 | S04-01…S04-09 | DONE | migrasi 0010 inventori + 0011 fix TZ dashboard + Flutter stok/pembelian/resep-HPP | `flutter analyze` 0 error; `flutter test` 42/42; `test_inventory.py` 57 PASS; regresi POS 77 PASS + QR 37 PASS; npm build 299 kB; 14 screenshot `docs/evidence/sprint04/` | Android fisik ditunda; S01-08 menunggu remote GitHub |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

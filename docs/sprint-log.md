@@ -1,5 +1,111 @@
 # Sprint Log
 
+## Sprint 04 — Stok, Pembelian, Resep, HPP
+Tanggal: 27 Oktober 2026
+Target/tiket: S04-01 … S04-09
+Status: **DONE** — semua tiket lulus dengan bukti nyata (migrasi + RPC Supabase asli, 3 suite integration test penuh, Flutter 42 test, web build di Chrome); pengujian perangkat Android ditunda (perangkat tidak tersedia)
+
+### Yang dibangun
+- [x] **S04-01** Master bahan + satuan dasar: migrasi
+  `20261026000010_inventory.sql` — tabel `ingredients` (satuan dasar hanya
+  g/ml/pcs, qty `numeric`, `reorder_level`, `unit_cost`), fungsi
+  `inv_to_base` (konversi **kg↔g / L↔ml di server**), `inv_save_ingredient`
+  (nama/batas/biaya divalidasi; satuan dasar terkunci setelah dibuat).
+- [x] **S04-02** UI `Stok Bahan` (`stock_page.dart`): daftar + pencarian
+  (`ilike`), chip status **HABIS / DI BAWAH MINIMUM** (jujur, tanpa angka
+  palsu), tambah/ubah bahan, dialog **Koreksi / Waste wajib alasan ≥3 huruf**
+  (`inv_adjust_stock` → selalu tulis ledger), sheet riwayat mutasi per bahan.
+- [x] **S04-03** Form `Pembelian` (`purchases_page.dart`): supplier opsional,
+  tanggal, multi-baris bahan+qty+total, status Terima/Pesanan; daftar dengan
+  chip DITERIMA/PESANAN + tombol **Terima** berkonfirmasi.
+  Server `inv_create_purchase`/`inv_receive_purchase`: saldo & `unit_cost`
+  (harga terakhir per satuan dasar) bertambah **tepat sekali** (guard status
+  `purchase_already_received`).
+- [x] **S04-04** UI `Resep & HPP` (`recipes_page.dart`): pilih menu →
+  **HPP per porsi = Σ(qty × unit_cost) ÷ yield** dari versi resep aktif
+  (`inv_hpp`), tabel biaya per bahan, **margin hanya dari komponen berdata**
+  (harga jual − HPP), riwayat versi (versi lama tidak dihapus), simpan resep
+  selalu jadi versi baru (`inv_save_recipe`).
+- [x] **S04-05** `recipe_versions`/`recipe_items` (versi aktif) +
+  `stock_movements` **append-only**: trigger menolak UPDATE/DELETE, RLS
+  SELECT-only operator — riwayat biaya/mutasi telusur.
+- [x] **S04-06** Posting pemakaian tepat sekali: trigger
+  `AFTER INSERT ON payments` → `inv_post_sale_usage` (1 baris ledger per
+  bahan per sale; penjaga defensif: skip bila mutasi `RECIPE` dengan
+  `ref = sale_id` sudah ada → retry checkout tidak menggandakan mutasi).
+- [x] **S04-07** Pengecualian jujur: menu **tanpa resep aktif = tanpa klaim
+  stok** (`has_recipe=false` → UI "resep belum ada"); `products.stock_mode`
+  **BATCH** (gorengan) dipotong saat `inv_produce_batch`, bukan saat jual;
+  `insufficient_stock` (P0001) **merollback sale** (UAT-06); refund tidak
+  otomatis restock.
+- [x] **S04-08** Margin per menu + status stok minimum + mutasi terakhir
+  (sheet per bahan) — hanya memakai komponen yang ada datanya.
+- [x] **S04-09** Test: `tests/integration/test_inventory.py` (57
+  pemeriksaan: konversi satuan, penerimaan sekali, HPP, potong bahan sekali,
+  retry idempoten, rollback, batch, waste/koreksi beralasan, ledger
+  append-only, anon ditolak) + regresi penuh + widget test Flutter baru.
+- [x] **Perbaikan di luar tiket (bug nyata saat uji):**
+  migrasi `20261027000011_dashboard_tz_fix.sql` — `pos_dashboard_summary`
+  membandingkan `timestamptz` dengan timestamp naive (dianggap UTC) sehingga
+  batas "hari ini" bergeser 7 jam (omzet hari baru belum masuk sebelum
+  07:00 WIB).
+
+### Verifikasi
+| Pengujian | Perintah/langkah | Hasil | Bukti |
+|---|---|---|---|
+| Analyze/lint | `flutter analyze` | **PASS** | 0 error/warning (17 info `unnecessary_underscores`, pola lama) |
+| Unit/widget Flutter | `flutter test` | **PASS** | **42/42** (5 baru halaman inventori + 3 baru error mapper `P0001`) |
+| Migrasi | `supabase db push` | **PASS** | `0010_inventory`, `0011_dashboard_tz_fix` "Finished" |
+| Uji REST inventori | `python3 tests/integration/test_inventory.py` | **PASS** | **57 PASS, 0 FAIL** |
+| Regresi POS | `python3 tests/integration/test_pos_api.py` | **PASS** | **77 PASS, 0 FAIL** (23+ skenario uang) |
+| Regresi QR draft | `python3 tests/integration/test_qr_drafts.py` | **PASS** | **37 PASS, 0 FAIL** |
+| Build web POS | `flutter build web --release --dart-define=…` | **PASS** | `✓ Built build/web` |
+| Build web QR | `npm run build` (apps/qr_web) | **PASS** | `✓ built in 12.54s`, dist 299 kB |
+| Buktian UI end-to-end (Chrome) | tablet 1280×800 | **PASS** | screenshot `docs/evidence/sprint04/` (lihat di bawah) |
+
+### Bukti E2E (Chrome, build web final, tablet 1280×800)
+| # | Skenario | Hasil nyata | File |
+|---|---|---|---|
+| 01 | Dashboard omzet hari ini | **Rp 199.000 / 7 transaksi final** — batas hari benar setelah fix zona waktu | `01-dashboard-omzet-hari-ini.png` |
+| 02 | Daftar stok + status | Urutan A→Z (fix `postgrest-dart` default descending), chip HABIS/DI BAWAH MINIMUM, "Bawang" tampil pertama | `02-stok-daftar-status-minimum.png` |
+| 03 | Tambah bahan baru | "Cabai Rawit Uji Sprint04" tersimpan (min 50 g, Rp 1.500/g) — verifikasi REST id 16 | `03-bahan-baru-tersimpan.png` |
+| 04 | Form pembelian (Pesanan) | Bawang 2.000 g total **Rp 40.000** (fix form: total baris tanpa × qty) | `04-pembelian-form-pesanan.png` |
+| 05 | Daftar pembelian | PO **#13 PESANAN** Toko Bumbu Kampoeng tampil teratas | `05-pembelian-pesanan-list.png` |
+| 06 | Konfirmasi terima | Dialog "Terima pembelian #13?" + penjaga penerimaan ganda | `06-konfirmasi-terima-pembelian.png` |
+| 07 | Penerimaan | Bawang 0 → **2.000 g**, `unit_cost` 0 → **Rp 20/g**, PO RECEIVED | `07-pembelian-diterima-stok-plus-1x.png` |
+| 08 | Ledger pembelian | Sheet mutasi: "Penerimaan po:13 **PURCHASE +2.000 g** sisa 2.000" — 1 baris (fix `Consumer` watch di sheet) | `08-riwayat-mutasi-purchase-ledger.png` |
+| 09 | Menu tanpa resep | MENU-TANPA-RESEP-BEFBB5 → status **"resep belum ada"** + penjawan tanpa klaim stok | `09-resep-belum-ada.png` |
+| 10 | HPP + versi resep | MENU-RESEP-BEFBB5: HPP **Rp 1.550/ponsi** (v3, yield 2, Σ Rp 3.100), margin Rp 18.450 (komponen berdata), riwayat **v1–v3** | `10-hpp-versi-aktif.png` |
+| 11 | Checkout POS | Struk **MJ-261027-0029** Rp 20.000, 1× MENU-RESEP-BEFBB5, CASH | `11-pos-checkout-struk.png` |
+| 12 | Mutasi resep terposting | Ledger TEPUNG: "Pemakaian resep MJ-261027-0029 **RECIPE −100 g** sisa 375" (1 baris/bahan, tak dobel) | `12-mutasi-recipe-sale.png` |
+| 13 | Waste beralasan | Dialog Waste 25 g + alasan "Jatuh saat pengangkutan" (wajib ≥3 huruf) | `13-waste-beralasan-form.png` |
+| 14 | Ledger waste | "Waste: Jatuh saat pengangkutan **WASTE −25 g** sisa 1.975" | `14-waste-ledger.png` |
+
+Verifikasi REST setelah checkout: sale 29 → tepat **2 baris** mutasi RECIPE
+(TEPUNG −100 g, SUSU −50 ml; batch yield 2 = per porsi), saldo 475→375 g dan
+1.900→1.850 ml.
+
+**Retry idempoten** (`/tmp/opencode/verify_s04_retry.py`, key sama 2×):
+checkout pertama `sale_id: 30, idempotent_replay: false` → retry
+`sale_id: 30, idempotent_replay: **true**` → mutasi RECIPE sale 30 tetap
+**2 baris** (tidak gandakan).
+
+### Gate S04
+- [x] Konversi Kg↔g / L↔ml lulus — `inv_to_base` di server (57 pemeriksaan `test_inventory.py`).
+- [x] Perubahan tulis ledger — semua mutasi via `inv_post_movement` (append-only, trigger tolak UPDATE/DELETE).
+- [x] Saldo + tepat sekali saat diterima — PO #13: 1 baris `PURCHASE`, guard `purchase_already_received`.
+- [x] Formula HPP sesuai versi resep + `unit_cost` — UI Rp 1.550 = (200×13 + 100×5) ÷ 2, versi aktif v3.
+- [x] Dua retry checkout tidak gandakan bahan — key sama → sale sama (30), ledger tetap 2 baris.
+- [x] Tidak otomatis klaim stok akurat untuk menu tanpa resep — "resep belum ada", tanpa mutasi RECIPE.
+- [x] Margin hanya komponen berdata — margin = harga jual − HPP resep aktif; menu tanpa resep tanpa angka HPP/margin.
+
+### Temuan dan perbaikan saat pengujian
+- **Zona waktu dashboard**: `pos_dashboard_summary` membandingkan `timestamptz` dengan timestamp naive → batas hari bergeser 7 jam; diperbaiki migrasi `20261027000011_dashboard_tz_fix.sql` (ter-push, omzet hari ini benar).
+- **Urutan daftar Z→A**: `postgrest-dart` default `ascending=false` (kebalikan SQL) → item terakhir tidak terbangun di viewport; diperbaiki `ascending: true` pada daftar bahan & menu resep.
+- **Total form pembelian Rp 80.000.000**: form mengalikan qty × `total_price` padahal server memakai total baris; diperbaiki `lineTotal` tanpa perkalian qty.
+- **Sheet riwayat mutasi loading permanen**: `ref.watch` dari builder modal bottom sheet tidak subscribe → data 200 OK tapi tak pernah tampil; dibungkus `Consumer` (bukti screenshot 08/12/14).
+- **Input waste**: kontrak `inv_adjust_stock` WASTE = qty **positif** (jumlah hilang; server membalik `-abs`) — sama seperti `test_inventory.py`; input negatif ditolak `invalid_qty`.
+
 ## Sprint 03 — Pesanan QR Pelanggan (Draft → Keranjang POS → Bayar)
 Tanggal: 26 Oktober 2026
 Target/tiket: S03-01 … S03-09

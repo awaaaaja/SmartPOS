@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/error_mapper.dart": {
-    "mtime": 1793009226.6784203,
-    "ast_hash": "8a5198c0f2f69f2eaf641a2d5057850a",
+    "mtime": 1793035622.3549051,
+    "ast_hash": "ad252e5481fbedd320cbfc5f15db6f65",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/formatters.dart": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/inventory/stock_page.dart": {
-    "mtime": 1793009303.3084693,
-    "ast_hash": "cb86bb696b995b62c8f2e0cbfcb5a76a",
+    "mtime": 1793040099.849811,
+    "ast_hash": "e6bcf5de5b63d9ffc852b0c219c22602",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/pos_page.dart": {
@@ -115,13 +115,13 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/purchases/purchases_page.dart": {
-    "mtime": 1793009303.308856,
-    "ast_hash": "b71166e06d538e105af067842da40652",
+    "mtime": 1793038655.5414083,
+    "ast_hash": "d3706c882c5129185d2b19b51bb35c13",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/recipes_hpp/recipes_page.dart": {
-    "mtime": 1793009303.3086703,
-    "ast_hash": "58beb753b1583d528a63f140cdbbb480",
+    "mtime": 1793035863.6468332,
+    "ast_hash": "05afdf8f8245ff9f06aaf58dc3a9b73e",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/reports/reports_page.dart": {
@@ -160,8 +160,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/core/error_mapper_test.dart": {
-    "mtime": 1793009487.1338015,
-    "ast_hash": "272737224e4f719093fad947c4333cd8",
+    "mtime": 1793036150.9475877,
+    "ast_hash": "3d3b54c0589a4d4a46ee9c3711b9767d",
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/core/formatters_test.dart": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_pos_api.py": {
-    "mtime": 1793015136.170398,
-    "ast_hash": "7d59713ef575cb82b5f86fa09f09579e",
+    "mtime": 1793034557.895899,
+    "ast_hash": "ecbc857eacc3f7b8a82fac78976d00d2",
     "semantic_hash": ""
   },
   "utils/supabase.ts": {
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "Sprints.md": {
-    "mtime": 1793023495.3061516,
-    "ast_hash": "90b437aa06802a22ad51a9e985981b2b",
+    "mtime": 1793041772.4944458,
+    "ast_hash": "afce0cee217a361fa806846758f76de1",
     "semantic_hash": ""
   },
   "apps/pos_flutter/README.md": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "docs/sprint-log.md": {
-    "mtime": 1793023451.4238474,
-    "ast_hash": "b9019d3704708d318be2238f179d19f9",
+    "mtime": 1793041654.0999014,
+    "ast_hash": "9bb6b35e724256da8fb50f155911eea6",
     "semantic_hash": ""
   },
   "docs/ui-diff.md": {
@@ -672,6 +672,101 @@
   "docs/evidence/sprint03/19-token-invalid.png": {
     "mtime": 1793023020.2098525,
     "ast_hash": "0243066d01c4b6d51fed63dc67672c11",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/features/inventory/inventory_repository.dart": {
+    "mtime": 1793037674.3977144,
+    "ast_hash": "4b856f406ba5783aac2703c0e64ba8b8",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/features/inventory_pages_test.dart": {
+    "mtime": 1793036509.326271,
+    "ast_hash": "516895e5e733c8790c0aef8aa8221e2a",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261026000010_inventory.sql": {
+    "mtime": 1793033033.5017533,
+    "ast_hash": "38ecbca302d625ba85131a2fd8dc71b3",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261027000011_dashboard_tz_fix.sql": {
+    "mtime": 1793034898.7095199,
+    "ast_hash": "c7a1dc6517a0b48a971af590867f38b8",
+    "semantic_hash": ""
+  },
+  "tests/integration/test_inventory.py": {
+    "mtime": 1793033443.6412733,
+    "ast_hash": "ae76b684752e1dc54028f223bfc51e66",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/01-dashboard-omzet-hari-ini.png": {
+    "mtime": 1793037115.8680694,
+    "ast_hash": "bbe0292a598fa4bd6579c8e0232e5a9c",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/02-stok-daftar-status-minimum.png": {
+    "mtime": 1793038287.7663999,
+    "ast_hash": "17db50db20ef32e65a26cccd64fadbe2",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/03-bahan-baru-tersimpan.png": {
+    "mtime": 1793038461.5002935,
+    "ast_hash": "203bbb95ab5b80d58c8cfd1b90e4235f",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/04-pembelian-form-pesanan.png": {
+    "mtime": 1793039243.5682344,
+    "ast_hash": "7f718f44aadd99610f1d79adff1f8fc2",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/05-pembelian-pesanan-list.png": {
+    "mtime": 1793039495.3135288,
+    "ast_hash": "d4bfd5d6a93943420c8255113aac54eb",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/06-konfirmasi-terima-pembelian.png": {
+    "mtime": 1793039536.8907228,
+    "ast_hash": "cd64302e190f318faff2c007dd22ef38",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/07-pembelian-diterima-stok-plus-1x.png": {
+    "mtime": 1793039577.1339426,
+    "ast_hash": "489f9306759b28ee67c083619fbd10c7",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/08-riwayat-mutasi-purchase-ledger.png": {
+    "mtime": 1793040622.58423,
+    "ast_hash": "1d73dd8183341c9bbf397df49bfa0db0",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/09-resep-belum-ada.png": {
+    "mtime": 1793041082.4125085,
+    "ast_hash": "f96a60e17b13a8ab27d094a51286249a",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/10-hpp-versi-aktif.png": {
+    "mtime": 1793041117.0387554,
+    "ast_hash": "778b33e81a040f593d68740ac6c52d30",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/11-pos-checkout-struk.png": {
+    "mtime": 1793041220.7774951,
+    "ast_hash": "14d7b3dd2d0cd307e1011957351d691f",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/12-mutasi-recipe-sale.png": {
+    "mtime": 1793041359.0974813,
+    "ast_hash": "1b8d2d1a771c3e1161430e2c9076a6a1",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/13-waste-beralasan-form.png": {
+    "mtime": 1793041571.879358,
+    "ast_hash": "3a948e2cb31911ba43fd18893bd5c15e",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint04/14-waste-ledger.png": {
+    "mtime": 1793041588.8231258,
+    "ast_hash": "83ed1b644461b5223b9e1dad9a71f18b",
     "semantic_hash": ""
   }
 }

@@ -76,8 +76,22 @@ def main():
                             "&is_active=eq.true", token)
     check("baca modifiers", status == 200)
 
-    p1, p2 = products[0], products[1]
-    mod = modifiers[0] if modifiers else None
+    # Pasangan produk-modifier diambil dari data aktual (bukan urutan
+    # master) agar uji modifier tetap benar saat katalog berubah.
+    status, pm_links = req("/rest/v1/product_modifiers?select=product_id,"
+                           "modifier_id", token)
+    pm_links = pm_links if status == 200 else []
+    link = pm_links[0] if pm_links and modifiers else None
+    p1 = next((p for p in products
+               if link and p["id"] == link["product_id"]), products[0])
+    p2 = next(p for p in products if p["id"] != p1["id"])
+    mod = next((m for m in modifiers
+                if link and m["id"] == link["modifier_id"]), None) \
+        if link else None
+
+    def has_link(prod_id, mod_id):
+        return any(l["product_id"] == prod_id and l["modifier_id"] == mod_id
+                   for l in pm_links)
 
     # --- 50+ skenario uang & rounding (S02-05) ---
     print("\n== Skenario uang & rounding quote ==")
@@ -122,14 +136,15 @@ def main():
             check(f"quote qty={qty} + modifier {mod['name']}", 
                   status == 200 and q["subtotal"] == expect, str(q))
 
-    # Skenario dua item campur
+    # Skenario dua item campur (modifier di item_b hanya bila terkait p2)
     item_a = {"product_id": p1["id"], "qty": 3, "modifier_ids": []}
+    mod_b = mod if (mod and has_link(p2["id"], mod["id"])) else None
     item_b = {"product_id": p2["id"], "qty": 2,
-              "modifier_ids": [mod["id"]] if mod else []}
+              "modifier_ids": [mod_b["id"]] if mod_b else []}
     status, q = req("/rest/v1/rpc/pos_quote", token,
                     {"p_items": [item_a, item_b], "p_discount_pct": 7})
     expect_sub = 3 * p1["price"] + 2 * p2["price"] + (
-        2 * mod["price_delta"] if mod else 0)
+        2 * mod_b["price_delta"] if mod_b else 0)
     expect_disc = half_up(expect_sub * 7 / 100.0)
     check("quote 2 item campur + diskon 7%",
           status == 200 and q["subtotal"] == expect_sub
