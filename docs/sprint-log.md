@@ -3,7 +3,7 @@
 ## Sprint 01 — Laporan Implementasi
 Tanggal: 26 Oktober 2026
 Target/tiket: S01-01 … S01-08
-Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; sisanya DONE dengan bukti)
+Status: **DONE kecuali S01-08** (CI GitHub menunggu remote Git; seluruh tiket lain lulus dengan bukti perangkat nyata)
 
 ### Yang dibangun
 - [x] **S01-01** Monorepo: `apps/pos_flutter` (Flutter), `apps/qr_web` (Vue/Vite),
@@ -33,7 +33,7 @@ Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; si
 | Pengujian | Perintah/langkah | Hasil | Bukti |
 |---|---|---|---|
 | Analyze/lint | `flutter analyze` | **PASS** | "No issues found" |
-| Unit/widget Flutter | `flutter test` | **PASS** | 19/19 lulus (formatters, error mapper, theme, shell tablet/HP, login) |
+| Unit/widget Flutter | `flutter test` | **PASS** | 20/20 lulus (formatters, error mapper, theme, shell tablet/HP, login, regresi overflow landscape) |
 | Build web QR | `npm run build` (apps/qr_web) | **PASS** | bundle 293 kB, tanpa error |
 | Dev server QR | `npm run dev` → `curl localhost:5199` | **PASS** | HTTP 200 |
 | Migrasi ke Supabase asli | `supabase db push --db-url …` | **PASS** | 4 migrasi "Finished" |
@@ -45,6 +45,10 @@ Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; si
 | Operator baca settings | `GET business_settings` + sesi operator | **PASS** | 1 baris usaha |
 | Trigger harga | PATCH harga produk uji 10000→12000 | **PASS** | `product_price_history` tercatat (dibersihkan sesudah uji) |
 | Build APK debug | `flutter build apk --debug --dart-define=…` | **PASS** | `✓ Built build/app/outputs/flutter-apk/app-debug.apk` (147,6 MB) |
+| Install + `flutter run` di perangkat fisik | OPPO CPH2473 (Android 14, USB, id `272903cc`) | **PASS** | aplikasi terpasang, `Supabase init completed`, UI tergambar |
+| Login operator di perangkat | ketik email+sandi → Masuk | **PASS** | header menampilkan `operator@mejeng.id` (`device-01/02`) |
+| Navigasi HP portrait | tap Beranda/Lainnya | **PASS** | bottom nav 5 item + sheet Lainnya (`device-03`) |
+| Landscape HP | rotasi dipaksa `user_rotation 1` | **PASS** | shell menyesuaikan tanpa crash (`device-04`) |
 
 ### Acceptance Criteria
 - [x] `npm run dev`/`build` jalan dengan `.env.example` (QR web).
@@ -52,8 +56,9 @@ Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; si
 - [x] 1 identitas operator; tanpa role switch.
 - [x] Publik vs operator terpisah (uji REST nyata di atas).
 - [x] Shell tablet + HP teruji widget test; tanpa Dapur/Pesanan/Pegawai.
-- [ ] `flutter run` di perangkat Android: **belum** — tidak ada
-  device/emulator di lingkungan ini (build APK debug berhasil, instal manual).
+- [x] `flutter run` di perangkat Android fisik (OPPO CPH2473): **lulus** —
+  install, login operator nyata, navigasi HP portrait & landscape; screenshot
+  di `docs/evidence/sprint01/`.
 - [ ] GitHub Actions hijau: **belum** — repository belum dipush ke GitHub.
 
 ### Temuan dan perbaikan
@@ -66,9 +71,22 @@ Status: **PARTIAL** (S01-01 & S01-08 menunggu perangkat Android & remote Git; si
 - Masalah: `formatWib` melempar `LocaleDataException` di unit test.
   Penyebab: `DateFormat('id-ID')` butuh `initializeDateFormatting`.
   Perbaikan: nama bulan Indonesia statis (deterministik, tanpa dependensi).
+- Masalah (**ditemukan di perangkat fisik, lolos semua tes sebelumnya**):
+  `ModulePlaceholder` `BOTTOM OVERFLOWED BY 112 PIXELS` di landscape HP
+  (viewport tinggi ≈240dp, kartu terpusat tanpa scroll).
+  Penyebab: `Center + Card` tanpa jalur scroll pada viewport pendek.
+  Perbaikan: `LayoutBuilder + SingleChildScrollView + minHeight`
+  (`lib/core/widgets/module_placeholder.dart`) + test regresi
+  `test/core/module_placeholder_test.dart` (viewport 640×240, drag sampai
+  chip terlihat). Verifikasi ulang: analyze 0 issue, 20/20 test lulus,
+  APK baru di-install ke perangkat dan landscape diuji ulang tanpa strip
+  overflow (`device-05-landscape-tanpa-overflow.png`).
 
 ### Sisa pekerjaan
-- TODO: jalankan `flutter run` pada tablet/HP target; screenshot bukti.
-- TODO: push repository ke GitHub agar CI berjalan nyata.
-- BLOCKED: S01-01 gate "Build Android debug di device" menunggu perangkat.
+- BLOCKED: S01-08 — push repository ke GitHub agar CI berjalan nyata (butuh
+  remote/akun dari pemilik proyek).
+- Gate S01: dua butir pertama lulus; butir "layout tablet/HP layak navigasi"
+  lulus di HP nyata (portrait + landscape). Sidebar tablet 840dp tidak dapat
+  dibuktikan di ponsel ini (lebar landscape hanya 640dp) — terverifikasi lewat
+  `flutter build web` + widget test.
 - Tiket pertama berikutnya: **S02-01** (CRUD kategori/menu/harga di Flutter).

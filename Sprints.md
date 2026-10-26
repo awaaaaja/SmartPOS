@@ -77,7 +77,7 @@ flowchart LR
 
 | ID | Prioritas | Implementasi langsung | Acceptance criteria | Status |
 |---|---|---|---|---|
-| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` | **PARTIAL** — `npm run dev` terverifikasi (HTTP 200), `flutter build apk --debug` lulus (APK 147,6 MB); `flutter run` butuh perangkat fisik yang belum tersedia |
+| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` | **DONE** — `flutter run` di perangkat fisik OPPO CPH2473 lulus (login operator nyata, bukti screenshot `docs/evidence/sprint01/`); `npm run dev` HTTP 200 |
 | S01-02 | P0 | Flutter design tokens: **primary `#930031`**, typography, spacing, card, button, modal, empty/loading/error, Material Icons; animasi transisi yang fungsional dan aksesibel | Widget story/demo untuk tiap komponen | **DONE** — `test/app/theme_test.dart` memastikan brand; komponen diuji di `test/app/shell_test.dart` |
 | S01-03 | P0 | Router dan shell tablet: sidebar landscape, mobile bottom navigation; halaman `Dashboard`, `POS`, `Menu`, `QR`, `Stok`, `Resep`, `Pembelian`, `Biaya`, `Energi`, `Kas`, `Riwayat`, `Laporan`, `Pengaturan` | Tidak ada `Dapur`, `Pesanan`, atau `Pegawai` | **DONE** — 13 halaman jujur (empty state menunggu sprint berikutnya), teruji di shell_test |
 | S01-04 | P0 | Integrasi Supabase Auth **satu akun operator**: login, logout, refresh session | Publik tidak bisa mengakses halaman internal | **DONE** — login/logout/login_page_test lulus; akun `operator@mejeng.id` dibuat & diuji via REST |
@@ -91,7 +91,7 @@ flowchart LR
 **Gate S01:**
 - [x] User flow internal memakai **1 identitas operator**, bukan role switch. (akun tunggal `operator@mejeng.id`, tanpa tabel role/pegawai)
 - [x] QR publik dan operator memiliki jalur akses yang berbeda. (anon hanya `get_public_menu`; data privat tertutup RLS — diuji langsung ke Supabase)
-- [ ] Build Android debug berhasil, layout tablet/HP layak navigasi. (**sebagian** — `flutter build apk --debug` menghasilkan APK; instalasi & navigasi di tablet/HP sungguhan masih menunggu perangkat)
+- [x] Build Android debug berhasil, layout tablet/HP layak navigasi. (APK terpasang & dijalankan di HP fisik OPPO portrait+landscape; bug overflow landscape ditemukan lalu diperbaiki + test regresi; sidebar tablet teruji via `flutter build web` + widget test — HP 640dp di bawah breakpoint 840dp sehingga bottom nav memang benar)
 
 ---
 
@@ -306,6 +306,8 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 |---|---|---|---|---|---|---|
 | 26 Okt 2026 | 01 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07 | DONE | `a039446` scaffold + shell + auth + migrasi + RLS | `flutter analyze` 0 issue; `flutter test` 19/19; REST Supabase anon vs operator lulus | - |
 | 26 Okt 2026 | 01 | S01-01, S01-08 | PARTIAL | monorepo + CI workflow | `npm run build` lulus; `npm run dev` HTTP 200 | Belum ada remote Git/GitHub Actions; `flutter run` butuh perangkat |
+| 26 Okt 2026 | 01 | S01-01 | DONE | `flutter run` di HP fisik OPPO CPH2473 | login operator nyata, navigasi portrait+landscape, 5 screenshot di `docs/evidence/sprint01/` | - |
+| 26 Okt 2026 | 01 | (perbaikan) | DONE | fix overflow `module_placeholder.dart` + `module_placeholder_test.dart` | bug ditemukan di landscape HP (`OVERFLOWED BY 112 PIXELS`), fixed, 20/20 test lulus, verifikasi ulang di device | - |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.
