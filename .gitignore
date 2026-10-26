@@ -1,0 +1,21 @@
+# Rahasia lokal — jangan pernah di-commit
+Kredensial.md
+.env
+.env.local
+.env.*.local
+
+# Artefak build
+node_modules/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.apk
+*.aab
+
+# IDE/OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
