@@ -75,23 +75,23 @@ flowchart LR
 
 **Goal:** proyek dijalankan dari repository tanpa setup manual yang misterius. Antarmuka internal hanya satu operator.
 
-| ID | Prioritas | Implementasi langsung | Acceptance criteria |
-|---|---|---|---|
-| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` |
-| S01-02 | P0 | Flutter design tokens: **primary `#930031`**, typography, spacing, card, button, modal, empty/loading/error, Material Icons; animasi transisi yang fungsional dan aksesibel | Widget story/demo untuk tiap komponen |
-| S01-03 | P0 | Router dan shell tablet: sidebar landscape, mobile bottom navigation; halaman `Dashboard`, `POS`, `Menu`, `QR`, `Stok`, `Resep`, `Pembelian`, `Biaya`, `Energi`, `Kas`, `Riwayat`, `Laporan`, `Pengaturan` | Tidak ada `Dapur`, `Pesanan`, atau `Pegawai` |
-| S01-04 | P0 | Integrasi Supabase Auth **satu akun operator**: login, logout, refresh session | Publik tidak bisa mengakses halaman internal |
-| S01-05 | P0 | Migrasi awal: business_settings, product categories, products, modifiers, price_history, tables | SQL migration + constraint dan seed dummy dev |
-| S01-06 | P0 | RLS & API authorization: private operator; public hanya membaca menu aktif / kirim QR draft melalui endpoint aman | Test akses tanpa token/operator invalid ditolak |
-| S01-07 | P0 | State management (mis. Riverpod), shared DTO, error mapper, HTTP client, WIB/IDR utilities | Unit test parse, money format, state loading |
-| S01-08 | P0 | CI GitHub: Flutter analyze/test, Vue lint/build, migration test; format precommit | Pipeline lulus dan README dapat direproduksi |
+| ID | Prioritas | Implementasi langsung | Acceptance criteria | Status |
+|---|---|---|---|---|
+| S01-01 | P0 | Buat monorepo Flutter (`apps/pos_flutter`), web Vue (`apps/qr_web`), `supabase/migrations`, dan API bisnis | `flutter run` serta `npm run dev` jalan dengan `.env.example` | **PARTIAL** — `npm run dev` terverifikasi (HTTP 200), `flutter analyze`/`test` lulus; `flutter run` butuh perangkat fisik yang belum tersedia |
+| S01-02 | P0 | Flutter design tokens: **primary `#930031`**, typography, spacing, card, button, modal, empty/loading/error, Material Icons; animasi transisi yang fungsional dan aksesibel | Widget story/demo untuk tiap komponen | **DONE** — `test/app/theme_test.dart` memastikan brand; komponen diuji di `test/app/shell_test.dart` |
+| S01-03 | P0 | Router dan shell tablet: sidebar landscape, mobile bottom navigation; halaman `Dashboard`, `POS`, `Menu`, `QR`, `Stok`, `Resep`, `Pembelian`, `Biaya`, `Energi`, `Kas`, `Riwayat`, `Laporan`, `Pengaturan` | Tidak ada `Dapur`, `Pesanan`, atau `Pegawai` | **DONE** — 13 halaman jujur (empty state menunggu sprint berikutnya), teruji di shell_test |
+| S01-04 | P0 | Integrasi Supabase Auth **satu akun operator**: login, logout, refresh session | Publik tidak bisa mengakses halaman internal | **DONE** — login/logout/login_page_test lulus; akun `operator@mejeng.id` dibuat & diuji via REST |
+| S01-05 | P0 | Migrasi awal: business_settings, product categories, products, modifiers, price_history, tables | SQL migration + constraint dan seed dummy dev | **DONE** — 4 migrasi diterapkan ke Supabase asli; seed `[DEMO]` lulus |
+| S01-06 | P0 | RLS & API authorization: private operator; public hanya membaca menu aktif / kirim QR draft melalui endpoint aman | Test akses tanpa token/operator invalid ditolak | **DONE** — anon kembalikan `[]`/401, token salah → `invalid_table_token`, token valid → menu |
+| S01-07 | P0 | State management (Riverpod), shared DTO, error mapper, HTTP client, WIB/IDR utilities | Unit test parse, money format, state loading | **DONE** — `formatters_test` (19 asersi) + `error_mapper_test` lulus |
+| S01-08 | P0 | CI GitHub: Flutter analyze/test, Vue lint/build, migration test; format precommit | Pipeline lulus dan README dapat direproduksi | **PARTIAL** — `.github/workflows/ci.yml` ditulis (Flutter, Vue, migrasi ke Postgres polos); belum dijalankan di GitHub (belum ada remote) |
 
 **Demo:** login → dashboard UI → POS kosong → navigasi semua menu tanpa crash. Gunakan fixture `DEMO`, belum mengklaim transaksi nyata.
 
 **Gate S01:**
-- [ ] User flow internal memakai **1 identitas operator**, bukan role switch.
-- [ ] QR publik dan operator memiliki jalur akses yang berbeda.
-- [ ] Build Android debug berhasil, layout tablet/HP layak navigasi.
+- [x] User flow internal memakai **1 identitas operator**, bukan role switch. (akun tunggal `operator@mejeng.id`, tanpa tabel role/pegawai)
+- [x] QR publik dan operator memiliki jalur akses yang berbeda. (anon hanya `get_public_menu`; data privat tertutup RLS — diuji langsung ke Supabase)
+- [ ] Build Android debug berhasil, layout tablet/HP layak navigasi. (**menunggu**: build APK/debug jalan di perangkat atau emulator; belum ada perangkat di lingkungan ini)
 
 ---
 
@@ -304,7 +304,8 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 
 | Tanggal | Sprint | Tiket | Status | Implementasi/commit | Hasil pengujian | Kendala |
 |---|---|---|---|---|---|---|
-| _Belum dimulai_ | - | - | TODO | - | - | - |
+| 26 Okt 2026 | 01 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07 | DONE | `a039446` scaffold + shell + auth + migrasi + RLS | `flutter analyze` 0 issue; `flutter test` 19/19; REST Supabase anon vs operator lulus | - |
+| 26 Okt 2026 | 01 | S01-01, S01-08 | PARTIAL | monorepo + CI workflow | `npm run build` lulus; `npm run dev` HTTP 200 | Belum ada remote Git/GitHub Actions; `flutter run` butuh perangkat |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.
