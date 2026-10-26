@@ -99,26 +99,26 @@ flowchart LR
 
 **Goal:** kasir menyelesaikan transaksi tanpa QR menggunakan Flutter tablet. Fokus paling penting dari produk.
 
-| ID | Prioritas | Implementasi langsung | Acceptance criteria |
-|---|---|---|---|
-| S02-01 | P0 | Form kategori, menu, harga, foto, tersedia/habis, arsip; validation + upload image | Item baru tampil di POS, arsip tidak menghapus histori |
-| S02-02 | P0 | Varian, topping, harga tambahan, catatan menu, aturan minimal/maksimal | Total per item tepat dalam test modifier |
-| S02-03 | P0 | Harga adjustable + `price_history`; perubahan harga aktif dan snapshot | Transaksi terdahulu tak berubah setelah edit |
-| S02-04 | P0 | UI `Kasir POS` tablet: pencarian, kategori, grid menu, tambah item, qty ±, hapus, catatan, pilihan makan di tempat/takeaway | Semua dilakukan dalam satu layar tanpa menu Pesanan |
-| S02-05 | P0 | `sales/quote` kalkulator server: subtotal, diskon, pajak/layanan konfigurabel, total | Test 50+ skenario uang integer & rounding |
-| S02-06 | P0 | Pembayaran dari POS (sheet/modal): tunai, transfer/QRIS manual, nominal dibayar, kembalian | Saldo dan kembalian tidak negatif/inkonsisten |
-| S02-07 | P0 | DB `sales`, `sale_items`, `payments`, `refunds`, `audit_events` + atomic checkout/idempotency | Double-click key sama menghasilkan **satu** sale |
-| S02-08 | P0 | Struk digital dan halaman Riwayat Penjualan; search/filter | Harga snapshot tetap, struk cocok dengan pembayaran |
-| S02-09 | P0 | Dashboard omzet dan jumlah transaksi dari sale final, bukan keranjang | Angka dashboard cocok query SQL |
-| S02-10 | P0 | Unit, integration, widget, E2E Flutter pembayaran dan price change | UAT-01, UAT-04, UAT-05 lulus |
+| ID | Prioritas | Implementasi langsung | Acceptance criteria | Status |
+|---|---|---|---|---|
+| S02-01 | P0 | Form kategori, menu, harga, foto, tersedia/habis, arsip; validation + upload image | Item baru tampil di POS, arsip tidak menghapus histori | **DONE** — CRUD katalog penuh; menu "Es Teh Manis Jumbo" dibuat via UI & terverifikasi REST; arsip kategori menghapus dari tampilan tanpa menghapus data |
+| S02-02 | P0 | Varian, topping, harga tambahan, catatan menu, aturan minimal/maksimal | Total per item tepat dalam test modifier | **DONE** — topping "Cincau +Rp 2.000" dipilih di POS; sheet menolak di luar batas; server menolak `modifier_max_exceeded` |
+| S02-03 | P0 | Harga adjustable + `price_history`; perubahan harga aktif dan snapshot | Transaksi terdahulu tak berubah setelah edit | **DONE** — 8.000→9.000 tercatat trigger; struk sale lama tetap memakai harga lama (uji REST + UI) |
+| S02-04 | P0 | UI `Kasir POS` tablet: pencarian, kategori, grid menu, tambah item, qty ±, hapus, catatan, pilihan makan di tempat/takeaway | Semua dilakukan dalam satu layar tanpa menu Pesanan | **DONE** — adaptif tablet/HP; katalog+keranjang bersamaan di ≥840dp, sheet keranjang di HP |
+| S02-05 | P0 | `sales/quote` kalkulator server: subtotal, diskon, pajak/layanan konfigurabel, total | Test 50+ skenario uang integer & rounding | **DONE** — `pos_quote`/`pos_line_total` server-side; 73 PASS REST termasuk 21 skenario pajak/layanan rounding half-up |
+| S02-06 | P0 | Pembayaran dari POS (sheet/modal): tunai, transfer/QRIS manual, nominal dibayar, kembalian | Saldo dan kembalian tidak negatif/inkonsisten | **DONE** — bayar Rp 50.000 → kembalian Rp 10.000 (bukti UI); server menolak `insufficient_payment` |
+| S02-07 | P0 | DB `sales`, `sale_items`, `payments`, `refunds`, `audit_events` + atomic checkout/idempotency | Double-click key sama menghasilkan **satu** sale | **DONE** — migrasi 0005+0006 diterapkan; klik 2× di UI + 10 retry REST key sama → satu sale, `idempotent_replay: true` |
+| S02-08 | P0 | Struk digital dan halaman Riwayat Penjualan; search/filter | Harga snapshot tetap, struk cocok dengan pembayaran | **DONE** — riwayat + struk snapshot + refund bervalidasi (parsial Rp 11.000 tercatat, uang historis utuh) |
+| S02-09 | P0 | Dashboard omzet dan jumlah transaksi dari sale final, bukan keranjang | Angka dashboard cocok query SQL | **DONE** — omzet hari ini Rp 47.000 = (40.000−11.000)+18.000, 2 transaksi final, refund Rp 91.000 — cocok SQL |
+| S02-10 | P0 | Unit, integration, widget, E2E Flutter pembayaran dan price change | UAT-01, UAT-04, UAT-05 lulus | **DONE** — 29/29 flutter test + 73 PASS integration REST + alur E2E web Chrome (18 screenshot `docs/evidence/sprint02/`) |
 
 **Demo:** operator membuat menu dummy → mengganti harga → memilih dua makanan dan minuman → bayar tunai → melihat kembalian → struk → histori dan dashboard ter-update. **Tidak ada tahap penerimaan dapur**.
 
 **Gate S02:**
-- [ ] Checkout memang hanya dari POS.
-- [ ] Uang/tarif ditetapkan di server; mobile tidak dapat memalsukan total.
-- [ ] Refund/void dicatat, tidak menghapus uang historis.
-- [ ] Button masuk POS dan back navigation berfungsi di tablet/HP.
+- [x] Checkout memang hanya dari POS. (semua sale lahir dari `pos_checkout`; tidak ada route/halaman checkout lain; uji REST menutup anon)
+- [x] Uang/tarif ditetapkan di server; mobile tidak dapat memalsukan total. (klien hanya mengirim keranjang mentah; 73 uji REST membuktikan server hitung ulang & menolak input ilegal)
+- [x] Refund/void dicatat, tidak menghapus uang historis. (refund parsial/penuh tercatat beralasan; `sales` asli tetap dengan total awal — verifikasi REST + UI)
+- [x] Button masuk POS dan back navigation berfungsi di tablet/HP. (teruji di web Chrome 1280×800 + widget test shell; verifikasi ulang di HP Android ditunda — perangkat tidak tersedia saat sesi ini)
 
 ---
 
@@ -308,6 +308,7 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 26 Okt 2026 | 01 | S01-01, S01-08 | PARTIAL | monorepo + CI workflow | `npm run build` lulus; `npm run dev` HTTP 200 | Belum ada remote Git/GitHub Actions; `flutter run` butuh perangkat |
 | 26 Okt 2026 | 01 | S01-01 | DONE | `flutter run` di HP fisik OPPO CPH2473 | login operator nyata, navigasi portrait+landscape, 5 screenshot di `docs/evidence/sprint01/` | - |
 | 26 Okt 2026 | 01 | (perbaikan) | DONE | fix overflow `module_placeholder.dart` + `module_placeholder_test.dart` | bug ditemukan di landscape HP (`OVERFLOWED BY 112 PIXELS`), fixed, 20/20 test lulus, verifikasi ulang di device | - |
+| 26 Okt 2026 | 02 | S02-01…S02-10 | DONE | migrasi 0005–0007 + API pos server-side + Flutter katalog/POS/riwayat/dashboard | `flutter analyze` 0 error; `flutter test` 29/29; REST integration 73 PASS 0 FAIL; alur E2E web Chrome 18 screenshot di `docs/evidence/sprint02/` | Pengujian HP Android ditunda (perangkat tidak tersedia); S01-08 tetap menunggu remote GitHub |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

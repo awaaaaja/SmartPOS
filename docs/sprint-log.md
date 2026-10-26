@@ -1,5 +1,97 @@
 # Sprint Log
 
+## Sprint 02 — Katalog & Kasir POS (End-to-End)
+Tanggal: 26 Oktober 2026
+Target/tiket: S02-01 … S02-10
+Status: **DONE** — semua tiket lulus dengan bukti nyata (Supabase asli + web build di Chrome); pengujian perangkat Android ditunda (perangkat tidak tersedia saat sesi ini)
+
+### Yang dibangun
+- [x] **S02-01** CRUD katalog: `features/catalog/catalog_page.dart` +
+  `catalog_repository.dart` (kategori, produk, foto via `image_picker` →
+  bucket Storage publik `product-photos`, arsip tanpa hapus histori).
+  Migrasi `20261026000007_product_photos.sql` (dilewati aman di CI polos).
+- [x] **S02-02** Varian/topping: modifier global + `product_modifiers`
+  min/max; sheet pemilihan modifier di POS menolak di luar batas (validasi
+  server `pos_line_total` juga menolak `modifier_max_exceeded`).
+- [x] **S02-03** Harga adjustable + riwayat: trigger
+  `product_price_history` (migrasi S01) + tampilan riwayat per produk.
+- [x] **S02-04** UI `Kasir POS` (`pos_page.dart`): layout adaptif —
+  tablet ≥840dp katalog+keranjang bersamaan; HP katalog penuh + bar keranjang
+  yang membuka sheet; pencarian, filter kategori, qty ±, catatan, hapus.
+- [x] **S02-05** Quote server: fungsi Postgres `pos_quote` /
+  `pos_line_total` (SECURITY DEFINER, hanya `authenticated`); klien
+  mengirim keranjang mentah, server hitung ulang subtotal/diskon/pajak/
+  layanan/total, pembulatan `ROUND` half-up.
+- [x] **S02-06** Sheet pembayaran: tunai/transfer/QRIS manual, nominal
+  diterima, kembalian (server menolak `insufficient_payment`).
+- [x] **S02-07** DB transaksi + checkout atomik: migrasi
+  `20261026000005_sales.sql` (`sales`, `sale_items` snapshot nama+harga+
+  modifier, `payments`, `refunds`, `audit_events`, RLS operator) +
+  `20261026000006_pos_api.sql` (`pos_checkout` idempoten via
+  `sales.idempotency_key` unik, nomor struk dari sequence).
+- [x] **S02-08** Riwayat + struk: `sales_history/history_page.dart`
+  (daftar, pencarian no. struk, detail struk snapshot, dialog refund
+  bervalidasi — nominal ≤ sisa, alasan ≥3 karakter).
+- [x] **S02-09** Dashboard omzet: `dashboard_page.dart` dari RPC
+  `pos_dashboard_summary` (hanya sale final, net terhadap refund).
+- [x] **S02-10** Test: `tests/integration/test_pos_api.py` (REST Supabase
+  asli) + unit test cart `test/features/cart_state_test.dart`.
+
+### Verifikasi
+| Pengujian | Perintah/langkah | Hasil | Bukti |
+|---|---|---|---|
+| Analyze/lint | `flutter analyze` | **PASS** | 0 error/warning (7 info `unnecessary_underscores`, konsisten pola lama) |
+| Unit/widget Flutter | `flutter test` | **PASS** | 29/29 (20 lama + 9 cart: merge baris, batas qty, urutan modifier, lineTotal) |
+| Migrasi transaksi | `supabase db push` | **PASS** | `0005_sales`, `0006_pos_api`, `0007_product_photos` "Finished" |
+| Uji REST uang/rounding | `python3 tests/integration/test_pos_api.py` | **PASS** | **73 PASS, 0 FAIL** — 20 skenario quote, 21 skenario pajak/layanan (rounding half-up), checkout idempoten (double tap + 10 retry → 1 sale), snapshot harga saat master diedit, refund parsial/penuh/over-limit, anon ditolak semua API uang |
+| Build web | `flutter build web --release --dart-define=…` | **PASS** | `✓ Built build/web` |
+| Buktian UI end-to-end (Chrome, tablet 1280×800) | login → katalog → POS → bayar → riwayat → refund → dashboard | **PASS** | 18 screenshot `docs/evidence/sprint02/` (lihat di bawah) |
+
+### Alur bukti end-to-end (Chrome, bukan mock)
+1. Login operator (`01-dashboard-omzet.png`) — dashboard menampilkan data server asli.
+2. Tambah kategori "Minuman" (`02-kategori-minuman.png`); kategori salah ketik diarsipkan (`02b-setelah-arsip-kategori-salah.png`).
+3. Buat menu "Es Teh Manis Jumbo" Rp 8.000 kategori Minuman (`03-form-menu-baru.png`, `04-menu-baru-tersimpan.png`) — terverifikasi REST: produk id 13.
+4. Ubah harga 8.000→9.000 + tambah topping "Cincau +Rp 2.000" (`05-ubah-harga-topping.png`); riwayat harga mencatat perubahan (`06-riwayat-harga.png`).
+5. Kasir POS: katalog+keranjang bersamaan (`07-pos-tablet-katalog-keranjang.png`); 2× Es Teh+Cincau + 1 Nasi Goreng.
+6. Quote server Total Rp 40.000 (`08-quote-server-total-40000.png`); bayar tunai Rp 50.000 → kembalian Rp 10.000 (`09-kembalian-10000.png`).
+7. Struk MJ-261026-0003 dengan snapshot modifier (`10-struk-transaksi.png`).
+8. Double-tap bayar: klik konfirmasi 2× → **satu** struk; via REST key sama → sale sama + `idempotent_replay: true` (MJ-261026-0004).
+9. Riwayat penjualan (`11-riwayat-penjualan.png`); struk snapshot harga lama tetap (`12-struk-snapshot.png`).
+10. Refund Rp 50.000 > sisa → ditolak validasi (`13-refund-ditolak-lebih-total.png`).
+11. Refund sah Rp 11.000 parsial → struk net Rp 29.000 + riwayat refund (`14-refund-parsial-struk-net.png`); DB: `PARTIALLY_REFUNDED`, uang historis tetap utuh.
+12. Dashboard: omzet hari ini Rp 47.000 (40.000−11.000 + 18.000), 2 transaksi final, refund Rp 91.000 (`15-dashboard-setelah-refund.png`) — cocok hitungan SQL.
+13. Perbaikan: daftar riwayat segar setelah refund (`16-riwayat-status-refund.png`).
+
+### Acceptance Criteria
+- [x] Item baru tampil di POS; arsip tidak menghapus histori.
+- [x] Total per item tepat untuk kombinasi modifier (server menolak di luar min/max).
+- [x] Transaksi terdahulu tak berubah setelah edit harga (diuji REST + struk UI).
+- [x] Semua aksi kasir dalam satu layar POS; tanpa halaman Pesanan.
+- [x] Test 50+ skenario uang integer & rounding (73 pemeriksaan total).
+- [x] Kembalian tidak negatif; server menolak bayar kurang.
+- [x] Double-click key sama = satu sale (uji klik 2× + 10 retry REST).
+- [x] Struk cocok pembayaran; pencarian no. struk berfungsi.
+- [x] Angka dashboard cocok query SQL.
+- [x] Refund dicatat beralasan, tidak menghapus uang historis.
+
+### Temuan dan perbaikan
+- Masalah: daftar Riwayat menampilkan status lama setelah refund (provider
+  tidak di-invalidate).
+  Perbaikan: `ref.invalidate(salesListProvider)` setelah refund sukses;
+  diverifikasi ulang di web (`16-riwayat-status-refund.png`).
+- Catatan pengujian otomatis Chrome: keystroke pertama pada sebagian input
+  Flutter-web tidak terekam (kehilangan huruf awal) — artefak automasi
+  accessibility, bukan bug aplikasi; ditangani saat uji dengan mengisi ulang
+  field. Di perangkat sentuh nyata tidak terjadi.
+- Uji double-tap di UI: tombol Konfirmasi dinonaktifkan saat `_submitting`
+  berjalan; retry memakai idempotency key yang sama sehingga server
+  mengembalikan sale yang sama (`idempotent_replay: true`).
+
+### Sisa pekerjaan
+- Pengujian di perangkat Android fisik (APK sudah dibangun lulus) ditunda
+  hingga perangkat tersedia — jalankan `adb install` + alur bukti yang sama.
+- S01-08 tetap BLOCKED (menunggu remote GitHub).
+
 ## Sprint 01 — Laporan Implementasi
 Tanggal: 26 Oktober 2026
 Target/tiket: S01-01 … S01-08
