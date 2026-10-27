@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-10-27T07:20:35.200646+00:00",
+  "result": "PASS",
+  "environment": "hosted Supabase via publishable key without login",
+  "checks": [
+    {
+      "table": "audit_events",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "business_settings",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "cash_shifts",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "cost_allocations",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "dining_tables",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "energy_estimates",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "expenses",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "ingredients",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "modifiers",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "payments",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "product_categories",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "product_modifiers",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "product_price_history",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "production_batches",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "products",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "purchase_items",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "purchases",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "qr_draft_items",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "qr_drafts",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "recipe_items",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "recipe_versions",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "refunds",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "sale_items",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "sales",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "table": "stock_movements",
+      "http": 200,
+      "private_data_blocked": true
+    },
+    {
+      "rpc": "get_public_menu",
+      "http": 400,
+      "blocked": true
+    },
+    {
+      "rpc": "qr_submit_draft",
+      "http": 400,
+      "blocked": true
+    },
+    {
+      "rpc": "qr_draft_json",
+      "http": 401,
+      "blocked": true
+    },
+    {
+      "rpc": "pos_sale_receipt",
+      "http": 401,
+      "blocked": true
+    }
+  ]
+}

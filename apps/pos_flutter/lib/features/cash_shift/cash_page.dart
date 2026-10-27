@@ -12,11 +12,6 @@ import '../operating_cost/operating_repository.dart';
 class CashShiftPage extends ConsumerWidget {
   const CashShiftPage({super.key});
 
-  Future<void> _refresh(WidgetRef ref) async {
-    ref.invalidate(cashStatusProvider);
-    await ref.read(cashStatusProvider.future);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -91,7 +86,10 @@ class CashShiftPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Rekonsiliasi Kas', style: theme.textTheme.titleMedium),
+                      Text(
+                        'Rekonsiliasi Kas',
+                        style: theme.textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 8),
                       _row(theme, 'Kas awal', s.openingCash),
                       _row(theme, 'Penjualan tunai net', s.cashSales),
@@ -126,14 +124,18 @@ class CashShiftPage extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
-                style: bold
-                    ? theme.textTheme.titleMedium
-                    : theme.textTheme.bodyMedium),
-            Text(formatRupiah(amount),
-                style: bold
-                    ? theme.textTheme.titleMedium?.copyWith(color: brandPrimary)
-                    : theme.textTheme.bodyMedium),
+            Text(
+              label,
+              style: bold
+                  ? theme.textTheme.titleMedium
+                  : theme.textTheme.bodyMedium,
+            ),
+            Text(
+              formatRupiah(amount),
+              style: bold
+                  ? theme.textTheme.titleMedium?.copyWith(color: brandPrimary)
+                  : theme.textTheme.bodyMedium,
+            ),
           ],
         ),
       );
@@ -149,17 +151,20 @@ class CashShiftPage extends ConsumerWidget {
           keyboardType: TextInputType.number,
           autofocus: true,
           decoration: const InputDecoration(
-              labelText: 'Uang awal di laci (Rp)',
-              prefixText: 'Rp ',
-              border: OutlineInputBorder()),
+            labelText: 'Uang awal di laci (Rp)',
+            prefixText: 'Rp ',
+            border: OutlineInputBorder(),
+          ),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Buka Shift')),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Buka Shift'),
+          ),
         ],
       ),
     );
@@ -169,23 +174,31 @@ class CashShiftPage extends ConsumerWidget {
     try {
       await ref.read(operatingRepositoryProvider).openCashShift(opening);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Shift dibuka dengan kas awal '
-                '${formatRupiah(opening)}.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Shift dibuka dengan kas awal '
+              '${formatRupiah(opening)}.',
+            ),
+          ),
+        );
       }
       ref.invalidate(cashStatusProvider);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
 
   Future<void> _closeShift(
-      BuildContext context, WidgetRef ref, CashShiftStatus s) async {
-    final controller =
-        TextEditingController(text: s.expectedCash.toString());
+    BuildContext context,
+    WidgetRef ref,
+    CashShiftStatus s,
+  ) async {
+    final controller = TextEditingController(text: s.expectedCash.toString());
     final note = TextEditingController();
     final ok = await showDialog<bool>(
       context: context,
@@ -194,34 +207,40 @@ class CashShiftPage extends ConsumerWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Kas diharapkan ${formatRupiah(s.expectedCash)}. '
-                'Hitung fisik uang di laci.'),
+            Text(
+              'Kas diharapkan ${formatRupiah(s.expectedCash)}. '
+              'Hitung fisik uang di laci.',
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               autofocus: true,
               decoration: const InputDecoration(
-                  labelText: 'Uang aktual dihitung (Rp)',
-                  prefixText: 'Rp ',
-                  border: OutlineInputBorder()),
+                labelText: 'Uang aktual dihitung (Rp)',
+                prefixText: 'Rp ',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: note,
               decoration: const InputDecoration(
-                  labelText: 'Catatan selisih (opsional)',
-                  border: OutlineInputBorder()),
+                labelText: 'Catatan selisih (opsional)',
+                border: OutlineInputBorder(),
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Tutup Kas')),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Tutup Kas'),
+          ),
         ],
       ),
     );
@@ -233,18 +252,22 @@ class CashShiftPage extends ConsumerWidget {
           .read(operatingRepositoryProvider)
           .closeCashShift(actual, note.text.trim());
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
               'Kas ditutup. Selisih ${formatRupiah(result.variance)} '
               '(harap ${formatRupiah(result.expectedCash)}, fisik '
-              '${formatRupiah(result.actualCash)}).'),
-        ));
+              '${formatRupiah(result.actualCash)}).',
+            ),
+          ),
+        );
       }
       ref.invalidate(cashStatusProvider);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }

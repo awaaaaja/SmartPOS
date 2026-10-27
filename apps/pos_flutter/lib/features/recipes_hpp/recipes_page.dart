@@ -38,12 +38,18 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
-                Text('Resep & HPP',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700)),
-                const Spacer(),
+                Text(
+                  'Resep & HPP',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 FilledButton.icon(
                   onPressed: _selectedProductId == null
                       ? null
@@ -63,8 +69,10 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(mapErrorToMessage(e),
-                          textAlign: TextAlign.center),
+                      child: Text(
+                        mapErrorToMessage(e),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     FilledButton.icon(
@@ -87,9 +95,7 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                 }
                 final selected = _selectedProductId == null
                     ? null
-                    : rows
-                        .where((p) => p.id == _selectedProductId)
-                        .firstOrNull;
+                    : rows.where((p) => p.id == _selectedProductId).firstOrNull;
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -108,18 +114,19 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                             child: ListTile(
                               dense: true,
                               selected: active,
-                              title: Text(p.name,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600)),
+                              title: Text(
+                                p.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               subtitle: Text(
                                 '${formatRupiah(p.price)} • '
-                                '${p.stockMode == 'BATCH'
-                                    ? 'pre-made per batch'
-                                    : 'make-to-order'}',
+                                '${p.stockMode == 'BATCH' ? 'pre-made per batch' : 'make-to-order'}',
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              onTap: () => setState(
-                                  () => _selectedProductId = p.id),
+                              onTap: () =>
+                                  setState(() => _selectedProductId = p.id),
                             ),
                           );
                         },
@@ -158,19 +165,18 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
 
   Future<void> _editRecipe(int productId) async {
     final ingredients = await ref.read(ingredientsProvider.future);
-    if (!context.mounted) return;
+    if (!mounted) return;
     if (ingredients.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Tambahkan bahan dulu di halaman Stok Bahan.')),
+          content: Text('Tambahkan bahan dulu di halaman Stok Bahan.'),
+        ),
       );
       return;
     }
 
     final yieldController = TextEditingController(text: '1');
-    final lines = [
-      _RecipeLine(ingredientId: ingredients.first.id, qty: '')
-    ];
+    final lines = [_RecipeLine(ingredientId: ingredients.first.id, qty: '')];
 
     final ok = await showDialog<bool>(
       context: context,
@@ -186,8 +192,9 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                 children: [
                   TextField(
                     controller: yieldController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(
                       labelText: 'Yield per batch (porsi)',
                       helperText:
@@ -208,17 +215,20 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                               initialValue: lines[i].ingredientId,
                               isExpanded: true,
                               items: ingredients
-                                  .map((e) => DropdownMenuItem(
-                                        value: e.id,
-                                        child: Text(
-                                            '${e.name} (${e.baseUnit})',
-                                            overflow:
-                                                TextOverflow.ellipsis),
-                                      ))
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e.id,
+                                      child: Text(
+                                        '${e.name} (${e.baseUnit})',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
-                              onChanged: (v) => setLocal(() =>
-                                  lines[i].ingredientId =
-                                      v ?? lines[i].ingredientId),
+                              onChanged: (v) => setLocal(
+                                () => lines[i].ingredientId =
+                                    v ?? lines[i].ingredientId,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -226,8 +236,10 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                             flex: 2,
                             child: TextFormField(
                               initialValue: lines[i].qty,
-                              keyboardType: const TextInputType
-                                  .numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               decoration: const InputDecoration(
                                 labelText: 'Takaran',
                                 isDense: true,
@@ -241,22 +253,26 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                             icon: const Icon(Icons.close_rounded),
                             onPressed: lines.length == 1
                                 ? null
-                                : () =>
-                                    setLocal(() => lines.removeAt(i)),
+                                : () => setLocal(() => lines.removeAt(i)),
                           ),
                         ],
                       ),
                     ),
                   TextButton.icon(
-                    onPressed: () => setLocal(() => lines.add(_RecipeLine(
-                        ingredientId: ingredients.first.id, qty: ''))),
+                    onPressed: () => setLocal(
+                      () => lines.add(
+                        _RecipeLine(
+                          ingredientId: ingredients.first.id,
+                          qty: '',
+                        ),
+                      ),
+                    ),
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('Tambah bahan'),
                   ),
                   Text(
                     'Versi lama tetap tersimpan untuk jejak HPP.',
-                    style: TextStyle(
-                        fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -264,11 +280,13 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal')),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal'),
+            ),
             FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Simpan versi')),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Simpan versi'),
+            ),
           ],
         ),
       ),
@@ -276,10 +294,11 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
     if (ok != true || !context.mounted) return;
 
     try {
-      await ref.read(inventoryRepositoryProvider).saveRecipe(
+      await ref
+          .read(inventoryRepositoryProvider)
+          .saveRecipe(
             productId: productId,
-            yieldQty:
-                double.tryParse(yieldController.text.trim()) ?? 1,
+            yieldQty: double.tryParse(yieldController.text.trim()) ?? 1,
             items: [
               for (final l in lines)
                 {
@@ -289,17 +308,18 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
             ],
           );
       await _refresh(productId);
-      if (context.mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Resep tersimpan sebagai versi terbaru.')),
+            content: Text('Resep tersimpan sebagai versi terbaru.'),
+          ),
         );
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -321,8 +341,9 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
               TextField(
                 controller: qtyController,
                 autofocus: true,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Jumlah yang dihasilkan (porsi)',
                   helperText:
@@ -344,37 +365,41 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Catat produksi')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Catat produksi'),
+          ),
         ],
       ),
     );
-    if (ok != true || !context.mounted) return;
+    if (ok != true || !mounted) return;
 
     try {
-      await ref.read(inventoryRepositoryProvider).produceBatch(
+      await ref
+          .read(inventoryRepositoryProvider)
+          .produceBatch(
             productId: product.id,
-            qtyProduced:
-                double.tryParse(qtyController.text.trim()) ?? 0,
+            qtyProduced: double.tryParse(qtyController.text.trim()) ?? 0,
             note: noteController.text.trim().isEmpty
                 ? null
                 : noteController.text.trim(),
           );
       await _refresh(product.id);
-      if (context.mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Batch tercatat; bahan terpotong sekali.')),
+            content: Text('Batch tercatat; bahan terpotong sekali.'),
+          ),
         );
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -434,12 +459,18 @@ class _HppDetail extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.menu_book_outlined,
-                        size: 48, color: Colors.grey.shade500),
+                    Icon(
+                      Icons.menu_book_outlined,
+                      size: 48,
+                      color: Colors.grey.shade500,
+                    ),
                     const SizedBox(height: 12),
-                    Text('resep belum ada',
-                        style: theme.textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      'resep belum ada',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     const Text(
                       'Menu ini dijual tanpa perhitungan stok bahan. '
@@ -477,20 +508,27 @@ class _HppDetail extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('HPP per porsi',
-                              style: theme.textTheme.bodySmall
-                                  ?.copyWith(color: textSecondary)),
-                          Text(formatRupiah(hppPer.round()),
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(
-                                      fontWeight: FontWeight.w800,
-                                      color: brandPrimary)),
+                          Text(
+                            'HPP per porsi',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: textSecondary,
+                            ),
+                          ),
+                          Text(
+                            formatRupiah(hppPer.round()),
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: brandPrimary,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             'Versi ${data.version} • yield '
                             '${formatNumber(data.yieldQty ?? 1)} porsi/batch',
                             style: const TextStyle(
-                                fontSize: 12, color: textSecondary),
+                              fontSize: 12,
+                              color: textSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -506,23 +544,27 @@ class _HppDetail extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Margin per porsi',
-                              style: theme.textTheme.bodySmall
-                                  ?.copyWith(color: textSecondary)),
-                          Text(formatRupiah(margin),
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: margin >= 0
-                                        ? successColor
-                                        : errorColor,
-                                  )),
+                          Text(
+                            'Margin per porsi',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: textSecondary,
+                            ),
+                          ),
+                          Text(
+                            formatRupiah(margin),
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: margin >= 0 ? successColor : errorColor,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             'Harga jual ${formatRupiah(product.price)} '
                             '− HPP (komponen berdata)',
                             style: const TextStyle(
-                                fontSize: 12, color: textSecondary),
+                              fontSize: 12,
+                              color: textSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -548,9 +590,12 @@ class _HppDetail extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Biaya bahan per batch (versi aktif)',
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      'Biaya bahan per batch (versi aktif)',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     DataTable(
                       columnSpacing: 24,
@@ -563,13 +608,16 @@ class _HppDetail extends ConsumerWidget {
                       ],
                       rows: [
                         for (final it in data.items)
-                          DataRow(cells: [
-                            DataCell(Text(it.name)),
-                            DataCell(Text(
-                                '${formatNumber(it.qty)} ${it.baseUnit}')),
-                            DataCell(Text(formatRupiah(it.unitCost))),
-                            DataCell(Text(formatRupiah(it.cost))),
-                          ]),
+                          DataRow(
+                            cells: [
+                              DataCell(Text(it.name)),
+                              DataCell(
+                                Text('${formatNumber(it.qty)} ${it.baseUnit}'),
+                              ),
+                              DataCell(Text(formatRupiah(it.unitCost))),
+                              DataCell(Text(formatRupiah(it.cost))),
+                            ],
+                          ),
                       ],
                     ),
                     const Divider(),
@@ -582,8 +630,9 @@ class _HppDetail extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          formatRupiah(data.items.fold<int>(
-                              0, (sum, it) => sum + it.cost)),
+                          formatRupiah(
+                            data.items.fold<int>(0, (sum, it) => sum + it.cost),
+                          ),
                           style: const TextStyle(fontWeight: FontWeight.w800),
                         ),
                       ],
@@ -601,9 +650,12 @@ class _HppDetail extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Riwayat versi resep',
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      'Riwayat versi resep',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     versions.when(
                       loading: () => const Padding(
@@ -629,7 +681,8 @@ class _HppDetail extends ConsumerWidget {
                                 'Versi ${v.version} — yield '
                                 '${formatNumber(v.yieldQty)} porsi',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               subtitle: Text(
                                 '${formatWib(v.createdAt)}'

@@ -1,0 +1,13 @@
+{
+  "artifact": "apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk",
+  "version": "1.0.0+1",
+  "bytes": 58068938,
+  "sha256": "0a51b2095ce8ca6ea12efa5c14a8df2f2dc7dfa4759b74bf2f3715841864604b",
+  "build_result": "PASS after IPv4 JVM retry; initial attempt failed DNS",
+  "signing": "UNSIGNED - MEJENG_KEYSTORE_PATH not provided; not installable/distributable",
+  "sensitive_pattern_scan": "PASS",
+  "matched_entries": [],
+  "qr_web_url": "not configured; permanent HTTPS hosting required",
+  "installed_on_android": false,
+  "release_gate": "BLOCKED"
+}

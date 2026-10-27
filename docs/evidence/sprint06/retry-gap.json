@@ -1,0 +1,12 @@
+{
+  "environment": "isolated local restored database; BEGIN/ROLLBACK; hosted database NOT changed",
+  "release_gate": "BLOCKED",
+  "finding": "Identical partial-refund and manual stock-adjustment requests each apply twice; APIs have no request idempotency key",
+  "observed": {
+    "stock_delta": 2.0,
+    "partial_refund_delta": 200,
+    "single_stock_request": 1,
+    "single_refund_request": 100
+  },
+  "action": "Do not approve release until mutation idempotency and operator timeout/reconciliation handling are implemented/tested"
+}

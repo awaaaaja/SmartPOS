@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-10-27T07:00:19.821938+00:00",
+  "result": "PASS",
+  "scope": "public business schema/data/functions/triggers/RLS + auth.users; isolated local PostgreSQL 18 staging with auth function stubs, not a full hosted Supabase recovery",
+  "public_tables_compared": 25,
+  "tables": {
+    "sales": {
+      "rows": 52,
+      "checksum": "6c9773eae82fa720d9d5a763dabaf1a1"
+    },
+    "refunds": {
+      "rows": 24,
+      "checksum": "1c9f57ad4f5ca4c6806a823f3e2d1d95"
+    },
+    "expenses": {
+      "rows": 31,
+      "checksum": "b543ccc6a613b67f658382a2ae9b2095"
+    },
+    "payments": {
+      "rows": 52,
+      "checksum": "fa6563475a52525b132f1f243148c81d"
+    },
+    "products": {
+      "rows": 38,
+      "checksum": "763b6f85cbf382c05db2bf23372982fe"
+    },
+    "modifiers": {
+      "rows": 2,
+      "checksum": "a4bac59f1760579bbc37dfa75fbbf101"
+    },
+    "purchases": {
+      "rows": 25,
+      "checksum": "7c629e9f9639b0c82dac01ac5e17d80e"
+    },
+    "qr_drafts": {
+      "rows": 100,
+      "checksum": "72b950ee7b95a82a7734f05baabd89ff"
+    },
+    "sale_items": {
+      "rows": 53,
+      "checksum": "22dd4c2a94c1ffc9d67ddc79af91489a"
+    },
+    "cash_shifts": {
+      "rows": 8,
+      "checksum": "7b45c8a6571df2f9ee0e39cb7ca49422"
+    },
+    "ingredients": {
+      "rows": 28,
+      "checksum": "bfa60b7844a61b5dc21ad5ca8b46923a"
+    },
+    "audit_events": {
+      "rows": 265,
+      "checksum": "c159020bca7b8bf5bb7bcc28bc178ed6"
+    },
+    "recipe_items": {
+      "rows": 47,
+      "checksum": "09c97a14c30cdcbe2f52e8425e36ebb2"
+    },
+    "dining_tables": {
+      "rows": 33,
+      "checksum": "6d9ab5ea6ac461a2358b0cbc7d8b2f61"
+    },
+    "purchase_items": {
+      "rows": 25,
+      "checksum": "98def3ea00a5976221f124030837df72"
+    },
+    "qr_draft_items": {
+      "rows": 100,
+      "checksum": "e1f1164e725f5d02ea4c55a9c941cb1a"
+    },
+    "recipe_versions": {
+      "rows": 33,
+      "checksum": "9f91a3f6288e266727e73a07e2ede49d"
+    },
+    "stock_movements": {
+      "rows": 56,
+      "checksum": "958f16007c5099021c9de9d41a98465d"
+    },
+    "cost_allocations": {
+      "rows": 14,
+      "checksum": "6f5056a42145e5d61843d89612cc0aeb"
+    },
+    "energy_estimates": {
+      "rows": 16,
+      "checksum": "34529d2afa9fc53622870e76f074dd51"
+    },
+    "business_settings": {
+      "rows": 1,
+      "checksum": "1affaab5462cf10bc046ca8c2728eae0"
+    },
+    "product_modifiers": {
+      "rows": 1,
+      "checksum": "813f715125c32d2c040f040d4d00874e"
+    },
+    "product_categories": {
+      "rows": 5,
+      "checksum": "6676ee8e9b713860ef2fc7d5a321237b"
+    },
+    "production_batches": {
+      "rows": 6,
+      "checksum": "b8ae7c0565712fa3658fae39b0513edd"
+    },
+    "product_price_history": {
+      "rows": 18,
+      "checksum": "d18d035c123824d0eee373ae3fa83006"
+    }
+  },
+  "financial_totals": {
+    "sales_rows": 52,
+    "sales_total": 1266500,
+    "refund_total": 327002
+  },
+  "public_policies": 23,
+  "anon_sales_visible": 0,
+  "archives": {
+    "s06-auth-users.dump": {
+      "bytes": 10311,
+      "sha256": "e3ed5a65c51aa796bcef0373cd3c37a1dd4e8820ab3ddeace7bc9531d964eebb",
+      "mode": "0o600"
+    },
+    "s06-business.dump": {
+      "bytes": 186525,
+      "sha256": "63cc071c299f8ad4022e8b0041e8202833ce3bffe003f7e89638ab659898d71c",
+      "mode": "0o600"
+    }
+  },
+  "not_included": [
+    "GoTrue identities/sessions and complete auth schema",
+    "Storage product-photo objects",
+    "cloud staging login/device validation",
+    "off-machine encrypted retention"
+  ]
+}

@@ -72,7 +72,7 @@ class QrInboxSheet extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 8),
                     itemCount: rows.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, i) {
                       final d = rows[i];
                       return Card(

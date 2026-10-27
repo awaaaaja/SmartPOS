@@ -1,0 +1,171 @@
+
+Building Linux applications requires some tools that are not included
+in the Flutter snap and need to be installed on your system:
+
+  - clang
+  - cmake
+  - ninja
+  - pkg-config
+  - GTK 3 development files
+
+To install them, run:
+
+  sudo apt install clang cmake ninja-build g++ pkg-config libgtk-3-dev
+
+Resolving dependencies...
+Downloading packages...
+  clock 1.1.2 (1.1.3 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  cupertino_icons 1.0.9 (2.0.0 available)
+  file_selector_macos 0.9.5+1 (0.9.5+2 available)
+  image_picker_ios 0.8.13+10 (0.8.13+13 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  qr 3.0.2 (4.0.0 available)
+  shared_preferences_android 2.5.3 (2.5.4 available)
+  shared_preferences_foundation 2.5.7 (2.6.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  test_api 0.7.11 (0.7.15 available)
+  vector_math 2.2.0 (2.4.3 available)
+  web 1.1.1 (1.1.2 available)
+Got dependencies!
+15 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart
+00:00 +0: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/theme_test.dart: primary brand wajib #930031
+00:00 +1: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/theme_test.dart: theme memakai Material 3 dengan primary brand
+00:00 +2: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: dashboard: empty pada Size(1024.0, 768.0)
+00:06 +3: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:08 +4: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:09 +5: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:10 +6: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:10 +7: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:11 +8: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:11 +9: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet landscape: sidebar tampil, tanpa Pesanan/Dapur/Pegawai
+00:11 +10: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: expenses: empty pada Size(1024.0, 768.0)
+00:11 +11: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet: pindah modul Meja & QR menampilkan halaman nyata
+00:13 +12: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet: pindah modul Meja & QR menampilkan halaman nyata
+00:14 +13: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tablet: pindah modul Meja & QR menampilkan halaman nyata
+00:14 +14: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: empty pada Size(1024.0, 768.0)
+00:14 +15: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:15 +16: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:15 +17: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:15 +18: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:15 +19: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:16 +20: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: HP portrait: bottom nav 5 item, Lainnya membuka daftar
+00:16 +21: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: catalog: loading pada Size(1024.0, 768.0)
+00:16 +22: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tombol keluar memanggil signOut operator
+00:17 +23: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tombol keluar memanggil signOut operator
+00:17 +24: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/shell_test.dart: tombol keluar memanggil signOut operator
+00:17 +25: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: purchases: loading pada Size(1024.0, 768.0)
+00:17 +26: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: expenses: loading pada Size(1024.0, 768.0)
+00:18 +27: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: energy: loading pada Size(1024.0, 768.0)
+00:19 +28: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: cash: loading pada Size(1024.0, 768.0)
+00:19 +29: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: loading pada Size(1024.0, 768.0)
+00:20 +30: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: reports: loading pada Size(1024.0, 768.0)
+00:20 +31: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: settings: loading pada Size(1024.0, 768.0)
+00:21 +32: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: dashboard: error pada Size(1024.0, 768.0)
+00:21 +33: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: pos: error pada Size(1024.0, 768.0)
+00:21 +34: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:22 +35: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:22 +36: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:23 +37: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:23 +38: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:24 +39: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:24 +40: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:24 +41: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:24 +42: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:25 +43: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:25 +44: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:25 +45: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:25 +46: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:26 +47: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:26 +48: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:26 +49: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:27 +50: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:27 +51: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:27 +52: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: tablet 1024: katalog dan keranjang tampil bersama sidebar
+00:28 +53: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: expenses: empty pada Size(390.0, 844.0)
+00:28 +54: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:28 +55: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:29 +56: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:29 +57: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:30 +58: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:30 +59: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:30 +60: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:30 +61: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:31 +62: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:31 +63: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:31 +64: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:31 +65: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:31 +66: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:32 +67: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/pos_mobile_test.dart: HP: perubahan jumlah masuk quote dan pembayaran aman saat keyboard terbuka
+00:32 +68: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: energy: loading pada Size(390.0, 844.0)
+00:32 +69: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: cash: loading pada Size(390.0, 844.0)
+00:33 +70: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: loading pada Size(390.0, 844.0)
+00:33 +71: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: reports: loading pada Size(390.0, 844.0)
+00:34 +72: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: settings: loading pada Size(390.0, 844.0)
+00:34 +73: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: dashboard: error pada Size(390.0, 844.0)
+00:34 +74: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: pos: error pada Size(390.0, 844.0)
+00:34 +75: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: tables: error pada Size(390.0, 844.0)
+00:34 +76: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: catalog: error pada Size(390.0, 844.0)
+00:35 +77: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: inventory: error pada Size(390.0, 844.0)
+00:35 +78: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: recipes: error pada Size(390.0, 844.0)
+00:36 +79: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: purchases: error pada Size(390.0, 844.0)
+00:36 +80: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: expenses: error pada Size(390.0, 844.0)
+00:36 +81: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: energy: error pada Size(390.0, 844.0)
+00:37 +82: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: cash: error pada Size(390.0, 844.0)
+00:37 +83: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: error pada Size(390.0, 844.0)
+00:38 +84: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: error pada Size(390.0, 844.0)
+00:38 +85: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: error pada Size(390.0, 844.0)
+00:38 +86: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: history: error pada Size(390.0, 844.0)
+00:38 +87: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: EnergyCalculator (UAT-09) faktor beban 100% memaksimalkan konsumsi
+00:38 +88: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/app/page_layout_test.dart: reports: error pada Size(390.0, 844.0)
+00:38 +89: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: kalkulator energi: pratinjau live listrik dan pilihan LPG
+00:38 +90: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: kalkulator energi: pratinjau live listrik dan pilihan LPG
+00:47 +91: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/qr_inbox_sheet_test.dart: panel QR Masuk menampilkan draft masuk + subtotal
+00:48 +92: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: biaya operasional: daftar memisahkan ESTIMASI dan AKTUAL
+00:49 +93: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/qr_inbox_sheet_test.dart: panel QR Masuk kosong = pesan jujur, tanpa angka palsu
+00:49 +94: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: kas shift: status tertutup menawarkan buka shift
+00:50 +95: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/qr_inbox_sheet_test.dart: tombol Ambil memanggil onClaim dengan draft yang benar
+00:50 +96: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: kas shift aktif: menampilkan rekonsiliasi tunai
+00:50 +97: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/qr_inbox_sheet_test.dart: tombol Batalkan memanggil repository cancel
+00:51 +98: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: laporan: statistik, biaya terpisah, dan tombol CSV
+00:51 +99: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: buildReportCsv menghasilkan baris nilai integer tanpa format ribuan
+00:51 +100: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/operating_cost_test.dart: ReportSummary: margin estimasi = net − HPP − biaya aktual periode
+00:53 +101: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +102: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +103: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +104: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +105: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +106: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +107: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +108: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +109: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:54 +110: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/inventory_pages_test.dart: stok: daftar menampilkan saldo, status minimum, pencarian
+00:58 +111: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+00:59 +112: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+00:59 +113: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+01:01 +114: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+01:02 +115: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+01:02 +116: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/catalog_large_list_test.dart: katalog 1000 menu dirender lazy dan tetap dapat digulir
+S06 catalog 1000: initial=5227ms, including scroll=7114ms
+01:05 +117: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +118: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +119: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +120: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +121: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +122: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +123: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +124: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:08 +125: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/features/login_page_test.dart: validasi email dan kata sandi sebelum mengirim
+01:10 +126: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/module_placeholder_test.dart: placeholder tidak overflow di viewport landscape pendek
+01:12 +127: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/module_placeholder_test.dart: placeholder tidak overflow di viewport landscape pendek
+01:15 +128: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: formatRupiah memformat rupiah pola id-ID
+01:15 +129: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: formatRupiah nilai negatif ditandai jelas
+01:15 +130: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: formatRupiah pembulatan ke rupiah terdekat
+01:15 +131: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: WIB toWib menambah 7 jam dari UTC
+01:15 +132: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: WIB lewat tengah malam berganti tanggal
+01:15 +133: /home/ujang/Documents/Project/Capstone/Smart_POS/apps/pos_flutter/test/core/formatters_test.dart: WIB formatWib deterministik dengan zona WIB
+01:15 +134: All tests passed!

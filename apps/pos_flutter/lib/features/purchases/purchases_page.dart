@@ -30,12 +30,18 @@ class PurchasesPage extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
-                Text('Pembelian',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700)),
-                const Spacer(),
+                Text(
+                  'Pembelian',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 FilledButton.icon(
                   onPressed: () => _createPurchase(context, ref),
                   icon: const Icon(Icons.add_shopping_cart_rounded),
@@ -53,8 +59,10 @@ class PurchasesPage extends ConsumerWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(mapErrorToMessage(e),
-                          textAlign: TextAlign.center),
+                      child: Text(
+                        mapErrorToMessage(e),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     FilledButton.icon(
@@ -79,12 +87,10 @@ class PurchasesPage extends ConsumerWidget {
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                         itemCount: rows.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 8),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (context, i) => _PurchaseTile(
                           purchase: rows[i],
-                          onReceive: () =>
-                              _receive(context, ref, rows[i]),
+                          onReceive: () => _receive(context, ref, rows[i]),
                         ),
                       ),
                     ),
@@ -96,7 +102,10 @@ class PurchasesPage extends ConsumerWidget {
   }
 
   Future<void> _receive(
-      BuildContext context, WidgetRef ref, Purchase purchase) async {
+    BuildContext context,
+    WidgetRef ref,
+    Purchase purchase,
+  ) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -108,20 +117,20 @@ class PurchasesPage extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Terima')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Terima'),
+          ),
         ],
       ),
     );
     if (confirm != true || !context.mounted) return;
 
     try {
-      await ref
-          .read(inventoryRepositoryProvider)
-          .receivePurchase(purchase.id);
+      await ref.read(inventoryRepositoryProvider).receivePurchase(purchase.id);
       await _refresh(ref);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -130,9 +139,9 @@ class PurchasesPage extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -140,23 +149,24 @@ class PurchasesPage extends ConsumerWidget {
   /// Form pembelian multi-bahan. Satuan mengikuti satuan dasar bahan
   /// (dan kg/liter yang dikonversi server).
   Future<void> _createPurchase(BuildContext context, WidgetRef ref) async {
-    final ingredients =
-        await ref.read(ingredientsProvider.future);
+    final ingredients = await ref.read(ingredientsProvider.future);
     if (!context.mounted) return;
     if (ingredients.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Tambahkan bahan dulu di halaman Stok Bahan.')),
+          content: Text('Tambahkan bahan dulu di halaman Stok Bahan.'),
+        ),
       );
       return;
     }
 
     final supplierController = TextEditingController();
     final dateController = TextEditingController(
-        text: DateTime.now().toIso8601String().substring(0, 10));
+      text: DateTime.now().toIso8601String().substring(0, 10),
+    );
     var status = 'RECEIVED';
     final lines = [
-      _LineState(ingredientId: ingredients.first.id, qty: '', price: '')
+      _LineState(ingredientId: ingredients.first.id, qty: '', price: ''),
     ];
 
     final ok = await showDialog<bool>(
@@ -165,13 +175,10 @@ class PurchasesPage extends ConsumerWidget {
         builder: (ctx, setLocal) {
           // Field "Total harga" = total baris (semantik server `total_price`);
           // jangan dikalikan qty lagi — unit cost = total / qty dihitung server.
-          double lineTotal(_LineState l) =>
-              (double.tryParse(l.price) ?? 0);
-          final total =
-              lines.fold<double>(0, (sum, l) => sum + lineTotal(l));
+          double lineTotal(_LineState l) => (double.tryParse(l.price) ?? 0);
+          final total = lines.fold<double>(0, (sum, l) => sum + lineTotal(l));
           String unitOf(int id) => ingredients
-              .firstWhere((e) => e.id == id,
-                  orElse: () => ingredients.first)
+              .firstWhere((e) => e.id == id, orElse: () => ingredients.first)
               .baseUnit;
 
           return AlertDialog(
@@ -205,9 +212,13 @@ class PurchasesPage extends ConsumerWidget {
                         SegmentedButton<String>(
                           segments: const [
                             ButtonSegment(
-                                value: 'RECEIVED', label: Text('Terima')),
+                              value: 'RECEIVED',
+                              label: Text('Terima'),
+                            ),
                             ButtonSegment(
-                                value: 'ORDERED', label: Text('Pesanan')),
+                              value: 'ORDERED',
+                              label: Text('Pesanan'),
+                            ),
                           ],
                           selected: {status},
                           onSelectionChanged: (s) =>
@@ -227,16 +238,20 @@ class PurchasesPage extends ConsumerWidget {
                                 initialValue: lines[i].ingredientId,
                                 isExpanded: true,
                                 items: ingredients
-                                    .map((e) => DropdownMenuItem(
-                                          value: e.id,
-                                          child: Text(e.name,
-                                              overflow:
-                                                  TextOverflow.ellipsis),
-                                        ))
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e.id,
+                                        child: Text(
+                                          e.name,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    )
                                     .toList(),
                                 onChanged: (v) => setLocal(
-                                    () => lines[i].ingredientId =
-                                        v ?? lines[i].ingredientId),
+                                  () => lines[i].ingredientId =
+                                      v ?? lines[i].ingredientId,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -244,8 +259,10 @@ class PurchasesPage extends ConsumerWidget {
                               flex: 2,
                               child: TextFormField(
                                 initialValue: lines[i].qty,
-                                keyboardType: const TextInputType
-                                    .numberWithOptions(decimal: true),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
                                 decoration: InputDecoration(
                                   labelText:
                                       'Qty (${unitOf(lines[i].ingredientId)})',
@@ -280,10 +297,15 @@ class PurchasesPage extends ConsumerWidget {
                         ),
                       ),
                     TextButton.icon(
-                      onPressed: () => setLocal(() => lines.add(_LineState(
-                          ingredientId: ingredients.first.id,
-                          qty: '',
-                          price: ''))),
+                      onPressed: () => setLocal(
+                        () => lines.add(
+                          _LineState(
+                            ingredientId: ingredients.first.id,
+                            qty: '',
+                            price: '',
+                          ),
+                        ),
+                      ),
                       icon: const Icon(Icons.add_rounded),
                       label: const Text('Tambah baris'),
                     ),
@@ -296,9 +318,11 @@ class PurchasesPage extends ConsumerWidget {
                       status == 'RECEIVED'
                           ? 'Stok langsung bertambah saat disimpan.'
                           : 'Belum menambah stok; terima lewat daftar '
-                              'pembelian.',
+                                'pembelian.',
                       style: const TextStyle(
-                          fontSize: 12, color: textSecondary),
+                        fontSize: 12,
+                        color: textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -306,11 +330,13 @@ class PurchasesPage extends ConsumerWidget {
             ),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('Batal')),
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Batal'),
+              ),
               FilledButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Simpan')),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Simpan'),
+              ),
             ],
           );
         },
@@ -329,7 +355,9 @@ class PurchasesPage extends ConsumerWidget {
     ];
 
     try {
-      await ref.read(inventoryRepositoryProvider).createPurchase(
+      await ref
+          .read(inventoryRepositoryProvider)
+          .createPurchase(
             supplier: supplierController.text.trim(),
             items: items,
             status: status,
@@ -339,29 +367,34 @@ class PurchasesPage extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(status == 'RECEIVED'
+            content: Text(
+              status == 'RECEIVED'
                   ? 'Pembelian tercatat; stok dan biaya diperbarui.'
-                  : 'Pesanan tercatat; tunggu penerimaan.')),
+                  : 'Pesanan tercatat; tunggu penerimaan.',
+            ),
+          ),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
 
-  static String unitFor(List<Ingredient> ingredients, int id) =>
-      ingredients
-          .firstWhere((e) => e.id == id,
-              orElse: () => ingredients.first)
-          .baseUnit;
+  static String unitFor(List<Ingredient> ingredients, int id) => ingredients
+      .firstWhere((e) => e.id == id, orElse: () => ingredients.first)
+      .baseUnit;
 }
 
 class _LineState {
-  _LineState({required this.ingredientId, required this.qty, required this.price});
+  _LineState({
+    required this.ingredientId,
+    required this.qty,
+    required this.price,
+  });
   int ingredientId;
   String qty;
   String price;
@@ -396,13 +429,16 @@ class _PurchaseTile extends StatelessWidget {
                     children: [
                       Text(
                         '#${p.id} • ${p.supplier ?? 'Tanpa supplier'}',
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: p.isReceived ? successColor : warningColor,
                           borderRadius: BorderRadius.circular(6),
@@ -410,9 +446,10 @@ class _PurchaseTile extends StatelessWidget {
                         child: Text(
                           p.isReceived ? 'DITERIMA' : 'PESANAN',
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700),
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
@@ -421,15 +458,16 @@ class _PurchaseTile extends StatelessWidget {
                   Text(
                     '${_formatDate(p.purchasedAt)} • '
                     '${p.items.length} bahan',
-                    style: const TextStyle(
-                        fontSize: 12, color: textSecondary),
+                    style: const TextStyle(fontSize: 12, color: textSecondary),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     p.items
-                        .map((l) =>
-                            '${l.ingredientName} ${formatNumber(l.qty)}'
-                            '${l.baseUnit}')
+                        .map(
+                          (l) =>
+                              '${l.ingredientName} ${formatNumber(l.qty)}'
+                              '${l.baseUnit}',
+                        )
                         .join(', '),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -442,17 +480,22 @@ class _PurchaseTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(formatRupiah(p.total),
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  formatRupiah(p.total),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 if (!p.isReceived)
                   FilledButton.tonal(
                     onPressed: onReceive,
                     child: const Text('Terima'),
                   )
                 else
-                  const Text('stok +1x',
-                      style: TextStyle(fontSize: 11, color: textSecondary)),
+                  const Text(
+                    'stok +1x',
+                    style: TextStyle(fontSize: 11, color: textSecondary),
+                  ),
               ],
             ),
           ],

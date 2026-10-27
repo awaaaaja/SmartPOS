@@ -24,7 +24,7 @@ KEY = os.environ.get(
     "SUPABASE_PUBLISHABLE_KEY",
     "sb_publishable_OpvLMVvQLqYnNyaHCjyRiA_ekFP6HBK")
 OPERATOR_EMAIL = os.environ.get("OPERATOR_EMAIL", "operator@mejeng.id")
-OPERATOR_PASSWORD = os.environ.get("OPERATOR_PASSWORD", "MejengPos2026!")
+OPERATOR_PASSWORD = os.environ["OPERATOR_PASSWORD"]
 
 passed = 0
 failed = 0
@@ -222,7 +222,8 @@ def main():
     check("checkout transfer sukses", status == 200, str(sale2)[:200])
 
     status, st = rpc(token, "cash_shift_status", {})
-    total = p["price"]
+    # Sale final membawa pajak/layanan usaha; kas harian memakai total sale.
+    total = sale["total"]
     check("expected = awal + penjualan tunai (transfer dikecualikan)",
           st.get("expected_cash") == 100000 + total
           and st.get("cash_sales") == total, str(st)[:300])

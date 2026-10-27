@@ -67,3 +67,17 @@ cd apps/qr_web && npm run build
 - `Kredensial.md` berisi rahasia dan sudah di-gitignore; jangan commit.
 - Uang disimpan **integer Rupiah**; total/quote dihitung di Postgres, bukan di klien.
 - Tidak ada modul Pesanan/Dapur/Pegawai/SaaS/ML pada MVP.
+
+## Kandidat rilis / serah terima
+
+Sprint 06 **PARTIAL, belum siap produksi**: APK berhasil dibangun tetapi unsigned;
+retry refund/koreksi stok belum aman dan pengujian Android target belum dilakukan.
+
+- [Changelog, artefak dan batasan](docs/release-notes.md)
+- [Setup Supabase, signing, instalasi, SOP dan gate UAT](docs/handover.md)
+- [Bukti dan prosedur backup/restore](docs/backup-restore.md)
+- [Hasil QA Sprint 06](docs/evidence/sprint06/README.md)
+
+Suite `tests/integration/test_*.py` membutuhkan `OPERATOR_PASSWORD` dari environment
+(tidak ada password default). Jalankan hanya di proyek QA yang boleh berisi mutasi
+penjualan, master, stok dan biaya; bukan pada database usaha aktif.

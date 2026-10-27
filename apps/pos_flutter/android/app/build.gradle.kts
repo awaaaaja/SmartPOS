@@ -4,6 +4,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Secret signing hanya dari environment lokal/CI, bukan source atau debug key.
+val releaseStore = providers.environmentVariable("MEJENG_KEYSTORE_PATH").orNull
+
 android {
     namespace = "com.waroengmejeng.pos_flutter"
     compileSdk = flutter.compileSdkVersion
@@ -15,7 +18,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.waroengmejeng.pos_flutter"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -25,11 +27,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = file(releaseStore)
+                storePassword = providers.environmentVariable("MEJENG_STORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("MEJENG_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("MEJENG_KEY_PASSWORD").get()
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Tanpa keystore hasilnya UNSIGNED: untuk verifikasi build, bukan instalasi.
+            signingConfig = if (releaseStore != null) signingConfigs.getByName("release") else null
         }
     }
 }

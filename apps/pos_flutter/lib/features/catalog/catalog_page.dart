@@ -28,15 +28,16 @@ class CatalogPage extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
-                Expanded(
-                  child: Text(
-                    'Menu & Harga',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w700),
+                Text(
+                  'Menu & Harga',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 OutlinedButton.icon(
@@ -44,7 +45,6 @@ class CatalogPage extends ConsumerWidget {
                   icon: const Icon(Icons.category_rounded, size: 18),
                   label: const Text('Kategori'),
                 ),
-                const SizedBox(width: 8),
                 FilledButton.icon(
                   onPressed: () => _editProduct(context, ref, null),
                   icon: const Icon(Icons.add_rounded),
@@ -65,7 +65,7 @@ class CatalogPage extends ConsumerWidget {
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (context, i) =>
                           _ProductTile(product: items[i]),
                     ),
@@ -138,8 +138,9 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
                         child: Text(
                           product.name,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -149,14 +150,14 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
                   const SizedBox(height: 2),
                   Text(
                     [
-                      if (product.categoryName != null)
-                        product.categoryName!,
+                      if (product.categoryName != null) product.categoryName!,
                       formatRupiah(product.price),
                       if (product.modifiers.isNotEmpty)
                         '${product.modifiers.length} varian/topping',
                     ].join(' · '),
-                    style: theme.textTheme.bodySmall
-                        ?.copyWith(color: textSecondary),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -168,17 +169,18 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
             ),
             IconButton(
               tooltip: product.isActive ? 'Tandai habis' : 'Aktifkan',
-              icon: Icon(product.isActive
-                  ? Icons.toggle_on_rounded
-                  : Icons.toggle_off_rounded),
+              icon: Icon(
+                product.isActive
+                    ? Icons.toggle_on_rounded
+                    : Icons.toggle_off_rounded,
+              ),
               color: product.isActive ? successColor : textSecondary,
               onPressed: _toggleActive,
             ),
             IconButton(
               tooltip: 'Ubah',
               icon: const Icon(Icons.edit_rounded),
-              onPressed: () =>
-                  CatalogPage._editProduct(context, ref, product),
+              onPressed: () => CatalogPage._editProduct(context, ref, product),
             ),
             IconButton(
               tooltip: 'Arsipkan',
@@ -224,9 +226,9 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
       ref.invalidate(productsProvider);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -237,15 +239,18 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
       builder: (ctx) => AlertDialog(
         title: Text('Arsipkan ${product.name}?'),
         content: const Text(
-            'Menu disembunyikan dari POS dan QR. Riwayat penjualan dan '
-            'harga tetap tersimpan.'),
+          'Menu disembunyikan dari POS dan QR. Riwayat penjualan dan '
+          'harga tetap tersimpan.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Arsipkan')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Arsipkan'),
+          ),
         ],
       ),
     );
@@ -255,9 +260,9 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
       ref.invalidate(productsProvider);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -273,11 +278,12 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Riwayat harga — ${product.name}',
-                style: Theme.of(ctx)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              'Riwayat harga — ${product.name}',
+              style: Theme.of(
+                ctx,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 12),
             SizedBox(
               height: 320,
@@ -288,13 +294,13 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snap.hasError) {
-                    return Center(
-                        child: Text(mapErrorToMessage(snap.error!)));
+                    return Center(child: Text(mapErrorToMessage(snap.error!)));
                   }
                   final entries = snap.data ?? const [];
                   if (entries.isEmpty) {
                     return const Center(
-                        child: Text('Belum ada perubahan harga tercatat.'));
+                      child: Text('Belum ada perubahan harga tercatat.'),
+                    );
                   }
                   return ListView.builder(
                     itemCount: entries.length,
@@ -302,12 +308,16 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
                       final e = entries[i];
                       return ListTile(
                         dense: true,
-                        leading: const Icon(Icons.swap_vert_rounded,
-                            color: brandPrimary),
+                        leading: const Icon(
+                          Icons.swap_vert_rounded,
+                          color: brandPrimary,
+                        ),
                         title: Text(
-                            '${formatRupiah(e.oldPrice)} → ${formatRupiah(e.newPrice)}'),
-                        subtitle: Text(formatWib(e.effectiveAt,
-                            withSeconds: true)),
+                          '${formatRupiah(e.oldPrice)} → ${formatRupiah(e.newPrice)}',
+                        ),
+                        subtitle: Text(
+                          formatWib(e.effectiveAt, withSeconds: true),
+                        ),
                       );
                     },
                   );
@@ -332,11 +342,15 @@ class _EmptyCatalog extends StatelessWidget {
         children: [
           Icon(Icons.restaurant_menu_rounded, size: 48, color: brandSoft),
           SizedBox(height: 12),
-          Text('Belum ada menu.',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          Text(
+            'Belum ada menu.',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           SizedBox(height: 4),
-          Text('Tambahkan menu pertama untuk mulai berjualan.',
-              style: TextStyle(color: textSecondary)),
+          Text(
+            'Tambahkan menu pertama untuk mulai berjualan.',
+            style: TextStyle(color: textSecondary),
+          ),
         ],
       ),
     );
@@ -355,15 +369,19 @@ class _ErrorRetry extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline_rounded,
-              size: 40, color: warningColor),
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 40,
+            color: warningColor,
+          ),
           const SizedBox(height: 12),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 12),
           FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Coba lagi')),
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Coba lagi'),
+          ),
         ],
       ),
     );
@@ -392,7 +410,7 @@ class _PhotoThumb extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: 52,
                 height: 52,
-                errorBuilder: (_, __, ___) => fallback,
+                errorBuilder: (_, _, _) => fallback,
               ),
       ),
     );
@@ -423,11 +441,12 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
       shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
-        Text('Kelola kategori',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.w700)),
+        Text(
+          'Kelola kategori',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -435,7 +454,8 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
               child: TextField(
                 controller: _controller,
                 decoration: const InputDecoration(
-                    hintText: 'Nama kategori baru (mis. Minuman)'),
+                  hintText: 'Nama kategori baru (mis. Minuman)',
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -451,7 +471,7 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
             const Padding(
               padding: EdgeInsets.all(24),
               child: Center(child: CircularProgressIndicator()),
-            )
+            ),
           ],
           error: (e, _) => [Text(mapErrorToMessage(e))],
           data: (items) => [
@@ -471,8 +491,9 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
                       ref.invalidate(categoriesProvider);
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(mapErrorToMessage(e))));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(mapErrorToMessage(e))),
+                        );
                       }
                     }
                   },
@@ -494,8 +515,9 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
       ref.invalidate(categoriesProvider);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -598,14 +620,18 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                 const SizedBox(height: 12),
                 categories.when(
                   loading: () => const LinearProgressIndicator(),
-                  error: (e, _) => Text(mapErrorToMessage(e),
-                      style: const TextStyle(fontSize: 12)),
+                  error: (e, _) => Text(
+                    mapErrorToMessage(e),
+                    style: const TextStyle(fontSize: 12),
+                  ),
                   data: (cats) => DropdownButtonFormField<int>(
                     initialValue: _categoryId,
                     decoration: const InputDecoration(labelText: 'Kategori'),
                     items: [
                       const DropdownMenuItem(
-                          value: null, child: Text('Tanpa kategori')),
+                        value: null,
+                        child: Text('Tanpa kategori'),
+                      ),
                       for (final c in cats)
                         DropdownMenuItem(value: c.id, child: Text(c.name)),
                     ],
@@ -615,8 +641,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _price,
-                  decoration:
-                      const InputDecoration(labelText: 'Harga jual (Rp)'),
+                  decoration: const InputDecoration(
+                    labelText: 'Harga jual (Rp)',
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (v) {
                     final n = int.tryParse((v ?? '').trim());
@@ -629,18 +656,19 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed:
-                            _uploading ? null : _pickAndUploadPhoto,
+                        onPressed: _uploading ? null : _pickAndUploadPhoto,
                         icon: _uploading
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2))
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Icon(Icons.photo_camera_rounded),
-                        label: Text(_photoUrl == null
-                            ? 'Pilih foto'
-                            : 'Ganti foto'),
+                        label: Text(
+                          _photoUrl == null ? 'Pilih foto' : 'Ganti foto',
+                        ),
                       ),
                     ),
                     if (_photoUrl != null) ...[
@@ -660,8 +688,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                   onChanged: (v) => setState(() => _isActive = v),
                 ),
                 const Divider(),
-                Text('Varian / topping',
-                    style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  'Varian / topping',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
                 const SizedBox(height: 4),
                 if (_allModifiers.isEmpty)
                   const Text(
@@ -674,8 +704,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                     contentPadding: EdgeInsets.zero,
                     dense: true,
                     controlAffinity: ListTileControlAffinity.leading,
-                    title:
-                        Text('${m.name} (+${formatRupiah(m.priceDelta)})'),
+                    title: Text('${m.name} (+${formatRupiah(m.priceDelta)})'),
                     value: _isAttached(m),
                     onChanged: (v) {
                       setState(() {
@@ -733,13 +762,17 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                 ],
                 if (existing != null) ...[
                   const Divider(),
-                  Text('Tambah modifier baru untuk produk ini',
-                      style: Theme.of(context).textTheme.titleSmall),
+                  Text(
+                    'Tambah modifier baru untuk produk ini',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                   const SizedBox(height: 8),
                   _NewModifierForm(
                     onCreate: (name, delta) async {
-                      final mod = await widget.repository
-                          .createModifier(name, delta);
+                      final mod = await widget.repository.createModifier(
+                        name,
+                        delta,
+                      );
                       setState(() {
                         _allModifiers = [..._allModifiers, mod];
                         _attached.add(mod);
@@ -754,8 +787,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal')),
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Batal'),
+        ),
         FilledButton(
           onPressed: _saving ? null : _save,
           child: const Text('Simpan'),
@@ -765,18 +799,20 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   }
 
   Future<void> _pickAndUploadPhoto() async {
-    final picked = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, maxWidth: 1200);
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1200,
+    );
     if (picked == null) return;
     setState(() => _uploading = true);
     try {
-      final url =
-          await widget.repository.uploadPhoto(File(picked.path));
+      final url = await widget.repository.uploadPhoto(File(picked.path));
       setState(() => _photoUrl = url);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     } finally {
       if (mounted) setState(() => _uploading = false);
@@ -800,8 +836,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -840,7 +877,9 @@ class _NewModifierFormState extends State<_NewModifierForm> {
             controller: _name,
             style: const TextStyle(fontSize: 13),
             decoration: const InputDecoration(
-                hintText: 'Nama (mis. Porsi Besar)', isDense: true),
+              hintText: 'Nama (mis. Porsi Besar)',
+              isDense: true,
+            ),
           ),
         ),
         const SizedBox(width: 8),
@@ -850,8 +889,7 @@ class _NewModifierFormState extends State<_NewModifierForm> {
             controller: _delta,
             keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 13),
-            decoration: const InputDecoration(
-                hintText: '+Rp', isDense: true),
+            decoration: const InputDecoration(hintText: '+Rp', isDense: true),
           ),
         ),
         const SizedBox(width: 8),
@@ -870,7 +908,8 @@ class _NewModifierFormState extends State<_NewModifierForm> {
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(mapErrorToMessage(e))));
+                        SnackBar(content: Text(mapErrorToMessage(e))),
+                      );
                     }
                   } finally {
                     if (mounted) setState(() => _busy = false);

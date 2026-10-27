@@ -41,8 +41,15 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
   void dispose() {
     _tabs.dispose();
     for (final c in [
-      _watt, _hours, _load, _tariff, _refill, _effHours, _batchHours,
-      _portions, _note,
+      _watt,
+      _hours,
+      _load,
+      _tariff,
+      _refill,
+      _effHours,
+      _batchHours,
+      _portions,
+      _note,
     ]) {
       c.dispose();
     }
@@ -60,7 +67,9 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
     }
     setState(() => _saving = true);
     try {
-      final result = await ref.read(operatingRepositoryProvider).saveEnergyEstimate(
+      final result = await ref
+          .read(operatingRepositoryProvider)
+          .saveEnergyEstimate(
             kind: isElectric ? 'ELECTRICITY' : 'LPG',
             watt: isElectric ? _num(_watt) : null,
             hours: isElectric ? _num(_hours) : null,
@@ -75,8 +84,10 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
       if (!mounted) return;
       setState(() => _last = result);
       ref.invalidate(expensesProvider);
-      _toast('Estimasi tersimpan sebagai biaya ESTIMATED '
-          '${formatRupiah(result.cost)} (bukan biaya aktual).');
+      _toast(
+        'Estimasi tersimpan sebagai biaya ESTIMATED '
+        '${formatRupiah(result.cost)} (bukan biaya aktual).',
+      );
     } catch (e) {
       if (mounted) _toast(mapErrorToMessage(e));
     } finally {
@@ -119,17 +130,17 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
               indicatorColor: brandPrimary,
               tabs: const [
                 Tab(icon: Icon(Icons.bolt_rounded), text: 'Listrik'),
-                Tab(icon: Icon(Icons.local_fire_department_rounded), text: 'LPG'),
+                Tab(
+                  icon: Icon(Icons.local_fire_department_rounded),
+                  text: 'LPG',
+                ),
               ],
             ),
           ),
           Expanded(
-          child: TabBarView(
+            child: TabBarView(
               controller: _tabs,
-              children: [
-                _electricForm(theme),
-                _lpgForm(theme),
-              ],
+              children: [_electricForm(theme), _lpgForm(theme)],
             ),
           ),
         ],
@@ -143,13 +154,23 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
     final load = _num(_load) ?? 0;
     final tariff = _num(_tariff) ?? 0;
     final portions = int.tryParse(_portions.text.trim()) ?? 0;
-    final valid = watt > 0 && hours > 0 && load > 0 && load <= 100 &&
-        tariff >= 0 && portions > 0;
-    final kwh = valid ? EnergyCalculator.kwh(
-        watt: watt, hours: hours, loadFactor: load) : 0.0;
+    final valid =
+        watt > 0 &&
+        hours > 0 &&
+        load > 0 &&
+        load <= 100 &&
+        tariff >= 0 &&
+        portions > 0;
+    final kwh = valid
+        ? EnergyCalculator.kwh(watt: watt, hours: hours, loadFactor: load)
+        : 0.0;
     final cost = valid
         ? EnergyCalculator.electricityCost(
-            watt: watt, hours: hours, loadFactor: load, tariff: tariff)
+            watt: watt,
+            hours: hours,
+            loadFactor: load,
+            tariff: tariff,
+          )
         : 0;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -161,13 +182,15 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
             ('Konsumsi', '${kwh.toStringAsFixed(3)} kWh'),
             ('Biaya estimasi', formatRupiah(cost)),
             if (portions > 0)
-              ('Biaya per porsi',
-                  formatRupiah(EnergyCalculator.costPerPortion(cost, portions))),
+              (
+                'Biaya per porsi',
+                formatRupiah(EnergyCalculator.costPerPortion(cost, portions)),
+              ),
           ],
           note: valid
               ? 'kWh = (W x jam x load% ÷ 100) ÷ 1000; biaya = kWh x tarif. '
-                  'Jika meter listrik gabung rumah, isi hanya porsi pemakaian '
-                  'usaha.'
+                    'Jika meter listrik gabung rumah, isi hanya porsi pemakaian '
+                    'usaha.'
               : 'Isi semua kolom dengan benar untuk melihat pratinjau.',
         ),
         const SizedBox(height: 12),
@@ -184,7 +207,8 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2))
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
               : const Icon(Icons.save_rounded),
           label: const Text('Simpan sebagai Biaya Estimasi'),
         ),
@@ -210,7 +234,10 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
     final valid = refill >= 0 && eff > 0 && batch >= 0 && portions > 0;
     final cost = valid
         ? EnergyCalculator.lpgCost(
-            refillPrice: refill, effectiveHours: eff, batchHours: batch)
+            refillPrice: refill,
+            effectiveHours: eff,
+            batchHours: batch,
+          )
         : 0;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -219,21 +246,32 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
           theme,
           title: 'Pratinjau estimasi LPG',
           rows: [
-            ('Biaya per jam nyala',
-                formatRupiah(eff > 0 ? (refill / eff).round() : 0)),
-            ('Biaya batch ${batch.toStringAsFixed(1)} jam',
-                formatRupiah(cost)),
+            (
+              'Biaya per jam nyala',
+              formatRupiah(eff > 0 ? (refill / eff).round() : 0),
+            ),
+            ('Biaya batch ${batch.toStringAsFixed(1)} jam', formatRupiah(cost)),
             if (portions > 0)
-              ('Biaya per porsi',
-                  formatRupiah(EnergyCalculator.costPerPortion(cost, portions))),
+              (
+                'Biaya per porsi',
+                formatRupiah(EnergyCalculator.costPerPortion(cost, portions)),
+              ),
           ],
           note: valid
               ? 'Biaya = (isi ulang ÷ jam efektif tabung) x jam batch.'
               : 'Isi semua kolom dengan benar untuk melihat pratinjau.',
         ),
         const SizedBox(height: 12),
-        _field(_refill, 'Harga isi ulang tabung (Rp)', Icons.local_gas_station_rounded),
-        _field(_effHours, 'Jam efektif per tabung (jam)', Icons.hourglass_bottom_rounded),
+        _field(
+          _refill,
+          'Harga isi ulang tabung (Rp)',
+          Icons.local_gas_station_rounded,
+        ),
+        _field(
+          _effHours,
+          'Jam efektif per tabung (jam)',
+          Icons.hourglass_bottom_rounded,
+        ),
         _field(_batchHours, 'Durasi batch (jam)', Icons.timer_rounded),
         _portionsField(),
         _noteField(),
@@ -244,7 +282,8 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2))
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
               : const Icon(Icons.save_rounded),
           label: const Text('Simpan sebagai Biaya Estimasi'),
         ),
@@ -265,34 +304,42 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
     required String title,
     required List<(String, String)> rows,
     required String note,
-  }) =>
-      Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              for (final (label, value) in rows)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(label, style: theme.textTheme.bodyMedium),
-                      Text(value,
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(color: brandPrimary)),
-                    ],
+  }) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          for (final (label, value) in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(label, style: theme.textTheme.bodyMedium),
                   ),
-                ),
-              const SizedBox(height: 8),
-              Text(note, style: theme.textTheme.bodySmall),
-            ],
-          ),
-        ),
-      );
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.right,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: brandPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 8),
+          Text(note, style: theme.textTheme.bodySmall),
+        ],
+      ),
+    ),
+  );
 
   Widget _field(TextEditingController c, String label, IconData icon) =>
       Padding(
@@ -310,25 +357,25 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
       );
 
   Widget _portionsField() => Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: TextField(
-          controller: _portions,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Jumlah porsi valid',
-            prefixIcon: Icon(Icons.restaurant_rounded),
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (_) => setState(() {}),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 10),
+    child: TextField(
+      controller: _portions,
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: 'Jumlah porsi valid',
+        prefixIcon: Icon(Icons.restaurant_rounded),
+        border: OutlineInputBorder(),
+      ),
+      onChanged: (_) => setState(() {}),
+    ),
+  );
 
   Widget _noteField() => TextField(
-        controller: _note,
-        decoration: const InputDecoration(
-          labelText: 'Catatan (opsional)',
-          prefixIcon: Icon(Icons.notes_rounded),
-          border: OutlineInputBorder(),
-        ),
-      );
+    controller: _note,
+    decoration: const InputDecoration(
+      labelText: 'Catatan (opsional)',
+      prefixIcon: Icon(Icons.notes_rounded),
+      border: OutlineInputBorder(),
+    ),
+  );
 }

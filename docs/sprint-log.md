@@ -1,5 +1,81 @@
 # Sprint Log
 
+## Sprint 06 — Polishing, QA, keamanan dan kandidat build
+Tanggal: 27 Oktober 2026
+Target/tiket: S06-01 … S06-10
+Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
+
+### Per tiket
+| Tiket | Status | Hasil / yang belum terbukti |
+|---|---|---|
+| S06-01 | PARTIAL | Audit 13 layar × 2 viewport × 3 state = 78 tes; perbaikan header/kartu overflow tujuh modul, POS tablet dua kolom, keranjang HP live dan form pembayaran scroll saat keyboard. Belum seluruh modal/populated state/keyboard di Android. |
+| S06-02 | PASS terbatas | Regresi POS 77, inventori 57, QR 37, operasional 41 = 212 PASS. Checkout dan QR replay aman; tidak berlaku untuk semua mutasi (lihat blocker). |
+| S06-03 | PARTIAL | 29 probe hosted: 25 tabel privat anon tertutup + injection token + RPC internal ditolak. Non-operator ditolak di staging lokal. Scan pattern source/APK tidak menemukan secret server; password tes default dihapus. Rotasi password lama dan pemeriksaan riwayat sebelum distribusi masih wajib. |
+| S06-04 | PARTIAL | Dump privat + restore lokal 25 tabel/checksum dan 23 policy RLS; total uang cocok. Auth/Storage penuh, cloud staging, retensi terenkripsi dan crash-reporting release belum lulus. |
+| S06-05 | PARTIAL | Smoke Chrome manual sale #57 dan QR Q00114 → sale #58 lulus; subtotal 7.000, pajak 525, layanan 175, total 7.700, bayar 10.000, kembali 2.300. Bukan pengujian tablet target. |
+| S06-06 | PARTIAL | 1.000 produk memakai lazy list; metrik debug/widget dan latensi hosted dicatat. Belum profil native/FPS, tidak mengklaim UI bebas freeze pada tablet. |
+| S06-07 | DEFERRED | Printer ESC/POS/Bluetooth menunggu tipe perangkat; tidak menambah driver/fitur cetak fiktif. |
+| S06-08 | NOT IN SCOPE | Online-only, tanpa SQLite outbox. Operator harus mengetahui tidak ada sinkronisasi offline. |
+| S06-09 | PARTIAL | APK release compile berhasil setelah retry JVM IPv4; versi 1.0.0+1, 58.068.938 byte. **Unsigned**, verifikasi signature gagal sesuai harapan, belum dipasang. AAB tidak diperlukan untuk QA sideload dan belum dibangun. |
+| S06-10 | PARTIAL | Changelog, instalasi/signing, setup Supabase, SOP dan checklist UAT tersedia. Latihan dan persetujuan operator belum dilakukan. |
+
+### Perbaikan yang sudah diterapkan
+- Test lama mengasumsikan pajak nol; kini total/nominal pembayaran mengikuti
+  pajak/layanan aktif, tanpa mengubah tarif usaha demi tes.
+- Header meja/katalog/stok/resep/pembelian dapat membungkus; hasil energi tidak
+  melebar; kartu laporan mengikuti tinggi konten, bukan aspect ratio tetap.
+- Breakpoint konten POS memperhitungkan sidebar tablet; HP memantau provider
+  keranjang di dalam modal sehingga perubahan jumlah masuk quote pembayaran.
+- Form pembayaran scroll saat keyboard, dropdown metode tidak overflow.
+- Pengaturan membaca nama/alamat/zona waktu/tarif Supabase (read-only);
+  dashboard tidak lagi menjanjikan data di sprint lama.
+- Default password operator tidak lagi tertanam di empat suite integrasi;
+  `OPERATOR_PASSWORD` wajib dari environment. Riwayat Git tidak ditulis ulang.
+- Release tidak memakai debug signing; empat env `MEJENG_*` dibaca Gradle;
+  tanpa keystore build **unsigned**, bukan build siap distribusi.
+- Lint lama dibersihkan; CSV browser memakai dependency `web` yang sebelumnya
+  sudah terpasang transitif. Tidak menambah dependency printer/offline/analytics.
+
+### Hasil dan bukti
+- `flutter analyze`: **No issues found**; `flutter test`: **134/134**.
+  Log di `docs/evidence/sprint06/`.
+- 212 pemeriksaan integrasi telah lulus pada Sprint 06 sebelum restart sesi;
+  tidak diulang seluruhnya hanya untuk membuat log baru. Perubahan berikutnya
+  pada suite tersebut hanya kewajiban password environment.
+- Flutter web release dan Vue build berhasil. Delapan screenshot browser
+  1024×768 / 390×844, angka smoke dicocokkan DB (`browser-smoke.json`).
+  Meja QA dinonaktifkan sesudah pengujian; dua sale QA tetap historis, tidak dihapus.
+- Klik ekspor CSV web menghasilkan Blob 1.023 byte, UTF-8 BOM, baris integer
+  `Penjualan,Net sales,954898` cocok layar (`csv-browser.json`).
+- Backup bisnis/auth.users privat di `/tmp/opencode/smart-pos-backups/`,
+  tidak masuk Git. Restore subset bisnis di database lokal terisolasi lulus;
+  snapshot **sebelum** dua sale smoke. Batasan ada di `docs/backup-restore.md`.
+- Latensi median lima request: quote **814 ms**, dashboard **1.231 ms**,
+  laporan **2.165 ms**, katalog **1.123 ms**; maksimum dashboard **6.047 ms**
+  termasuk retry jaringan. Dua reset transport dicatat, bukan disembunyikan.
+- Fixture 1.000 menu: render awal **5.227 ms**, termasuk scroll **7.114 ms**
+  dalam harness debug saat pekerjaan build lain berjalan; bukan benchmark native
+  atau angka FPS. Tidak menambah cache spekulatif berdasarkan angka ini.
+- SHA-256/path APK dan scan pola sensitif: `android-build.json`.
+
+### Blocker keselamatan yang ditemukan (belum diperbaiki)
+Di staging lokal hasil restore, dua panggilan `pos_refund(..., 100, ...)`
+identik menghasilkan total refund Rp200; dua koreksi stok +1 menghasilkan +2.
+Reproduksi dibungkus `BEGIN/ROLLBACK`; uang/stok hosted tidak diubah.
+API tersebut tidak punya kunci idempotensi. **Tombol busy/guard UI tidak cukup**
+untuk timeout setelah server commit. Bukti `retry-gap.json`.
+Kontrak server+form harus diperbaiki dan diuji replay/concurrency sebelum gate
+“setiap perubahan uang/stok aman terhadap retry” boleh dicentang.
+
+### Paket serah terima / gate tersisa
+`docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
+`docs/evidence/sprint06/README.md`. Gate belum lulus: mutasi retry, signing,
+Android target/manual operator, rotasi password lama, pemulihan Supabase lengkap
+dan hosting QR permanen. Tidak ada push/release produksi. S01-08 tetap menunggu
+remote GitHub, bukan diklaim hijau.
+`graphify update .` selesai; warning parser SQL belum terpasang dan JSON evidence
+tanpa node dicatat, tidak disamakan dengan kegagalan tes aplikasi.
+
 ## Sprint 05 — Biaya Operasional, Kalkulator, Kas dan Laporan
 Tanggal: 27 Oktober 2026
 Target/tiket: S05-01 … S05-09

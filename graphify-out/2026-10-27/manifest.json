@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/error_mapper.dart": {
-    "mtime": 1793035622.3549051,
-    "ast_hash": "ad252e5481fbedd320cbfc5f15db6f65",
+    "mtime": 1793061740.1805134,
+    "ast_hash": "3a2dc0c2b58514c689091acf7684c921",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/formatters.dart": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/cash_shift/cash_page.dart": {
-    "mtime": 1793009303.3096375,
-    "ast_hash": "c6b0c9249280f19a51f37f6eb376e59a",
+    "mtime": 1793061915.448856,
+    "ast_hash": "ce8fd5ce0414e9a1ab5ca2b67a6ff378",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/catalog/catalog_page.dart": {
@@ -85,18 +85,18 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/dashboard/dashboard_page.dart": {
-    "mtime": 1793016043.660782,
-    "ast_hash": "607bf5fa53003247ee891f94c3552538",
+    "mtime": 1793062072.266668,
+    "ast_hash": "d8fdd5dc516b4e7036a540df3b2eb654",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/energy/energy_page.dart": {
-    "mtime": 1793009303.3093994,
-    "ast_hash": "691d1f353d230612352313687799a10b",
+    "mtime": 1793062107.6852212,
+    "ast_hash": "776e4bbfd710d42b26c88ebbaa23d4dc",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/expenses/expenses_page.dart": {
-    "mtime": 1793009303.309084,
-    "ast_hash": "ff568c272b98a999faa0258afd5ca9e0",
+    "mtime": 1793062113.988233,
+    "ast_hash": "69bc69e37a76cf83627169a9ffadf59c",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/inventory/stock_page.dart": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/reports/reports_page.dart": {
-    "mtime": 1793009303.3111684,
-    "ast_hash": "a16ee8fbb185c711154c34073e94cd34",
+    "mtime": 1793061993.840005,
+    "ast_hash": "f3b6a190cf6caf1535243bb493b8d98f",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/sales_history/history_page.dart": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/app/shell_test.dart": {
-    "mtime": 1793020730.2083416,
-    "ast_hash": "6ff25731af56da033daf5fd8f5502196",
+    "mtime": 1793062529.2660215,
+    "ast_hash": "f22b2bbc3e1a4a25511a8f98b2d6bf68",
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/app/theme_test.dart": {
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "Sprints.md": {
-    "mtime": 1793041772.4944458,
-    "ast_hash": "afce0cee217a361fa806846758f76de1",
+    "mtime": 1793066634.4699922,
+    "ast_hash": "1d4ad6485bb712c891d946ebdd4d767f",
     "semantic_hash": ""
   },
   "apps/pos_flutter/README.md": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "docs/sprint-log.md": {
-    "mtime": 1793041654.0999014,
-    "ast_hash": "9bb6b35e724256da8fb50f155911eea6",
+    "mtime": 1793066556.0677183,
+    "ast_hash": "1a0f53834db22a3539cd138b173d9258",
     "semantic_hash": ""
   },
   "docs/ui-diff.md": {
@@ -767,6 +767,91 @@
   "docs/evidence/sprint04/14-waste-ledger.png": {
     "mtime": 1793041588.8231258,
     "ast_hash": "83ed1b644461b5223b9e1dad9a71f18b",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/core/csv_export.dart": {
+    "mtime": 1793061933.9878914,
+    "ast_hash": "96930508765411e9028b44d74d3fb29d",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/core/csv_export_stub.dart": {
+    "mtime": 1793061933.9878914,
+    "ast_hash": "7f4b04b3e408ab69b18a8e7e16373eb4",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/core/csv_export_web.dart": {
+    "mtime": 1793061942.9369085,
+    "ast_hash": "dfae8f3d4fec3c02e9cc6ed369c90ed8",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/features/operating_cost/operating_repository.dart": {
+    "mtime": 1793063489.273244,
+    "ast_hash": "9985ae0474efddcc016974655584c0d6",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/features/operating_cost_test.dart": {
+    "mtime": 1793062387.7487528,
+    "ast_hash": "df4f002dea213ae08e98457e90a09ee0",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261027000012_operating_cost.sql": {
+    "mtime": 1793061212.6392953,
+    "ast_hash": "4a98e8f51af7b99c7ea2e9ed250556d2",
+    "semantic_hash": ""
+  },
+  "tests/integration/test_operating_cost.py": {
+    "mtime": 1793061361.2056384,
+    "ast_hash": "5f5a5a923883daff1b9338b385a64f70",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/01_dashboard_awal.png": {
+    "mtime": 1793062721.1573856,
+    "ast_hash": "c8fd5cd30f23532066b00c9a6359b91a",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/02_kalkulator_listrik_pratinjau.png": {
+    "mtime": 1793062946.8194718,
+    "ast_hash": "dc443a009da18ee47e677d9bbdda93d3",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/03_kalkulator_disimpan_estimasi.png": {
+    "mtime": 1793063055.2874262,
+    "ast_hash": "867a048cf39b411ea792cbe11e044472",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/04_kalkulator_lpg_pratinjau.png": {
+    "mtime": 1793063083.6161273,
+    "ast_hash": "0cfcf05eb5be96deba1664391c264750",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/05_biaya_estimasi_vs_aktual.png": {
+    "mtime": 1793063142.1909037,
+    "ast_hash": "baff9ba1c6748a8f1539a4248da70cab",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/06_alokasi_ditolak_melebihi_sumber.png": {
+    "mtime": 1793064498.1138563,
+    "ast_hash": "ab53eb5e0f17a60284d20c16e99510ed",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/07_kas_shift_dibuka.png": {
+    "mtime": 1793064916.979992,
+    "ast_hash": "1e67f2dcd9854073d466e144a91170b7",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/08_kas_expected_hanya_tunai.png": {
+    "mtime": 1793065705.5400772,
+    "ast_hash": "a4f8e396e47bebc80d2ec8215e75009b",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/09_kas_tutup_selisih.png": {
+    "mtime": 1793065864.8137443,
+    "ast_hash": "780f8a8ab99af85ecb0a162b271510ef",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint05/10_laporan_penuh.png": {
+    "mtime": 1793066120.2311957,
+    "ast_hash": "c1375d10a47abb5a7cbc13b96172850b",
     "semantic_hash": ""
   }
 }

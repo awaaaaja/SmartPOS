@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "environment": "local restored staging; session JWT stub, not hosted Auth login",
+  "checks": {
+    "is_operator": false,
+    "non_operator": true,
+    "sales_visible": 0,
+    "settings_visible": 0
+  }
+}

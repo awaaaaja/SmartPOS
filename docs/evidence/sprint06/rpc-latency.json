@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-10-27T07:19:57.792656+00:00",
+  "environment": "Linux client to hosted Supabase; fresh urllib HTTPS connection per request, not tablet frame profiling",
+  "runs": 5,
+  "measurements": {
+    "quote": {
+      "milliseconds": [
+        1059.93,
+        814.34,
+        418.46,
+        690.18,
+        1347.14
+      ],
+      "median_ms": 814.34,
+      "max_ms": 1347.14,
+      "response_bytes": 100
+    },
+    "dashboard": {
+      "milliseconds": [
+        1230.95,
+        740.51,
+        728.16,
+        1504.31,
+        6046.5
+      ],
+      "median_ms": 1230.95,
+      "max_ms": 6046.5,
+      "response_bytes": 133
+    },
+    "reports": {
+      "milliseconds": [
+        2697.07,
+        1287.01,
+        2152.5,
+        2165.3,
+        2543.99
+      ],
+      "median_ms": 2165.3,
+      "max_ms": 2697.07,
+      "response_bytes": 1347
+    },
+    "catalog": {
+      "milliseconds": [
+        1123.36,
+        2964.36,
+        5668.61,
+        630.21,
+        566.85
+      ],
+      "median_ms": 1123.36,
+      "max_ms": 5668.61,
+      "response_bytes": 2195
+    }
+  },
+  "transport_errors_retried": [
+    {
+      "path": "/rest/v1/rpc/pos_dashboard_summary",
+      "error": "URLError"
+    },
+    {
+      "path": "/rest/v1/products",
+      "error": "URLError"
+    }
+  ]
+}

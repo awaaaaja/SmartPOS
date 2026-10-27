@@ -1,5 +1,5 @@
 name: pos_flutter
-description: "A new Flutter project."
+description: "Smart POS satu operator untuk Waroeng MeJeng Kampoeng."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.20.3
   image_picker: ^1.1.2
   qr_flutter: ^4.1.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

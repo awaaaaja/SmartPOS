@@ -23,8 +23,11 @@ class DashboardPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 40, color: warningColor),
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 40,
+                color: warningColor,
+              ),
               const SizedBox(height: 12),
               Text(mapErrorToMessage(e), textAlign: TextAlign.center),
               const SizedBox(height: 12),
@@ -39,15 +42,18 @@ class DashboardPage extends ConsumerWidget {
         data: (s) => ListView(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
           children: [
-            Text('Dashboard',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              'Dashboard',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 4),
-            Text('Ringkasan penjualan dari basis data. Belum ada badge QR '
-                'atau stok kritis (Sprint 03).',
-                style: const TextStyle(color: textSecondary, fontSize: 12)),
+            Text(
+              'Ringkasan transaksi final. Draft QR belum dibayar tidak '
+              'menambah omzet.',
+              style: const TextStyle(color: textSecondary, fontSize: 12),
+            ),
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
@@ -98,14 +104,16 @@ class DashboardPage extends ConsumerWidget {
                       value: formatRupiah(r.expensesEstimatedPeriod),
                       icon: Icons.lightbulb_outline_rounded,
                       color: warningColor,
-                      subtitle: 'asumsi/listrik-LPG dari kalkulator, bukan tagihan',
+                      subtitle:
+                          'asumsi/listrik-LPG dari kalkulator, bukan tagihan',
                     ),
                     _StatCard(
                       title: 'Estimasi hasil operasi hari ini',
                       value: formatRupiah(r.operatingMarginEstimate),
                       icon: Icons.trending_up_rounded,
                       color: brandPrimary,
-                      subtitle: 'net sales − biaya bahan − biaya aktual. '
+                      subtitle:
+                          'net sales − biaya bahan − biaya aktual. '
                           'Bukan laba bersih: tenaga kerja, susut & pajak '
                           'belum lengkap.',
                     ),
@@ -198,21 +206,28 @@ class _StatCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(title,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: textSecondary)),
+                  child: Text(
+                    title,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: textSecondary,
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            Text(value,
-                style: theme.textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              value,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             if (subtitle != null) ...[
               const SizedBox(height: 4),
-              Text(subtitle!,
-                  style: const TextStyle(
-                      fontSize: 12, color: textSecondary)),
+              Text(
+                subtitle!,
+                style: const TextStyle(fontSize: 12, color: textSecondary),
+              ),
             ],
           ],
         ),

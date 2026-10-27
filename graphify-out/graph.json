@@ -76,8 +76,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "destinations.dart"
     },
     {
@@ -87,8 +87,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_appdestination",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "appdestination"
     },
     {
@@ -98,8 +98,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_label",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "label"
     },
     {
@@ -109,8 +109,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_icon",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "icon"
     },
     {
@@ -131,8 +131,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_group",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "group"
     },
     {
@@ -142,8 +142,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_mobilelabel",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "mobilelabel"
     },
     {
@@ -164,8 +164,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_groupmain",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "_groupmain"
     },
     {
@@ -175,8 +175,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "static_const",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "static const"
     },
     {
@@ -186,8 +186,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_groupproduct",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "_groupproduct"
     },
     {
@@ -197,8 +197,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_groupfinance",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "_groupfinance"
     },
     {
@@ -208,8 +208,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_groups",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "groups"
     },
     {
@@ -219,8 +219,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "static_list",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "static list"
     },
     {
@@ -230,8 +230,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_mobilenavdestinations",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "mobilenavdestinations"
     },
     {
@@ -241,8 +241,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_destinations_bygroup",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 67,
+      "community_name": "destinations.dart",
       "norm_label": "bygroup"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_app_shell_authgate",
-      "community": 61,
-      "community_name": "app/theme.dart",
+      "community": 65,
+      "community_name": "authRepositoryProvider",
       "norm_label": "authgate"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "consumerwidget",
-      "community": 61,
-      "community_name": "app/theme.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "consumerwidget"
     },
     {
@@ -340,8 +340,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "consumerstatefulwidget",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "consumerstatefulwidget"
     },
     {
@@ -362,8 +362,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "consumerstate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "consumerstate"
     },
     {
@@ -560,7 +560,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_flutter_riverpod_flutter_riverpod_dart",
-      "community": 55,
+      "community": 72,
       "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "norm_label": "package:flutter_riverpod/flutter_riverpod.dart"
     },
@@ -946,7 +946,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_csv_export_stub",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "csv_export_stub.dart"
     },
     {
@@ -957,7 +957,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_csv_export_stub_file",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "file"
     },
     {
@@ -968,7 +968,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_csv_export_stub_savecsvfile",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "savecsvfile"
     },
     {
@@ -979,7 +979,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_csv_export_stub_writeasstring",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "writeasstring"
     },
     {
@@ -990,7 +990,7 @@
       "_origin": "ast",
       "id": "dart_io",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "dart:io"
     },
     {
@@ -1038,15 +1038,26 @@
       "norm_label": "savecsvfile"
     },
     {
-      "label": "dart:html",
+      "label": "dart:js_interop",
       "file_type": "code",
       "source_file": null,
       "source_location": null,
       "_origin": "ast",
-      "id": "dart_html",
+      "id": "dart_js_interop",
       "community": 66,
       "community_name": "csv_export_web.dart",
-      "norm_label": "dart:html"
+      "norm_label": "dart:js_interop"
+    },
+    {
+      "label": "package:web/web.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_web_web_dart",
+      "community": 66,
+      "community_name": "csv_export_web.dart",
+      "norm_label": "package:web/web.dart"
     },
     {
       "label": "error_mapper.dart",
@@ -1056,7 +1067,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_error_mapper",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "error_mapper.dart"
     },
     {
@@ -1067,7 +1078,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_error_mapper_m",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "m"
     },
     {
@@ -1078,7 +1089,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_error_mapper_mapbusinesserror",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "_mapbusinesserror"
     },
     {
@@ -1089,7 +1100,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_core_error_mapper_maperrortomessage",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "maperrortomessage"
     },
     {
@@ -1100,7 +1111,7 @@
       "_origin": "ast",
       "id": "dart_async",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "dart:async"
     },
     {
@@ -1111,7 +1122,7 @@
       "_origin": "ast",
       "id": "package_supabase_flutter_supabase_flutter_dart",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "package:supabase_flutter/supabase_flutter.dart"
     },
     {
@@ -1825,8 +1836,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "int_get",
-      "community": 3,
-      "community_name": "history_page.dart",
+      "community": 8,
+      "community_name": "sale_models.dart",
       "norm_label": "int get"
     },
     {
@@ -2144,8 +2155,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_auth_auth_repository_authrepository",
-      "community": 18,
-      "community_name": "login_page_test.dart",
+      "community": 75,
+      "community_name": "AuthRepository",
       "norm_label": "authrepository"
     },
     {
@@ -2490,17 +2501,6 @@
       "norm_label": "cashshiftpage"
     },
     {
-      "label": "_refresh",
-      "file_type": "code",
-      "source_file": "apps/pos_flutter/lib/features/cash_shift/cash_page.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "apps_pos_flutter_lib_features_cash_shift_cash_page_refresh",
-      "community": 61,
-      "community_name": "app/theme.dart",
-      "norm_label": "_refresh"
-    },
-    {
       "label": "build",
       "file_type": "code",
       "source_file": "apps/pos_flutter/lib/features/cash_shift/cash_page.dart",
@@ -2584,8 +2584,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_catalogpage",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 48,
+      "community_name": "categoriesProvider",
       "norm_label": "catalogpage"
     },
     {
@@ -2595,8 +2595,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_producttile",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 26,
+      "community_name": "catalogRepositoryProvider",
       "norm_label": "_producttile"
     },
     {
@@ -2606,8 +2606,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_producttilestate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 26,
+      "community_name": "catalogRepositoryProvider",
       "norm_label": "_producttilestate"
     },
     {
@@ -2673,7 +2673,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_productdialog",
       "community": 48,
-      "community_name": "ConsumerState",
+      "community_name": "categoriesProvider",
       "norm_label": "_productdialog"
     },
     {
@@ -2684,7 +2684,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_productdialogstate",
       "community": 48,
-      "community_name": "ConsumerState",
+      "community_name": "categoriesProvider",
       "norm_label": "_productdialogstate"
     },
     {
@@ -2980,8 +2980,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_page_build",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 48,
+      "community_name": "categoriesProvider",
       "norm_label": "build"
     },
     {
@@ -3244,8 +3244,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_repository_productsprovider",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 48,
+      "community_name": "categoriesProvider",
       "norm_label": "productsprovider"
     },
     {
@@ -3255,8 +3255,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_catalog_catalog_repository_categoriesprovider",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 48,
+      "community_name": "categoriesProvider",
       "norm_label": "categoriesprovider"
     },
     {
@@ -3409,8 +3409,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "auth_auth_repository_dart",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 72,
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "norm_label": "../auth/auth_repository.dart"
     },
     {
@@ -3431,8 +3431,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_dashboard_dashboard_page_dashboardpage",
-      "community": 5,
-      "community_name": "dashboard_page.dart",
+      "community": 74,
+      "community_name": "DashboardPage",
       "norm_label": "dashboardpage"
     },
     {
@@ -3519,8 +3519,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_dashboard_dashboard_page_build",
-      "community": 5,
-      "community_name": "dashboard_page.dart",
+      "community": 74,
+      "community_name": "DashboardPage",
       "norm_label": "build"
     },
     {
@@ -3552,8 +3552,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_energy_energy_page_energypage",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 59,
+      "community_name": "energy_page.dart",
       "norm_label": "energypage"
     },
     {
@@ -3563,8 +3563,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_energy_energy_page_energypagestate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 59,
+      "community_name": "energy_page.dart",
       "norm_label": "_energypagestate"
     },
     {
@@ -3574,8 +3574,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "singletickerproviderstatemixin",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 59,
+      "community_name": "energy_page.dart",
       "norm_label": "singletickerproviderstatemixin"
     },
     {
@@ -3761,8 +3761,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_energy_energy_page_save",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 59,
+      "community_name": "energy_page.dart",
       "norm_label": "_save"
     },
     {
@@ -3871,8 +3871,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_expenses_expenses_page_expensespage",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "expensespage"
     },
     {
@@ -4047,8 +4047,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_expenses_expenses_page_refresh",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "_refresh"
     },
     {
@@ -4058,8 +4058,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_expenses_expenses_page_build",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "build"
     },
     {
@@ -4630,8 +4630,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider",
-      "community": 53,
-      "community_name": "stock_page.dart",
+      "community": 44,
+      "community_name": "purchases_page.dart",
       "norm_label": "inventoryrepositoryprovider"
     },
     {
@@ -4718,8 +4718,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_inventory_inventory_repository_stockmovementsprovider",
-      "community": 53,
-      "community_name": "stock_page.dart",
+      "community": 34,
+      "community_name": "inventory_repository.dart",
       "norm_label": "stockmovementsprovider"
     },
     {
@@ -5719,8 +5719,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_operating_cost_operating_repository_expensesprovider",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "expensesprovider"
     },
     {
@@ -5730,8 +5730,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_operating_cost_operating_repository_allocationsprovider",
-      "community": 52,
-      "community_name": "expenses_page.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "allocationsprovider"
     },
     {
@@ -5807,8 +5807,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_operating_cost_operating_repository_dashboardreportprovider",
-      "community": 5,
-      "community_name": "dashboard_page.dart",
+      "community": 74,
+      "community_name": "DashboardPage",
       "norm_label": "dashboardreportprovider"
     },
     {
@@ -6016,8 +6016,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_modifiersheet",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_modifiersheet"
     },
     {
@@ -6027,8 +6027,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_modifiersheetstate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_modifiersheetstate"
     },
     {
@@ -6071,8 +6071,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_paymentsheet",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_paymentsheet"
     },
     {
@@ -6082,8 +6082,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_paymentsheetstate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_paymentsheetstate"
     },
     {
@@ -6588,8 +6588,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_build",
-      "community": 2,
-      "community_name": "catalog_repository.dart",
+      "community": 48,
+      "community_name": "categoriesProvider",
       "norm_label": "build"
     },
     {
@@ -6599,8 +6599,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_pickproduct",
-      "community": 22,
-      "community_name": "_PosPageState",
+      "community": 1,
+      "community_name": "pos_page.dart",
       "norm_label": "_pickproduct"
     },
     {
@@ -6698,8 +6698,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_page_submit",
-      "community": 67,
-      "community_name": "posRepositoryProvider",
+      "community": 1,
+      "community_name": "pos_page.dart",
       "norm_label": "_submit"
     },
     {
@@ -7039,8 +7039,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_repository_posrepositoryprovider",
-      "community": 67,
-      "community_name": "posRepositoryProvider",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "posrepositoryprovider"
     },
     {
@@ -7050,8 +7050,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_pos_pos_repository_dashboardsummaryprovider",
-      "community": 5,
-      "community_name": "dashboard_page.dart",
+      "community": 74,
+      "community_name": "DashboardPage",
       "norm_label": "dashboardsummaryprovider"
     },
     {
@@ -7655,8 +7655,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_recipes_hpp_recipes_page_producebatch",
-      "community": 53,
-      "community_name": "stock_page.dart",
+      "community": 50,
+      "community_name": "recipes_page.dart",
       "norm_label": "_producebatch"
     },
     {
@@ -7842,8 +7842,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_sales_history_history_page_saledetailsheet",
-      "community": 67,
-      "community_name": "posRepositoryProvider",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_saledetailsheet"
     },
     {
@@ -7853,8 +7853,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_sales_history_history_page_saledetailsheetstate",
-      "community": 67,
-      "community_name": "posRepositoryProvider",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_saledetailsheetstate"
     },
     {
@@ -7875,8 +7875,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_sales_history_history_page_refunddialog",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_refunddialog"
     },
     {
@@ -7886,8 +7886,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_sales_history_history_page_refunddialogstate",
-      "community": 48,
-      "community_name": "ConsumerState",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "_refunddialogstate"
     },
     {
@@ -8062,8 +8062,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_sales_history_history_page_initstate",
-      "community": 67,
-      "community_name": "posRepositoryProvider",
+      "community": 3,
+      "community_name": "history_page.dart",
       "norm_label": "initstate"
     },
     {
@@ -8117,8 +8117,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_settings_settings_page",
-      "community": 24,
-      "community_name": "package:flutter/material.dart",
+      "community": 72,
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "norm_label": "settings_page.dart"
     },
     {
@@ -8128,9 +8128,20 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_settings_settings_page_settingspage",
-      "community": 24,
-      "community_name": "package:flutter/material.dart",
+      "community": 70,
+      "community_name": "ConsumerWidget",
       "norm_label": "settingspage"
+    },
+    {
+      "label": "businessSettingsProvider",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_lib_features_settings_settings_page_businesssettingsprovider",
+      "community": 72,
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "norm_label": "businesssettingsprovider"
     },
     {
       "label": "build",
@@ -8139,20 +8150,9 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_settings_settings_page_build",
-      "community": 24,
-      "community_name": "package:flutter/material.dart",
+      "community": 72,
+      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
       "norm_label": "build"
-    },
-    {
-      "label": "../../core/widgets/module_placeholder.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "core_widgets_module_placeholder_dart",
-      "community": 24,
-      "community_name": "package:flutter/material.dart",
-      "norm_label": "../../core/widgets/module_placeholder.dart"
     },
     {
       "label": "qr_page.dart",
@@ -8260,8 +8260,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_features_tables_qr_qr_page_createtable",
-      "community": 49,
-      "community_name": "TablesQrPage",
+      "community": 45,
+      "community_name": "qr_page.dart",
       "norm_label": "_createtable"
     },
     {
@@ -8788,7 +8788,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "main.dart"
     },
@@ -8799,7 +8799,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_posapp",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "posapp"
     },
@@ -8810,7 +8810,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_missingconfigapp",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "missingconfigapp"
     },
@@ -8821,7 +8821,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_supabaseurl",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "supabaseurl"
     },
@@ -8832,7 +8832,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_supabasepublishablekey",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "supabasepublishablekey"
     },
@@ -8843,7 +8843,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_main",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "main"
     },
@@ -8854,7 +8854,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_initialize",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "initialize"
     },
@@ -8865,7 +8865,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_lib_main_build",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "build"
     },
@@ -8876,9 +8876,295 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_shell_dart",
-      "community": 47,
+      "community": 69,
       "community_name": "main.dart",
       "norm_label": "app/shell.dart"
+    },
+    {
+      "label": "page_layout_test.dart",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_app_page_layout_test",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "page_layout_test.dart"
+    },
+    {
+      "label": "pages",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_app_page_layout_test_pages",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "pages"
+    },
+    {
+      "label": "report",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_app_page_layout_test_report",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "report"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_app_page_layout_test_main",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "main"
+    },
+    {
+      "label": "package:flutter_test/flutter_test.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_flutter_test_flutter_test_dart",
+      "community": 58,
+      "community_name": "package:flutter_test/flutter_test.dart",
+      "norm_label": "package:flutter_test/flutter_test.dart"
+    },
+    {
+      "label": "package:pos_flutter/app/theme.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_app_theme_dart",
+      "community": 24,
+      "community_name": "package:flutter/material.dart",
+      "norm_label": "package:pos_flutter/app/theme.dart"
+    },
+    {
+      "label": "package:pos_flutter/core/models/sale_models.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_core_models_sale_models_dart",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "package:pos_flutter/core/models/sale_models.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/cash_shift/cash_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_cash_shift_cash_page_dart",
+      "community": 62,
+      "community_name": "operating_cost_test.dart",
+      "norm_label": "package:pos_flutter/features/cash_shift/cash_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/catalog/catalog_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_catalog_catalog_page_dart",
+      "community": 73,
+      "community_name": "catalog_large_list_test.dart",
+      "norm_label": "package:pos_flutter/features/catalog/catalog_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/catalog/catalog_repository.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_catalog_catalog_repository_dart",
+      "community": 73,
+      "community_name": "catalog_large_list_test.dart",
+      "norm_label": "package:pos_flutter/features/catalog/catalog_repository.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/dashboard/dashboard_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_dashboard_dashboard_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/dashboard/dashboard_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/energy/energy_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_energy_energy_page_dart",
+      "community": 62,
+      "community_name": "operating_cost_test.dart",
+      "norm_label": "package:pos_flutter/features/energy/energy_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/expenses/expenses_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_expenses_expenses_page_dart",
+      "community": 62,
+      "community_name": "operating_cost_test.dart",
+      "norm_label": "package:pos_flutter/features/expenses/expenses_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/inventory/inventory_repository.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_inventory_inventory_repository_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/inventory/inventory_repository.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/inventory/stock_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_inventory_stock_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/inventory/stock_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/operating_cost/operating_repository.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_operating_cost_operating_repository_dart",
+      "community": 62,
+      "community_name": "operating_cost_test.dart",
+      "norm_label": "package:pos_flutter/features/operating_cost/operating_repository.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/pos/pos_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_pos_pos_page_dart",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "package:pos_flutter/features/pos/pos_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/pos/pos_repository.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_pos_pos_repository_dart",
+      "community": 58,
+      "community_name": "package:flutter_test/flutter_test.dart",
+      "norm_label": "package:pos_flutter/features/pos/pos_repository.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/purchases/purchases_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_purchases_purchases_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/purchases/purchases_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/recipes_hpp/recipes_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_recipes_hpp_recipes_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/recipes_hpp/recipes_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/reports/reports_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_reports_reports_page_dart",
+      "community": 62,
+      "community_name": "operating_cost_test.dart",
+      "norm_label": "package:pos_flutter/features/reports/reports_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/sales_history/history_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_sales_history_history_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/sales_history/history_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/settings/settings_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_settings_settings_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/settings/settings_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/tables_qr/qr_page.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_tables_qr_qr_page_dart",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "package:pos_flutter/features/tables_qr/qr_page.dart"
+    },
+    {
+      "label": "package:pos_flutter/features/tables_qr/tables_repository.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_pos_flutter_features_tables_qr_tables_repository_dart",
+      "community": 46,
+      "community_name": "qr_inbox_sheet_test.dart",
+      "norm_label": "package:pos_flutter/features/tables_qr/tables_repository.dart"
+    },
+    {
+      "label": "T",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "t",
+      "community": 55,
+      "community_name": "page_layout_test.dart",
+      "norm_label": "t"
     },
     {
       "label": "shell_test.dart",
@@ -8898,8 +9184,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_test_app_shell_test_fakeauthrepository",
-      "community": 18,
-      "community_name": "login_page_test.dart",
+      "community": 75,
+      "community_name": "AuthRepository",
       "norm_label": "_fakeauthrepository"
     },
     {
@@ -8980,17 +9266,6 @@
       "norm_label": "main"
     },
     {
-      "label": "package:flutter_test/flutter_test.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_flutter_test_flutter_test_dart",
-      "community": 58,
-      "community_name": "package:flutter_test/flutter_test.dart",
-      "norm_label": "package:flutter_test/flutter_test.dart"
-    },
-    {
       "label": "package:pos_flutter/app/shell.dart",
       "file_type": "code",
       "source_file": null,
@@ -9000,17 +9275,6 @@
       "community": 23,
       "community_name": "shell_test.dart",
       "norm_label": "package:pos_flutter/app/shell.dart"
-    },
-    {
-      "label": "package:pos_flutter/app/theme.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_app_theme_dart",
-      "community": 24,
-      "community_name": "package:flutter/material.dart",
-      "norm_label": "package:pos_flutter/app/theme.dart"
     },
     {
       "label": "package:pos_flutter/features/auth/auth_repository.dart",
@@ -9053,7 +9317,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_test_core_error_mapper_test",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "error_mapper_test.dart"
     },
     {
@@ -9064,7 +9328,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_test_core_error_mapper_test_main",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "main"
     },
     {
@@ -9075,7 +9339,7 @@
       "_origin": "ast",
       "id": "package_pos_flutter_core_error_mapper_dart",
       "community": 47,
-      "community_name": "main.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "package:pos_flutter/core/error_mapper.dart"
     },
     {
@@ -9178,15 +9442,37 @@
       "norm_label": "line"
     },
     {
-      "label": "package:pos_flutter/features/pos/pos_repository.dart",
+      "label": "catalog_large_list_test.dart",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "community": 73,
+      "community_name": "catalog_large_list_test.dart",
+      "norm_label": "catalog_large_list_test.dart"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_features_catalog_large_list_test_main",
+      "community": 73,
+      "community_name": "catalog_large_list_test.dart",
+      "norm_label": "main"
+    },
+    {
+      "label": "package:pos_flutter/core/models/catalog_models.dart",
       "file_type": "code",
       "source_file": null,
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_pos_pos_repository_dart",
-      "community": 58,
-      "community_name": "package:flutter_test/flutter_test.dart",
-      "norm_label": "package:pos_flutter/features/pos/pos_repository.dart"
+      "id": "package_pos_flutter_core_models_catalog_models_dart",
+      "community": 73,
+      "community_name": "catalog_large_list_test.dart",
+      "norm_label": "package:pos_flutter/core/models/catalog_models.dart"
     },
     {
       "label": "inventory_pages_test.dart",
@@ -9196,7 +9482,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_test_features_inventory_pages_test",
       "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "page_layout_test.dart",
       "norm_label": "inventory_pages_test.dart"
     },
     {
@@ -9207,7 +9493,7 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_test_features_inventory_pages_test_app",
       "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "page_layout_test.dart",
       "norm_label": "_app"
     },
     {
@@ -9218,52 +9504,8 @@
       "_origin": "ast",
       "id": "apps_pos_flutter_test_features_inventory_pages_test_main",
       "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
+      "community_name": "page_layout_test.dart",
       "norm_label": "main"
-    },
-    {
-      "label": "package:pos_flutter/features/inventory/inventory_repository.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_features_inventory_inventory_repository_dart",
-      "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "norm_label": "package:pos_flutter/features/inventory/inventory_repository.dart"
-    },
-    {
-      "label": "package:pos_flutter/features/inventory/stock_page.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_features_inventory_stock_page_dart",
-      "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "norm_label": "package:pos_flutter/features/inventory/stock_page.dart"
-    },
-    {
-      "label": "package:pos_flutter/features/purchases/purchases_page.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_features_purchases_purchases_page_dart",
-      "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "norm_label": "package:pos_flutter/features/purchases/purchases_page.dart"
-    },
-    {
-      "label": "package:pos_flutter/features/recipes_hpp/recipes_page.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_features_recipes_hpp_recipes_page_dart",
-      "community": 55,
-      "community_name": "package:flutter_riverpod/flutter_riverpod.dart",
-      "norm_label": "package:pos_flutter/features/recipes_hpp/recipes_page.dart"
     },
     {
       "label": "login_page_test.dart",
@@ -9283,8 +9525,8 @@
       "source_location": null,
       "_origin": "ast",
       "id": "apps_pos_flutter_test_features_login_page_test_recordingauthrepository",
-      "community": 18,
-      "community_name": "login_page_test.dart",
+      "community": 75,
+      "community_name": "AuthRepository",
       "norm_label": "_recordingauthrepository"
     },
     {
@@ -9442,59 +9684,70 @@
       "norm_label": "main"
     },
     {
-      "label": "package:pos_flutter/features/cash_shift/cash_page.dart",
+      "label": "pos_mobile_test.dart",
       "file_type": "code",
-      "source_file": null,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_cash_shift_cash_page_dart",
-      "community": 62,
-      "community_name": "operating_cost_test.dart",
-      "norm_label": "package:pos_flutter/features/cash_shift/cash_page.dart"
+      "id": "apps_pos_flutter_test_features_pos_mobile_test",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "pos_mobile_test.dart"
     },
     {
-      "label": "package:pos_flutter/features/energy/energy_page.dart",
+      "label": "_QuoteRepository",
       "file_type": "code",
-      "source_file": null,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_energy_energy_page_dart",
-      "community": 62,
-      "community_name": "operating_cost_test.dart",
-      "norm_label": "package:pos_flutter/features/energy/energy_page.dart"
+      "id": "apps_pos_flutter_test_features_pos_mobile_test_quoterepository",
+      "community": 4,
+      "community_name": "pos_repository.dart",
+      "norm_label": "_quoterepository"
     },
     {
-      "label": "package:pos_flutter/features/expenses/expenses_page.dart",
+      "label": "quotedQty",
       "file_type": "code",
-      "source_file": null,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_expenses_expenses_page_dart",
-      "community": 62,
-      "community_name": "operating_cost_test.dart",
-      "norm_label": "package:pos_flutter/features/expenses/expenses_page.dart"
+      "id": "apps_pos_flutter_test_features_pos_mobile_test_quotedqty",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "quotedqty"
     },
     {
-      "label": "package:pos_flutter/features/operating_cost/operating_repository.dart",
+      "label": "noSuchMethod",
       "file_type": "code",
-      "source_file": null,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_operating_cost_operating_repository_dart",
-      "community": 62,
-      "community_name": "operating_cost_test.dart",
-      "norm_label": "package:pos_flutter/features/operating_cost/operating_repository.dart"
+      "id": "apps_pos_flutter_test_features_pos_mobile_test_nosuchmethod",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "nosuchmethod"
     },
     {
-      "label": "package:pos_flutter/features/reports/reports_page.dart",
+      "label": "quote",
       "file_type": "code",
-      "source_file": null,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "_origin": "ast",
-      "id": "package_pos_flutter_features_reports_reports_page_dart",
-      "community": 62,
-      "community_name": "operating_cost_test.dart",
-      "norm_label": "package:pos_flutter/features/reports/reports_page.dart"
+      "id": "apps_pos_flutter_test_features_pos_mobile_test_quote",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "quote"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "apps_pos_flutter_test_features_pos_mobile_test_main",
+      "community": 71,
+      "community_name": "pos_mobile_test.dart",
+      "norm_label": "main"
     },
     {
       "label": "qr_inbox_sheet_test.dart",
@@ -9583,17 +9836,6 @@
       "community": 46,
       "community_name": "qr_inbox_sheet_test.dart",
       "norm_label": "package:pos_flutter/features/pos/qr_inbox_sheet.dart"
-    },
-    {
-      "label": "package:pos_flutter/features/tables_qr/tables_repository.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_pos_flutter_features_tables_qr_tables_repository_dart",
-      "community": 46,
-      "community_name": "qr_inbox_sheet_test.dart",
-      "norm_label": "package:pos_flutter/features/tables_qr/tables_repository.dart"
     },
     {
       "label": "manifest.json",
@@ -11272,7 +11514,7 @@
       "_origin": "ast",
       "id": "readme",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "readme.md"
     },
     {
@@ -11283,7 +11525,7 @@
       "_origin": "ast",
       "id": "readme_smart_pos_waroeng_mejeng_kampoeng",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "smart pos \u2014 waroeng mejeng kampoeng"
     },
     {
@@ -11294,7 +11536,7 @@
       "_origin": "ast",
       "id": "readme_struktur",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "struktur"
     },
     {
@@ -11305,7 +11547,7 @@
       "_origin": "ast",
       "id": "readme_menjalankan",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "menjalankan"
     },
     {
@@ -11316,7 +11558,7 @@
       "_origin": "ast",
       "id": "readme_1_supabase",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "1. supabase"
     },
     {
@@ -11327,7 +11569,7 @@
       "_origin": "ast",
       "id": "readme_2_aplikasi_kasir_flutter",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "2. aplikasi kasir (flutter)"
     },
     {
@@ -11338,7 +11580,7 @@
       "_origin": "ast",
       "id": "readme_3_web_qr_vue",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "3. web qr (vue)"
     },
     {
@@ -11349,7 +11591,7 @@
       "_origin": "ast",
       "id": "readme_uji",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "uji"
     },
     {
@@ -11360,8 +11602,19 @@
       "_origin": "ast",
       "id": "readme_aturan_keamanan",
       "community": 27,
-      "community_name": "Smart POS \u2014 Waroeng MeJeng Kampoeng",
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
       "norm_label": "aturan keamanan"
+    },
+    {
+      "label": "Kandidat rilis / serah terima",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L71",
+      "_origin": "ast",
+      "id": "readme_kandidat_rilis_serah_terima",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "kandidat rilis / serah terima"
     },
     {
       "label": "Sprints.md",
@@ -11521,7 +11774,7 @@
       "label": "9. Fitur Post-MVP yang **Tidak Dikerjakan**",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L234",
+      "source_location": "L249",
       "_origin": "ast",
       "id": "sprints_9_fitur_post_mvp_yang_tidak_dikerjakan",
       "community": 12,
@@ -11532,7 +11785,7 @@
       "label": "10. Kontrak Halaman dan File yang Direkomendasikan",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L240",
+      "source_location": "L255",
       "_origin": "ast",
       "id": "sprints_10_kontrak_halaman_dan_file_yang_direkomendasikan",
       "community": 12,
@@ -11543,7 +11796,7 @@
       "label": "11. Integrasi CRUD dan UI Prioritas",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L279",
+      "source_location": "L294",
       "_origin": "ast",
       "id": "sprints_11_integrasi_crud_dan_ui_prioritas",
       "community": 12,
@@ -11554,7 +11807,7 @@
       "label": "12. Template Issue Pengembangan",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L297",
+      "source_location": "L312",
       "_origin": "ast",
       "id": "sprints_12_template_issue_pengembangan",
       "community": 12,
@@ -11565,7 +11818,7 @@
       "label": "13. Catatan Progres dan Change Log",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L319",
+      "source_location": "L334",
       "_origin": "ast",
       "id": "sprints_13_catatan_progres_dan_change_log",
       "community": 12,
@@ -11576,7 +11829,7 @@
       "label": "Keputusan UI dan Product MVP (per 26 Oktober 2026)",
       "file_type": "document",
       "source_file": "Sprints.md",
-      "source_location": "L339",
+      "source_location": "L355",
       "_origin": "ast",
       "id": "sprints_keputusan_ui_dan_product_mvp_per_26_oktober_2026",
       "community": 12,
@@ -11683,6 +11936,50 @@
       "norm_label": "keamanan"
     },
     {
+      "label": "backup-restore.md",
+      "file_type": "document",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_backup_restore",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "backup-restore.md"
+    },
+    {
+      "label": "Backup dan latihan restore Sprint 06",
+      "file_type": "document",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_backup_restore_backup_dan_latihan_restore_sprint_06",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "backup dan latihan restore sprint 06"
+    },
+    {
+      "label": "Bukti yang sudah ada",
+      "file_type": "document",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_backup_restore_bukti_yang_sudah_ada",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "bukti yang sudah ada"
+    },
+    {
+      "label": "Prosedur pengulangan (staging saja)",
+      "file_type": "document",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "docs_backup_restore_prosedur_pengulangan_staging_saja",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "prosedur pengulangan (staging saja)"
+    },
+    {
       "label": "decision-log.md",
       "file_type": "document",
       "source_file": "docs/decision-log.md",
@@ -11760,6 +12057,171 @@
       "norm_label": "d-05 (2026-10-26) \u2014 konfigurasi flutter via `--dart-define`, layar konfigurasi jujur"
     },
     {
+      "label": "sprint06/README.md",
+      "file_type": "document",
+      "source_file": "docs/evidence/sprint06/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_evidence_sprint06_readme",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "sprint06/readme.md"
+    },
+    {
+      "label": "Evidence Sprint 06 \u2014 QA, bukan persetujuan produksi",
+      "file_type": "document",
+      "source_file": "docs/evidence/sprint06/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_evidence_sprint06_readme_evidence_sprint_06_qa_bukan_persetujuan_produksi",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "evidence sprint 06 \u2014 qa, bukan persetujuan produksi"
+    },
+    {
+      "label": "handover.md",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_handover",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "handover.md"
+    },
+    {
+      "label": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "serah terima qa mvp \u2014 27 oktober 2026"
+    },
+    {
+      "label": "1. Blocker / known issues",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "docs_handover_1_blocker_known_issues",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "1. blocker / known issues"
+    },
+    {
+      "label": "2. Setup Supabase",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "docs_handover_2_setup_supabase",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "2. setup supabase"
+    },
+    {
+      "label": "3. Build, signing dan pemasangan Android",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "docs_handover_3_build_signing_dan_pemasangan_android",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "3. build, signing dan pemasangan android"
+    },
+    {
+      "label": "4. Migrasi, backup dan rollback",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L98",
+      "_origin": "ast",
+      "id": "docs_handover_4_migrasi_backup_dan_rollback",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "4. migrasi, backup dan rollback"
+    },
+    {
+      "label": "5. SOP latihan operator",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L110",
+      "_origin": "ast",
+      "id": "docs_handover_5_sop_latihan_operator",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "5. sop latihan operator"
+    },
+    {
+      "label": "6. Checklist UAT dan persetujuan",
+      "file_type": "document",
+      "source_file": "docs/handover.md",
+      "source_location": "L130",
+      "_origin": "ast",
+      "id": "docs_handover_6_checklist_uat_dan_persetujuan",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "6. checklist uat dan persetujuan"
+    },
+    {
+      "label": "release-notes.md",
+      "file_type": "document",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_release_notes",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "release-notes.md"
+    },
+    {
+      "label": "Catatan kandidat MVP 1.0.0+1 \u2014 27 Oktober 2026",
+      "file_type": "document",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_release_notes_catatan_kandidat_mvp_1_0_0_1_27_oktober_2026",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "catatan kandidat mvp 1.0.0+1 \u2014 27 oktober 2026"
+    },
+    {
+      "label": "Perubahan Sprint 06",
+      "file_type": "document",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "docs_release_notes_perubahan_sprint_06",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "perubahan sprint 06"
+    },
+    {
+      "label": "Artefak lokal",
+      "file_type": "document",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "docs_release_notes_artefak_lokal",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "artefak lokal"
+    },
+    {
+      "label": "Fitur dan batasan",
+      "file_type": "document",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "docs_release_notes_fitur_dan_batasan",
+      "community": 27,
+      "community_name": "Serah terima QA MVP \u2014 27 Oktober 2026",
+      "norm_label": "fitur dan batasan"
+    },
+    {
       "label": "sprint-log.md",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
@@ -11782,10 +12244,76 @@
       "norm_label": "sprint log"
     },
     {
-      "label": "Sprint 05 \u2014 Biaya Operasional, Kalkulator, Kas dan Laporan",
+      "label": "Sprint 06 \u2014 Polishing, QA, keamanan dan kandidat build",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
       "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "sprint 06 \u2014 polishing, qa, keamanan dan kandidat build"
+    },
+    {
+      "label": "Per tiket",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "docs_sprint_log_per_tiket",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "per tiket"
+    },
+    {
+      "label": "Perbaikan yang sudah diterapkan",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "docs_sprint_log_perbaikan_yang_sudah_diterapkan",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "perbaikan yang sudah diterapkan"
+    },
+    {
+      "label": "Hasil dan bukti",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "docs_sprint_log_hasil_dan_bukti",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "hasil dan bukti"
+    },
+    {
+      "label": "Blocker keselamatan yang ditemukan (belum diperbaiki)",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "docs_sprint_log_blocker_keselamatan_yang_ditemukan_belum_diperbaiki",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "blocker keselamatan yang ditemukan (belum diperbaiki)"
+    },
+    {
+      "label": "Paket serah terima / gate tersisa",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "docs_sprint_log_paket_serah_terima_gate_tersisa",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "paket serah terima / gate tersisa"
+    },
+    {
+      "label": "Sprint 05 \u2014 Biaya Operasional, Kalkulator, Kas dan Laporan",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
       "community": 15,
@@ -11796,7 +12324,7 @@
       "label": "Yang dibangun",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L8",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "docs_sprint_log_yang_dibangun",
       "community": 15,
@@ -11807,7 +12335,7 @@
       "label": "Verifikasi",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L41",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "docs_sprint_log_verifikasi",
       "community": 15,
@@ -11818,7 +12346,7 @@
       "label": "Bukti E2E (Chrome, build web final)",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L54",
+      "source_location": "L126",
       "_origin": "ast",
       "id": "docs_sprint_log_bukti_e2e_chrome_build_web_final",
       "community": 15,
@@ -11829,7 +12357,7 @@
       "label": "Gate S05",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L69",
+      "source_location": "L141",
       "_origin": "ast",
       "id": "docs_sprint_log_gate_s05",
       "community": 15,
@@ -11840,7 +12368,7 @@
       "label": "Temuan dan perbaikan saat pengujian",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L80",
+      "source_location": "L152",
       "_origin": "ast",
       "id": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian",
       "community": 15,
@@ -11851,7 +12379,7 @@
       "label": "Sisa pekerjaan / risiko",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L95",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "docs_sprint_log_sisa_pekerjaan_risiko",
       "community": 15,
@@ -11862,7 +12390,7 @@
       "label": "Sprint 04 \u2014 Stok, Pembelian, Resep, HPP",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L103",
+      "source_location": "L175",
       "_origin": "ast",
       "id": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
       "community": 15,
@@ -11873,9 +12401,9 @@
       "label": "Yang dibangun",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L108",
+      "source_location": "L180",
       "_origin": "ast",
-      "id": "docs_sprint_log_yang_dibangun_108",
+      "id": "docs_sprint_log_yang_dibangun_180",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "yang dibangun"
@@ -11884,9 +12412,9 @@
       "label": "Verifikasi",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L153",
+      "source_location": "L225",
       "_origin": "ast",
-      "id": "docs_sprint_log_verifikasi_153",
+      "id": "docs_sprint_log_verifikasi_225",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "verifikasi"
@@ -11895,7 +12423,7 @@
       "label": "Bukti E2E (Chrome, build web final, tablet 1280\u00d7800)",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L166",
+      "source_location": "L238",
       "_origin": "ast",
       "id": "docs_sprint_log_bukti_e2e_chrome_build_web_final_tablet_1280_800",
       "community": 15,
@@ -11906,7 +12434,7 @@
       "label": "Gate S04",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L193",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "docs_sprint_log_gate_s04",
       "community": 15,
@@ -11917,9 +12445,9 @@
       "label": "Temuan dan perbaikan saat pengujian",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L202",
+      "source_location": "L274",
       "_origin": "ast",
-      "id": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_202",
+      "id": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_274",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "temuan dan perbaikan saat pengujian"
@@ -11928,7 +12456,7 @@
       "label": "Sprint 03 \u2014 Pesanan QR Pelanggan (Draft \u2192 Keranjang POS \u2192 Bayar)",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L209",
+      "source_location": "L281",
       "_origin": "ast",
       "id": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
       "community": 15,
@@ -11939,75 +12467,9 @@
       "label": "Yang dibangun",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L214",
+      "source_location": "L286",
       "_origin": "ast",
-      "id": "docs_sprint_log_yang_dibangun_214",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "yang dibangun"
-    },
-    {
-      "label": "Verifikasi",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L256",
-      "_origin": "ast",
-      "id": "docs_sprint_log_verifikasi_256",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "verifikasi"
-    },
-    {
-      "label": "Skenario uji wajib (hasil nyata)",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L267",
-      "_origin": "ast",
-      "id": "docs_sprint_log_skenario_uji_wajib_hasil_nyata",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "skenario uji wajib (hasil nyata)"
-    },
-    {
-      "label": "Temuan dan perbaikan saat pengujian",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L279",
-      "_origin": "ast",
-      "id": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_279",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "temuan dan perbaikan saat pengujian"
-    },
-    {
-      "label": "Sisa pekerjaan / risiko",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L285",
-      "_origin": "ast",
-      "id": "docs_sprint_log_sisa_pekerjaan_risiko_285",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "sisa pekerjaan / risiko"
-    },
-    {
-      "label": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L291",
-      "_origin": "ast",
-      "id": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
-      "community": 15,
-      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
-      "norm_label": "sprint 02 \u2014 katalog & kasir pos (end-to-end)"
-    },
-    {
-      "label": "Yang dibangun",
-      "file_type": "document",
-      "source_file": "docs/sprint-log.md",
-      "source_location": "L296",
-      "_origin": "ast",
-      "id": "docs_sprint_log_yang_dibangun_296",
+      "id": "docs_sprint_log_yang_dibangun_286",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "yang dibangun"
@@ -12024,10 +12486,76 @@
       "norm_label": "verifikasi"
     },
     {
+      "label": "Skenario uji wajib (hasil nyata)",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L339",
+      "_origin": "ast",
+      "id": "docs_sprint_log_skenario_uji_wajib_hasil_nyata",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "skenario uji wajib (hasil nyata)"
+    },
+    {
+      "label": "Temuan dan perbaikan saat pengujian",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L351",
+      "_origin": "ast",
+      "id": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_351",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "temuan dan perbaikan saat pengujian"
+    },
+    {
+      "label": "Sisa pekerjaan / risiko",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L357",
+      "_origin": "ast",
+      "id": "docs_sprint_log_sisa_pekerjaan_risiko_357",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "sisa pekerjaan / risiko"
+    },
+    {
+      "label": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L363",
+      "_origin": "ast",
+      "id": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "sprint 02 \u2014 katalog & kasir pos (end-to-end)"
+    },
+    {
+      "label": "Yang dibangun",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L368",
+      "_origin": "ast",
+      "id": "docs_sprint_log_yang_dibangun_368",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "yang dibangun"
+    },
+    {
+      "label": "Verifikasi",
+      "file_type": "document",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L400",
+      "_origin": "ast",
+      "id": "docs_sprint_log_verifikasi_400",
+      "community": 15,
+      "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
+      "norm_label": "verifikasi"
+    },
+    {
       "label": "Alur bukti end-to-end (Chrome, bukan mock)",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L338",
+      "source_location": "L410",
       "_origin": "ast",
       "id": "docs_sprint_log_alur_bukti_end_to_end_chrome_bukan_mock",
       "community": 15,
@@ -12038,7 +12566,7 @@
       "label": "Acceptance Criteria",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L353",
+      "source_location": "L425",
       "_origin": "ast",
       "id": "docs_sprint_log_acceptance_criteria",
       "community": 15,
@@ -12049,7 +12577,7 @@
       "label": "Temuan dan perbaikan",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L365",
+      "source_location": "L437",
       "_origin": "ast",
       "id": "docs_sprint_log_temuan_dan_perbaikan",
       "community": 15,
@@ -12060,7 +12588,7 @@
       "label": "Sisa pekerjaan",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L378",
+      "source_location": "L450",
       "_origin": "ast",
       "id": "docs_sprint_log_sisa_pekerjaan",
       "community": 15,
@@ -12071,7 +12599,7 @@
       "label": "Sprint 01 \u2014 Laporan Implementasi",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L383",
+      "source_location": "L455",
       "_origin": "ast",
       "id": "docs_sprint_log_sprint_01_laporan_implementasi",
       "community": 15,
@@ -12082,9 +12610,9 @@
       "label": "Yang dibangun",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L388",
+      "source_location": "L460",
       "_origin": "ast",
-      "id": "docs_sprint_log_yang_dibangun_388",
+      "id": "docs_sprint_log_yang_dibangun_460",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "yang dibangun"
@@ -12093,9 +12621,9 @@
       "label": "Verifikasi",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L412",
+      "source_location": "L484",
       "_origin": "ast",
-      "id": "docs_sprint_log_verifikasi_412",
+      "id": "docs_sprint_log_verifikasi_484",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "verifikasi"
@@ -12104,9 +12632,9 @@
       "label": "Acceptance Criteria",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L433",
+      "source_location": "L505",
       "_origin": "ast",
-      "id": "docs_sprint_log_acceptance_criteria_433",
+      "id": "docs_sprint_log_acceptance_criteria_505",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "acceptance criteria"
@@ -12115,9 +12643,9 @@
       "label": "Temuan dan perbaikan",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L444",
+      "source_location": "L516",
       "_origin": "ast",
-      "id": "docs_sprint_log_temuan_dan_perbaikan_444",
+      "id": "docs_sprint_log_temuan_dan_perbaikan_516",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "temuan dan perbaikan"
@@ -12126,9 +12654,9 @@
       "label": "Sisa pekerjaan",
       "file_type": "document",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L465",
+      "source_location": "L537",
       "_origin": "ast",
-      "id": "docs_sprint_log_sisa_pekerjaan_465",
+      "id": "docs_sprint_log_sisa_pekerjaan_537",
       "community": 15,
       "community_name": "Sprint 02 \u2014 Katalog & Kasir POS (End-to-End)",
       "norm_label": "sisa pekerjaan"
@@ -12788,6 +13316,17 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_flutter_material_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/test/app/shell_test.dart",
       "source_location": null,
       "weight": 1.0,
@@ -12821,6 +13360,17 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_flutter_material_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
       "source_location": null,
       "weight": 1.0,
@@ -12848,6 +13398,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_flutter_material_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
       "target": "package_flutter_material_dart"
     },
     {
@@ -13419,6 +13980,17 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_lib_features_settings_settings_page_settingspage",
+      "target": "consumerwidget"
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/tables_qr/qr_page.dart",
       "source_location": null,
       "weight": 1.0,
@@ -13644,17 +14216,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_sales_history_history_page_saletile",
-      "target": "statelesswidget"
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_settings_settings_page_settingspage",
       "target": "statelesswidget"
     },
     {
@@ -14375,6 +14936,17 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_lib_features_settings_settings_page",
+      "target": "package_flutter_riverpod_flutter_riverpod_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/tables_qr/qr_page.dart",
       "source_location": null,
       "weight": 1.0,
@@ -14408,11 +14980,33 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_flutter_riverpod_flutter_riverpod_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/test/app/shell_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_test_app_shell_test",
+      "target": "package_flutter_riverpod_flutter_riverpod_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
       "target": "package_flutter_riverpod_flutter_riverpod_dart"
     },
     {
@@ -14446,6 +15040,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_flutter_riverpod_flutter_riverpod_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
       "target": "package_flutter_riverpod_flutter_riverpod_dart"
     },
     {
@@ -14754,7 +15359,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_core_csv_export_web",
-      "target": "dart_html"
+      "target": "dart_js_interop"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/lib/core/csv_export_web.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_lib_core_csv_export_web",
+      "target": "package_web_web_dart"
     },
     {
       "relation": "defines",
@@ -14820,6 +15436,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_pos_pos_page",
+      "target": "dart_async"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
       "target": "dart_async"
     },
     {
@@ -17165,6 +17792,17 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_lib_features_settings_settings_page",
+      "target": "core_error_mapper_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/tables_qr/qr_page.dart",
       "source_location": null,
       "weight": 1.0,
@@ -17249,17 +17887,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_cash_shift_cash_page",
-      "target": "apps_pos_flutter_lib_features_cash_shift_cash_page_refresh"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/cash_shift/cash_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_cash_shift_cash_page",
       "target": "apps_pos_flutter_lib_features_cash_shift_cash_page_row"
     },
     {
@@ -17307,18 +17934,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_cash_shift_cash_page_cashshiftpage",
       "target": "apps_pos_flutter_lib_features_operating_cost_operating_repository_operatingrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/cash_shift/cash_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_cash_shift_cash_page_refresh",
-      "target": "apps_pos_flutter_lib_features_operating_cost_operating_repository_cashstatusprovider"
     },
     {
       "relation": "references",
@@ -18656,6 +19271,17 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_lib_features_settings_settings_page",
+      "target": "auth_auth_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/tables_qr/tables_repository.dart",
       "source_location": null,
       "weight": 1.0,
@@ -19155,18 +19781,6 @@
       "target": "apps_pos_flutter_lib_features_energy_energy_page_energypage"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/energy/energy_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_energy_energy_page_energypagestate",
-      "target": "apps_pos_flutter_lib_features_operating_cost_operating_repository_operatingrepositoryprovider"
-    },
-    {
       "relation": "mixes_in",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -19176,18 +19790,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_energy_energy_page_energypagestate",
       "target": "singletickerproviderstatemixin"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/energy/energy_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_energy_energy_page_save",
-      "target": "apps_pos_flutter_lib_features_operating_cost_operating_repository_operatingrepositoryprovider"
     },
     {
       "relation": "defines",
@@ -20446,54 +21048,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_inventory_stock_page_adjust",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_inventory_stock_page_editingredient",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_inventory_stock_page_inventorypagestate",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/purchases/purchases_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_purchases_purchases_page_createpurchase",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/purchases/purchases_page.dart",
       "source_location": null,
       "weight": 1.0,
@@ -20506,36 +21060,12 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/recipes_hpp/recipes_page.dart",
+      "source_file": "apps/pos_flutter/lib/features/purchases/purchases_page.dart",
       "source_location": null,
       "weight": 1.0,
       "context": "riverpod_reference",
       "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_recipes_hpp_recipes_page_editrecipe",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/recipes_hpp/recipes_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_recipes_hpp_recipes_page_producebatch",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/recipes_hpp/recipes_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_recipes_hpp_recipes_page_recipeshpppagestate",
+      "source": "apps_pos_flutter_lib_features_purchases_purchases_page_receive",
       "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_inventoryrepositoryprovider"
     },
     {
@@ -20755,30 +21285,6 @@
       "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_recipeversionsprovider"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_inventory_stock_page_inventorypagestate",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_stockmovementsprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_inventory_stock_page_showhistory",
-      "target": "apps_pos_flutter_lib_features_inventory_inventory_repository_stockmovementsprovider"
-    },
-    {
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -20878,13 +21384,14 @@
       "target": "apps_pos_flutter_lib_features_inventory_stock_page_inventorypage"
     },
     {
-      "relation": "defines",
+      "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/inventory/stock_page.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
+      "context": "type_lookup",
       "source": "apps_pos_flutter_lib_features_inventory_stock_page",
       "target": "apps_pos_flutter_lib_features_inventory_stock_page_inventorypagestate"
     },
@@ -22858,18 +23365,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/pos/pos_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_pos_pos_page_paymentsheetstate",
-      "target": "apps_pos_flutter_lib_features_pos_pos_repository_posrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/sales_history/history_page.dart",
       "source_location": null,
       "weight": 1.0,
@@ -22901,18 +23396,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_pos_pos_page_build",
       "target": "apps_pos_flutter_lib_features_tables_qr_tables_repository_qrdraftsprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/pos/pos_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_pos_pos_page_pickproduct",
-      "target": "apps_pos_flutter_lib_features_pos_pos_repository_cartcontrollerprovider"
     },
     {
       "relation": "references",
@@ -22973,18 +23456,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_pos_pos_page_completeclaimeddrafts",
       "target": "apps_pos_flutter_lib_features_tables_qr_tables_repository_qrdraftrepositoryprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/pos/pos_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_pos_pos_page_submit",
-      "target": "apps_pos_flutter_lib_features_pos_pos_repository_posrepositoryprovider"
     },
     {
       "relation": "imports",
@@ -23492,6 +23963,17 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_pos_pos_repository_cartcontroller",
       "target": "notifier"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test_quoterepository",
+      "target": "apps_pos_flutter_lib_features_pos_pos_repository_posrepository"
     },
     {
       "relation": "references",
@@ -24444,10 +24926,10 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_settings_settings_page",
-      "target": "apps_pos_flutter_lib_features_settings_settings_page_settingspage"
+      "target": "apps_pos_flutter_lib_features_settings_settings_page_businesssettingsprovider"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/lib/features/settings/settings_page.dart",
@@ -24455,7 +24937,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_settings_settings_page",
-      "target": "core_widgets_module_placeholder_dart"
+      "target": "apps_pos_flutter_lib_features_settings_settings_page_settingspage"
     },
     {
       "relation": "defines",
@@ -24669,18 +25151,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_lib_features_tables_qr_qr_page_build",
       "target": "apps_pos_flutter_lib_features_tables_qr_tables_repository_tableslistprovider"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/lib/features/tables_qr/qr_page.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "riverpod_reference",
-      "_origin": "ast",
-      "source": "apps_pos_flutter_lib_features_tables_qr_qr_page_createtable",
-      "target": "apps_pos_flutter_lib_features_tables_qr_tables_repository_tablesrepositoryprovider"
     },
     {
       "relation": "references",
@@ -25228,6 +25698,700 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "apps_pos_flutter_test_app_page_layout_test_main"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "apps_pos_flutter_test_app_page_layout_test_pages"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "apps_pos_flutter_test_app_page_layout_test_report"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_core_models_sale_models_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_cash_shift_cash_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_catalog_catalog_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_catalog_catalog_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_dashboard_dashboard_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_energy_energy_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_expenses_expenses_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_inventory_inventory_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_inventory_stock_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_operating_cost_operating_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_pos_pos_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_pos_pos_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_purchases_purchases_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_recipes_hpp_recipes_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_reports_reports_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_sales_history_history_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_settings_settings_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_tables_qr_qr_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "package_pos_flutter_features_tables_qr_tables_repository_dart"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/page_layout_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "context": "type_lookup",
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_page_layout_test",
+      "target": "t"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/shell_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_shell_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/theme_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_theme_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/core/error_mapper_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_core_error_mapper_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/core/formatters_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_core_formatters_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/core/module_placeholder_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_core_module_placeholder_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/cart_state_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_cart_state_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/login_page_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_login_page_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/qr_inbox_sheet_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_qr_inbox_sheet_test",
+      "target": "package_flutter_test_flutter_test_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/shell_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_shell_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/app/theme_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_app_theme_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/core/module_placeholder_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_core_module_placeholder_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/login_page_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_login_page_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_app_theme_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_core_models_sale_models_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_features_cash_shift_cash_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_pos_flutter_features_catalog_catalog_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_pos_flutter_features_catalog_catalog_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_features_catalog_catalog_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_features_energy_energy_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_features_expenses_expenses_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_pos_flutter_features_inventory_inventory_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_pos_flutter_features_inventory_stock_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_features_operating_cost_operating_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_features_pos_pos_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/cart_state_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_cart_state_test",
+      "target": "package_pos_flutter_features_pos_pos_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_features_pos_pos_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_pos_flutter_features_purchases_purchases_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_inventory_pages_test",
+      "target": "package_pos_flutter_features_recipes_hpp_recipes_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_operating_cost_test",
+      "target": "package_pos_flutter_features_reports_reports_page_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "package_pos_flutter_features_tables_qr_tables_repository_dart"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/qr_inbox_sheet_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_qr_inbox_sheet_test",
+      "target": "package_pos_flutter_features_tables_qr_tables_repository_dart"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "apps/pos_flutter/test/app/shell_test.dart",
       "source_location": null,
       "weight": 1.0,
@@ -25321,17 +26485,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_test_app_shell_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/app/shell_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_app_shell_test",
       "target": "package_pos_flutter_app_shell_dart"
     },
     {
@@ -25343,172 +26496,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "apps_pos_flutter_test_app_shell_test",
-      "target": "package_pos_flutter_app_theme_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/app/shell_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_app_shell_test",
       "target": "package_pos_flutter_features_auth_auth_repository_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/app/theme_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_app_theme_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/core/error_mapper_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_core_error_mapper_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/core/formatters_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_core_formatters_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/core/module_placeholder_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_core_module_placeholder_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/cart_state_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_cart_state_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/login_page_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_login_page_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/qr_inbox_sheet_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_qr_inbox_sheet_test",
-      "target": "package_flutter_test_flutter_test_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/app/theme_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_app_theme_test",
-      "target": "package_pos_flutter_app_theme_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/core/module_placeholder_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_core_module_placeholder_test",
-      "target": "package_pos_flutter_app_theme_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_pos_flutter_app_theme_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/login_page_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_login_page_test",
-      "target": "package_pos_flutter_app_theme_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_app_theme_dart"
     },
     {
       "relation": "imports",
@@ -25621,15 +26609,26 @@
       "target": "apps_pos_flutter_test_features_cart_state_test_main"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/cart_state_test.dart",
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_cart_state_test",
-      "target": "package_pos_flutter_features_pos_pos_repository_dart"
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "apps_pos_flutter_test_features_catalog_large_list_test_main"
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/pos_flutter/test/features/catalog_large_list_test.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "apps_pos_flutter_test_features_catalog_large_list_test",
+      "target": "package_pos_flutter_core_models_catalog_models_dart"
     },
     {
       "relation": "defines",
@@ -25652,50 +26651,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_test_features_inventory_pages_test",
       "target": "apps_pos_flutter_test_features_inventory_pages_test_main"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_pos_flutter_features_inventory_inventory_repository_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_pos_flutter_features_inventory_stock_page_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_pos_flutter_features_purchases_purchases_page_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/inventory_pages_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_inventory_pages_test",
-      "target": "package_pos_flutter_features_recipes_hpp_recipes_page_dart"
     },
     {
       "relation": "defines",
@@ -25852,59 +26807,59 @@
       "target": "apps_pos_flutter_test_features_operating_cost_test_main"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_features_cash_shift_cash_page_dart"
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "apps_pos_flutter_test_features_pos_mobile_test_main"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_features_energy_energy_page_dart"
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "apps_pos_flutter_test_features_pos_mobile_test_nosuchmethod"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_features_expenses_expenses_page_dart"
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "apps_pos_flutter_test_features_pos_mobile_test_quote"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_features_operating_cost_operating_repository_dart"
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "apps_pos_flutter_test_features_pos_mobile_test_quotedqty"
     },
     {
-      "relation": "imports",
+      "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/operating_cost_test.dart",
+      "source_file": "apps/pos_flutter/test/features/pos_mobile_test.dart",
       "source_location": null,
       "weight": 1.0,
       "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_operating_cost_test",
-      "target": "package_pos_flutter_features_reports_reports_page_dart"
+      "source": "apps_pos_flutter_test_features_pos_mobile_test",
+      "target": "apps_pos_flutter_test_features_pos_mobile_test_quoterepository"
     },
     {
       "relation": "defines",
@@ -25982,17 +26937,6 @@
       "_origin": "ast",
       "source": "apps_pos_flutter_test_features_qr_inbox_sheet_test",
       "target": "package_pos_flutter_features_pos_qr_inbox_sheet_dart"
-    },
-    {
-      "relation": "imports",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/pos_flutter/test/features/qr_inbox_sheet_test.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "apps_pos_flutter_test_features_qr_inbox_sheet_test",
-      "target": "package_pos_flutter_features_tables_qr_tables_repository_dart"
     },
     {
       "relation": "contains",
@@ -27783,6 +28727,50 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_backup_restore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_evidence_sprint06_readme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_handover",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_release_notes",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
@@ -27802,6 +28790,17 @@
       "_origin": "ast",
       "source": "readme_smart_pos_waroeng_mejeng_kampoeng",
       "target": "readme_aturan_keamanan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_smart_pos_waroeng_mejeng_kampoeng",
+      "target": "readme_kandidat_rilis_serah_terima",
       "confidence_score": 1.0
     },
     {
@@ -27874,7 +28873,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L240",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints",
@@ -27885,7 +28884,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L279",
+      "source_location": "L294",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints",
@@ -27896,7 +28895,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L297",
+      "source_location": "L312",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints",
@@ -27907,7 +28906,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L319",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints",
@@ -28006,7 +29005,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L234",
+      "source_location": "L249",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints",
@@ -28072,7 +29071,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Sprints.md",
-      "source_location": "L339",
+      "source_location": "L355",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sprints_13_catatan_progres_dan_change_log",
@@ -28159,6 +29158,50 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_backup_restore",
+      "target": "docs_backup_restore_backup_dan_latihan_restore_sprint_06",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L102",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover",
+      "target": "docs_backup_restore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_backup_restore_backup_dan_latihan_restore_sprint_06",
+      "target": "docs_backup_restore_bukti_yang_sudah_ada",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/backup-restore.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_backup_restore_backup_dan_latihan_restore_sprint_06",
+      "target": "docs_backup_restore_prosedur_pengulangan_staging_saja",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/decision-log.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -28225,6 +29268,149 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/evidence/sprint06/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_evidence_sprint06_readme",
+      "target": "docs_evidence_sprint06_readme_evidence_sprint_06_qa_bukan_persetujuan_produksi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover",
+      "target": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_release_notes",
+      "target": "docs_handover",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_1_blocker_known_issues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_2_setup_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_3_build_signing_dan_pemasangan_android",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_4_migrasi_backup_dan_rollback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_5_sop_latihan_operator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/handover.md",
+      "source_location": "L130",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_handover_serah_terima_qa_mvp_27_oktober_2026",
+      "target": "docs_handover_6_checklist_uat_dan_persetujuan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_release_notes",
+      "target": "docs_release_notes_catatan_kandidat_mvp_1_0_0_1_27_oktober_2026",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_release_notes_catatan_kandidat_mvp_1_0_0_1_27_oktober_2026",
+      "target": "docs_release_notes_artefak_lokal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_release_notes_catatan_kandidat_mvp_1_0_0_1_27_oktober_2026",
+      "target": "docs_release_notes_fitur_dan_batasan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/release-notes.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_release_notes_catatan_kandidat_mvp_1_0_0_1_27_oktober_2026",
+      "target": "docs_release_notes_perubahan_sprint_06",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -28237,7 +29423,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L383",
+      "source_location": "L455",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_log",
@@ -28248,7 +29434,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L291",
+      "source_location": "L363",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_log",
@@ -28259,7 +29445,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L209",
+      "source_location": "L281",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_log",
@@ -28270,7 +29456,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L103",
+      "source_location": "L175",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_log",
@@ -28281,7 +29467,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L3",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_log",
@@ -28292,7 +29478,73 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L54",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_log",
+      "target": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "target": "docs_sprint_log_blocker_keselamatan_yang_ditemukan_belum_diperbaiki",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "target": "docs_sprint_log_hasil_dan_bukti",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "target": "docs_sprint_log_paket_serah_terima_gate_tersisa",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "target": "docs_sprint_log_per_tiket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_sprint_log_sprint_06_polishing_qa_keamanan_dan_kandidat_build",
+      "target": "docs_sprint_log_perbaikan_yang_sudah_diterapkan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/sprint-log.md",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28303,7 +29555,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L69",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28314,7 +29566,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L95",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28325,7 +29577,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L80",
+      "source_location": "L152",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28336,7 +29588,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L41",
+      "source_location": "L113",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28347,7 +29599,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L8",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_05_biaya_operasional_kalkulator_kas_dan_laporan",
@@ -28358,7 +29610,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L166",
+      "source_location": "L238",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
@@ -28369,7 +29621,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L193",
+      "source_location": "L265",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
@@ -28380,51 +29632,51 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L202",
+      "source_location": "L274",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
-      "target": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_202",
+      "target": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_274",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L153",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
-      "target": "docs_sprint_log_verifikasi_153",
+      "target": "docs_sprint_log_verifikasi_225",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L108",
+      "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_04_stok_pembelian_resep_hpp",
-      "target": "docs_sprint_log_yang_dibangun_108",
+      "target": "docs_sprint_log_yang_dibangun_180",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L285",
+      "source_location": "L357",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
-      "target": "docs_sprint_log_sisa_pekerjaan_risiko_285",
+      "target": "docs_sprint_log_sisa_pekerjaan_risiko_357",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L267",
+      "source_location": "L339",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
@@ -28435,40 +29687,40 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L279",
+      "source_location": "L351",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
-      "target": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_279",
+      "target": "docs_sprint_log_temuan_dan_perbaikan_saat_pengujian_351",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L256",
+      "source_location": "L328",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
-      "target": "docs_sprint_log_verifikasi_256",
+      "target": "docs_sprint_log_verifikasi_328",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L214",
+      "source_location": "L286",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_03_pesanan_qr_pelanggan_draft_keranjang_pos_bayar",
-      "target": "docs_sprint_log_yang_dibangun_214",
+      "target": "docs_sprint_log_yang_dibangun_286",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L353",
+      "source_location": "L425",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
@@ -28479,7 +29731,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L338",
+      "source_location": "L410",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
@@ -28490,7 +29742,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L378",
+      "source_location": "L450",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
@@ -28501,7 +29753,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L365",
+      "source_location": "L437",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
@@ -28512,77 +29764,77 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L328",
+      "source_location": "L400",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
-      "target": "docs_sprint_log_verifikasi_328",
+      "target": "docs_sprint_log_verifikasi_400",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L296",
+      "source_location": "L368",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_02_katalog_kasir_pos_end_to_end",
-      "target": "docs_sprint_log_yang_dibangun_296",
+      "target": "docs_sprint_log_yang_dibangun_368",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L433",
+      "source_location": "L505",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_01_laporan_implementasi",
-      "target": "docs_sprint_log_acceptance_criteria_433",
+      "target": "docs_sprint_log_acceptance_criteria_505",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L465",
+      "source_location": "L537",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_01_laporan_implementasi",
-      "target": "docs_sprint_log_sisa_pekerjaan_465",
+      "target": "docs_sprint_log_sisa_pekerjaan_537",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L444",
+      "source_location": "L516",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_01_laporan_implementasi",
-      "target": "docs_sprint_log_temuan_dan_perbaikan_444",
+      "target": "docs_sprint_log_temuan_dan_perbaikan_516",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L412",
+      "source_location": "L484",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_01_laporan_implementasi",
-      "target": "docs_sprint_log_verifikasi_412",
+      "target": "docs_sprint_log_verifikasi_484",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/sprint-log.md",
-      "source_location": "L388",
+      "source_location": "L460",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_sprint_log_sprint_01_laporan_implementasi",
-      "target": "docs_sprint_log_yang_dibangun_388",
+      "target": "docs_sprint_log_yang_dibangun_460",
       "confidence_score": 1.0
     },
     {
@@ -28598,5 +29850,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "65f81484127539e42f2f3a3d45c6a41a2f508899"
+  "built_at_commit": "61b8d7f674f1af7dee94df705cfe0e7eab2082a6"
 }

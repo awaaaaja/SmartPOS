@@ -1,0 +1,44 @@
+{
+  "result": "PASS",
+  "environment": "Flutter release web / Vue production build in Chrome on Linux, NOT Android tablet",
+  "viewports": [
+    "1024x768 browser",
+    "390x844 browser emulation"
+  ],
+  "checks": {
+    "draft": {
+      "id": 114,
+      "status": "COMPLETED",
+      "sale_id": 58,
+      "subtotal": 7000
+    },
+    "sales": [
+      {
+        "id": 57,
+        "tax": 525,
+        "paid": 10000,
+        "total": 7700,
+        "change": 2300,
+        "status": "FINAL",
+        "service": 175,
+        "receipt_no": "MJ-261027-0057"
+      },
+      {
+        "id": 58,
+        "tax": 525,
+        "paid": 10000,
+        "total": 7700,
+        "change": 2300,
+        "status": "FINAL",
+        "service": 175,
+        "receipt_no": "MJ-261027-0058"
+      }
+    ]
+  },
+  "qa_table_disabled": true,
+  "notes": [
+    "Two new QA sales remain as immutable history; not deleted or refunded",
+    "Backup snapshot was taken before these smoke sales",
+    "Known partial-refund/manual-stock retry gap remains a release blocker"
+  ]
+}

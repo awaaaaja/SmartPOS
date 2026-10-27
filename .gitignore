@@ -22,3 +22,13 @@ build/
 
 # Kotlin/Gradle lokal
 .kotlin/
+
+# Signing dan backup privat
+*.jks
+*.keystore
+*.p12
+key.properties
+*.dump
+backups/
+__pycache__/
+*.pyc

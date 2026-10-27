@@ -43,12 +43,18 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
-                Text('Stok Bahan',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700)),
-                const Spacer(),
+                Text(
+                  'Stok Bahan',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 FilledButton.icon(
                   onPressed: () => _editIngredient(),
                   icon: const Icon(Icons.add_rounded),
@@ -79,8 +85,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(mapErrorToMessage(e),
-                          textAlign: TextAlign.center),
+                      child: Text(
+                        mapErrorToMessage(e),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     FilledButton.icon(
@@ -96,9 +104,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       child: Text(
                         search.trim().isEmpty
                             ? 'Belum ada bahan terdaftar. Tekan '
-                                '“Bahan baru” untuk menambah master bahan.'
+                                  '“Bahan baru” untuk menambah master bahan.'
                             : 'Tidak ada bahan yang cocok dengan '
-                                '“${search.trim()}”.',
+                                  '“${search.trim()}”.',
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: textSecondary),
                       ),
@@ -108,8 +116,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                         itemCount: rows.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 8),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (context, i) =>
                             _IngredientTile(ingredient: rows[i]),
                       ),
@@ -122,14 +129,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   }
 
   Future<void> _editIngredient([Ingredient? existing]) async {
-    final nameController =
-        TextEditingController(text: existing?.name ?? '');
+    final nameController = TextEditingController(text: existing?.name ?? '');
     final reorderController = TextEditingController(
-        text: existing == null
-            ? ''
-            : formatNumber(existing.reorderLevel));
-    final costController =
-        TextEditingController(text: '${existing?.unitCost ?? 0}');
+      text: existing == null ? '' : formatNumber(existing.reorderLevel),
+    );
+    final costController = TextEditingController(
+      text: '${existing?.unitCost ?? 0}',
+    );
     var baseUnit = existing?.baseUnit ?? 'g';
 
     final ok = await showDialog<bool>(
@@ -154,7 +160,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                   decoration: const InputDecoration(labelText: 'Satuan dasar'),
                   items: const [
                     DropdownMenuItem(value: 'g', child: Text('gram (g)')),
-                    DropdownMenuItem(value: 'ml', child: Text('mililiter (ml)')),
+                    DropdownMenuItem(
+                      value: 'ml',
+                      child: Text('mililiter (ml)'),
+                    ),
                     DropdownMenuItem(value: 'pcs', child: Text('pcs')),
                   ],
                   onChanged: existing == null
@@ -164,14 +173,14 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 if (existing != null)
                   Text(
                     'Satuan dasar tidak dapat diubah setelah bahan dibuat.',
-                    style: TextStyle(
-                        fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: reorderController,
                   keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true),
+                    decimal: true,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Batas minimum (stok opname)',
                     helperText: 'Contoh: 500 untuk 500 g',
@@ -191,11 +200,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal')),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal'),
+            ),
             FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Simpan')),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Simpan'),
+            ),
           ],
         ),
       ),
@@ -203,25 +214,26 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     if (ok != true || !mounted) return;
 
     try {
-      await ref.read(inventoryRepositoryProvider).saveIngredient(
+      await ref
+          .read(inventoryRepositoryProvider)
+          .saveIngredient(
             id: existing?.id,
             name: nameController.text.trim(),
             baseUnit: baseUnit,
-            reorderLevel:
-                double.tryParse(reorderController.text.trim()) ?? 0,
+            reorderLevel: double.tryParse(reorderController.text.trim()) ?? 0,
             unitCost: int.tryParse(costController.text.trim()) ?? 0,
           );
       ref.invalidate(ingredientsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bahan tersimpan.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Bahan tersimpan.')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -247,35 +259,39 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                   'Saldo saat ini: ${formatNumber(ingredient.balance)} '
                   '${ingredient.baseUnit}',
                   style: const TextStyle(
-                      fontWeight: FontWeight.w600, color: textSecondary),
+                    fontWeight: FontWeight.w600,
+                    color: textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 SegmentedButton<String>(
                   segments: const [
                     ButtonSegment(
-                        value: 'ADJUSTMENT',
-                        label: Text('Koreksi'),
-                        icon: Icon(Icons.tune_rounded)),
+                      value: 'ADJUSTMENT',
+                      label: Text('Koreksi'),
+                      icon: Icon(Icons.tune_rounded),
+                    ),
                     ButtonSegment(
-                        value: 'WASTE',
-                        label: Text('Waste'),
-                        icon: Icon(Icons.delete_sweep_rounded)),
+                      value: 'WASTE',
+                      label: Text('Waste'),
+                      icon: Icon(Icons.delete_sweep_rounded),
+                    ),
                   ],
                   selected: {source},
-                  onSelectionChanged: (s) =>
-                      setLocal(() => source = s.first),
+                  onSelectionChanged: (s) => setLocal(() => source = s.first),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: qtyController,
                   autofocus: true,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(
                     labelText: source == 'WASTE'
                         ? 'Jumlah yang hilang (${ingredient.baseUnit})'
                         : 'Penyesuaian (tanda +/-, '
-                            '${ingredient.baseUnit})',
+                              '${ingredient.baseUnit})',
                     helperText: source == 'WASTE'
                         ? 'Selalu mengurangi stok.'
                         : 'Contoh: -25 bila fisik lebih sedikit.',
@@ -294,11 +310,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal')),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal'),
+            ),
             FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Catat mutasi')),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Catat mutasi'),
+            ),
           ],
         ),
       ),
@@ -306,7 +324,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     if (ok != true || !mounted) return;
 
     try {
-      await ref.read(inventoryRepositoryProvider).adjustStock(
+      await ref
+          .read(inventoryRepositoryProvider)
+          .adjustStock(
             ingredientId: ingredient.id,
             qty: double.tryParse(qtyController.text.trim()) ?? 0,
             reason: reasonController.text.trim(),
@@ -321,9 +341,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mapErrorToMessage(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     }
   }
@@ -338,11 +358,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Mutasi — ${ingredient.name}',
-                style: Theme.of(ctx)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              'Mutasi — ${ingredient.name}',
+              style: Theme.of(
+                ctx,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 12),
             SizedBox(
               height: 340,
@@ -350,60 +371,61 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               // ter-subscribe (watch langsung dari builder sheet tidak
               // memicu rebuild saat data siap — loading permanen).
               child: Consumer(
-                builder: (context, ref, _) =>
-                    ref.watch(stockMovementsProvider(ingredient.id)).when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, _) =>
-                        Center(child: Text(mapErrorToMessage(e))),
-                    data: (rows) => rows.isEmpty
-                        ? const Center(
-                            child: Text('Belum ada mutasi tercatat.'))
-                        : ListView.builder(
-                            itemCount: rows.length,
-                            itemBuilder: (context, i) {
-                              final m = rows[i];
-                              final up = m.qtyDelta > 0;
-                              return ListTile(
-                                dense: true,
-                                leading: Icon(
-                                  up
-                                      ? Icons.arrow_circle_up_rounded
-                                      : Icons.arrow_circle_down_rounded,
-                                  color: up ? successColor : warningColor,
-                                ),
-                                title: Text(m.reason),
-                                subtitle: Text(
-                                  '${m.source} • '
-                                  '${formatWib(m.createdAt)}',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                trailing: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '${up ? '+' : ''}'
-                                      '${formatNumber(m.qtyDelta)} '
-                                      '${ingredient.baseUnit}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: up ? successColor : errorColor,
+                builder: (context, ref, _) => ref
+                    .watch(stockMovementsProvider(ingredient.id))
+                    .when(
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (e, _) =>
+                          Center(child: Text(mapErrorToMessage(e))),
+                      data: (rows) => rows.isEmpty
+                          ? const Center(
+                              child: Text('Belum ada mutasi tercatat.'),
+                            )
+                          : ListView.builder(
+                              itemCount: rows.length,
+                              itemBuilder: (context, i) {
+                                final m = rows[i];
+                                final up = m.qtyDelta > 0;
+                                return ListTile(
+                                  dense: true,
+                                  leading: Icon(
+                                    up
+                                        ? Icons.arrow_circle_up_rounded
+                                        : Icons.arrow_circle_down_rounded,
+                                    color: up ? successColor : warningColor,
+                                  ),
+                                  title: Text(m.reason),
+                                  subtitle: Text(
+                                    '${m.source} • '
+                                    '${formatWib(m.createdAt)}',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${up ? '+' : ''}'
+                                        '${formatNumber(m.qtyDelta)} '
+                                        '${ingredient.baseUnit}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: up ? successColor : errorColor,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      'sisa '
-                                      '${formatNumber(m.balanceAfter)}',
-                                      style: const TextStyle(fontSize: 11),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                                      Text(
+                                        'sisa '
+                                        '${formatNumber(m.balanceAfter)}',
+                                        style: const TextStyle(fontSize: 11),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                     ),
-                ),
+              ),
             ),
           ],
         ),
@@ -424,15 +446,14 @@ class _IngredientTile extends StatelessWidget {
     final status = ing.isOut
         ? 'HABIS'
         : ing.isLow
-            ? 'DI BAWAH MINIMUM'
-            : null;
+        ? 'DI BAWAH MINIMUM'
+        : null;
 
     return Card(
       margin: EdgeInsets.zero,
       child: PopupMenuButton<String>(
         onSelected: (v) {
-          final state = context.findAncestorStateOfType<
-              _InventoryPageState>();
+          final state = context.findAncestorStateOfType<_InventoryPageState>();
           if (v == 'edit') state?._editIngredient(ing);
           if (v == 'adjust') state?._adjust(ing);
           if (v == 'history') state?._showHistory(ing);
@@ -453,16 +474,21 @@ class _IngredientTile extends StatelessWidget {
                     Row(
                       children: [
                         Flexible(
-                          child: Text(ing.name,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.w700)),
+                          child: Text(
+                            ing.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                         if (status != null) ...[
                           const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: ing.isOut ? errorColor : warningColor,
                               borderRadius: BorderRadius.circular(6),
@@ -470,9 +496,10 @@ class _IngredientTile extends StatelessWidget {
                             child: Text(
                               status,
                               style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700),
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ],
@@ -484,7 +511,9 @@ class _IngredientTile extends StatelessWidget {
                       '${ing.baseUnit} • biaya '
                       '${formatRupiah(ing.unitCost)}/${ing.baseUnit}',
                       style: const TextStyle(
-                          fontSize: 12, color: textSecondary),
+                        fontSize: 12,
+                        color: textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -500,13 +529,14 @@ class _IngredientTile extends StatelessWidget {
                       color: ing.isOut
                           ? errorColor
                           : ing.isLow
-                              ? warningColor
-                              : textPrimary,
+                          ? warningColor
+                          : textPrimary,
                     ),
                   ),
-                  const Text('tersedia',
-                      style:
-                          TextStyle(fontSize: 11, color: textSecondary)),
+                  const Text(
+                    'tersedia',
+                    style: TextStyle(fontSize: 11, color: textSecondary),
+                  ),
                 ],
               ),
             ],

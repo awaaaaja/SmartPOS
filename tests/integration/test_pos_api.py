@@ -19,7 +19,7 @@ KEY = os.environ.get(
     "SUPABASE_PUBLISHABLE_KEY",
     "sb_publishable_OpvLMVvQLqYnNyaHCjyRiA_ekFP6HBK")
 OPERATOR_EMAIL = os.environ.get("OPERATOR_EMAIL", "operator@mejeng.id")
-OPERATOR_PASSWORD = os.environ.get("OPERATOR_PASSWORD", "MejengPos2026!")
+OPERATOR_PASSWORD = os.environ["OPERATOR_PASSWORD"]
 
 passed = 0
 failed = 0
@@ -233,7 +233,12 @@ def main():
         "p_discount_pct": 0, "p_idempotency_key": key})
     check("checkout pertama sukses", status == 200 and r1["sale_id"],
           str(r1)[:200])
-    expect_total = 2 * (p1["price"] + (mod["price_delta"] if mod else 0))
+    # Tarif aktif usaha (bisa 7,5%+2,5%, bukan selalu 0) ikut dihitung:
+    # total = subtotal + ROUND(subtotal x pajak) + ROUND(subtotal x layanan).
+    base_total = 2 * (p1["price"] + (mod["price_delta"] if mod else 0))
+    expect_total = (base_total
+                    + half_up(base_total * float(old_tax))
+                    + half_up(base_total * float(old_service)))
     check("total checkout sesuai quote server",
           r1["total"] == expect_total, str(r1)[:200])
     check("kembalian benar",

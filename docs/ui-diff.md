@@ -12,3 +12,6 @@ dicatat di sini (Prompt.md §1).
 | Kartu Kitchen/Pesanan | Board dapur + status PREPARING/READY | Tidak ada | Scope single-operator v2.1 |
 | Data demo | localStorage browser | Database Supabase, fixture dev berlabel `[DEMO]` | Larangan localStorage sebagai DB |
 | Bottom nav HP | 4 item + tombol aksi | Beranda, Kasir, Stok, Laporan, Lainnya | PRD §4.1 |
+| Header modul HP | Mockup lebar tetap | Header dapat membungkus; kartu laporan setinggi konten | Regresi S06: tujuh modul overflow di 390×844 |
+| POS tablet 1024 | Katalog + keranjang | Breakpoint area konten 720dp setelah sidebar | Dua kolom tetap tampil di tablet landscape |
+| Pengaturan | Form preferensi | Profil/tarif aktual read-only; perubahan oleh pengelola Supabase | Tidak menyamarkan placeholder sebagai fitur selesai; editor/printer belum tersedia |

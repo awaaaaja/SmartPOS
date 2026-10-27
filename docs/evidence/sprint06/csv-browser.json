@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "environment": "Flutter release web in Chrome Linux, 390x844 emulation",
+  "adapter": "package:web",
+  "trigger": "Actual Ekspor CSV UI click; generated Blob captured before URL revocation",
+  "bytes": 1023,
+  "mime": "text/csv;charset=utf-8",
+  "utf8_bom": true,
+  "net_sales_row": "Penjualan,Net sales,954898",
+  "matches_displayed_net_sales": true,
+  "android_file_sharing_tested": false
+}

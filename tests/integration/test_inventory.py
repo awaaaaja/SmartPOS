@@ -27,7 +27,7 @@ KEY = os.environ.get(
     "SUPABASE_PUBLISHABLE_KEY",
     "sb_publishable_OpvLMVvQLqYnNyaHCjyRiA_ekFP6HBK")
 OPERATOR_EMAIL = os.environ.get("OPERATOR_EMAIL", "operator@mejeng.id")
-OPERATOR_PASSWORD = os.environ.get("OPERATOR_PASSWORD", "MejengPos2026!")
+OPERATOR_PASSWORD = os.environ["OPERATOR_PASSWORD"]
 
 passed = 0
 failed = 0
@@ -227,7 +227,7 @@ def main():
     key = "inv-" + uuid.uuid4().hex
     status, r1 = rpc(token, "pos_checkout", {
         "p_items": [{"product_id": pid, "qty": 2, "modifier_ids": []}],
-        "p_method": "CASH", "p_paid": 40000, "p_dining_type": "TAKEAWAY",
+        "p_method": "CASH", "p_paid": 100000, "p_dining_type": "TAKEAWAY",
         "p_discount_pct": 0, "p_idempotency_key": key})
     check("checkout sukses", status == 200, str(r1)[:250])
     sale_id = r1.get("sale_id") or (r1.get("sale") or {}).get("id")
@@ -249,7 +249,7 @@ def main():
     # --- retry idempoten: key sama -> mutasi tidak bertambah ---
     status, r2 = rpc(token, "pos_checkout", {
         "p_items": [{"product_id": pid, "qty": 2, "modifier_ids": []}],
-        "p_method": "CASH", "p_paid": 40000, "p_dining_type": "TAKEAWAY",
+        "p_method": "CASH", "p_paid": 100000, "p_dining_type": "TAKEAWAY",
         "p_discount_pct": 0, "p_idempotency_key": key})
     check("retry idempoten -> sale sama",
           status == 200 and r2.get("idempotent_replay") is True,
@@ -277,7 +277,7 @@ def main():
     key2 = "inv-" + uuid.uuid4().hex
     status, err = rpc(token, "pos_checkout", {
         "p_items": [{"product_id": pid2, "qty": 1, "modifier_ids": []}],
-        "p_method": "CASH", "p_paid": 10000, "p_dining_type": "TAKEAWAY",
+        "p_method": "CASH", "p_paid": 100000, "p_dining_type": "TAKEAWAY",
         "p_discount_pct": 0, "p_idempotency_key": key2})
     check("checkout ditolak insufficient_stock",
           status == 400 and "insufficient_stock" in str(err),
@@ -299,7 +299,7 @@ def main():
                      f"id=eq.{ing_g}", token)[1][0]["balance"]
     status, r3 = rpc(token, "pos_checkout", {
         "p_items": [{"product_id": pid3, "qty": 3, "modifier_ids": []}],
-        "p_method": "CASH", "p_paid": 15000, "p_dining_type": "TAKEAWAY",
+        "p_method": "CASH", "p_paid": 100000, "p_dining_type": "TAKEAWAY",
         "p_discount_pct": 0, "p_idempotency_key": "inv-" + uuid.uuid4().hex})
     check("checkout produk tanpa resep sukses", status == 200,
           str(r3)[:250])
@@ -337,7 +337,7 @@ def main():
     # Jual 2 gorengan: stok bahan tidak boleh berkurang lagi.
     status, r4 = rpc(token, "pos_checkout", {
         "p_items": [{"product_id": pid4, "qty": 2, "modifier_ids": []}],
-        "p_method": "CASH", "p_paid": 16000, "p_dining_type": "TAKEAWAY",
+        "p_method": "CASH", "p_paid": 100000, "p_dining_type": "TAKEAWAY",
         "p_discount_pct": 0, "p_idempotency_key": "inv-" + uuid.uuid4().hex})
     check("penjualan batch sukses", status == 200, str(r4)[:250])
     bal2 = req(f"/rest/v1/ingredients?select=balance&"

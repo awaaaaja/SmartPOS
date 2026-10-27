@@ -221,13 +221,28 @@ Status: **DONE 27 Okt 2026** — bukti lengkap di `docs/sprint-log.md` (bagian S
 | S06-09 | P0 | Build Android release, versioning, signing aman, migration plan, rollback procedure | APK/AAB dapat dipasang, tidak menyimpan secret server |
 | S06-10 | P0 | Checklist UAT/SOP ringan dan serah terima operator | Operator dapat menyelesaikan transaksi tanpa bantuan developer |
 
+**Status 27 Okt 2026: PARTIAL / gate rilis BLOCKED.** QA lokal dan web dikerjakan,
+bukan klaim seluruh tiket DONE. Rincian per tiket di `docs/sprint-log.md` (Sprint 06),
+paket instalasi/setup/SOP di `docs/handover.md`.
+
+- Analyzer 0 issue; Flutter 134/134 (termasuk 78 kombinasi layar/state/viewport),
+  regresi backend 212 pemeriksaan lulus; 29 probe publik lulus.
+- Backup bisnis pulih ke staging PostgreSQL lokal (25 tabel/checksum, 23 policy),
+  **bukan** full-restore Supabase Auth/Storage.
+- Dua alur smoke browser menghasilkan sale #57/#58; QR Q00114 COMPLETED.
+  Delapan screenshot di `docs/evidence/sprint06/`, **bukan bukti tablet Android**.
+- Build APK 1.0.0+1 berhasil (58,1 MB), **unsigned**, belum bisa dipasang.
+- Blocker nyata: retry refund parsial/koreksi stok menggandakan mutasi di staging,
+  signing belum disediakan, password lama perlu rotasi, tablet/restore cloud dan
+  hosting QR permanen belum lulus. Printer ditunda, offline tidak dicakup.
+
 **Gate rilis wajib:**
-- [ ] Tidak ada navigasi/fitur `Dapur`, `Pesanan`, `Pegawai`, `Multi Cabang`, `SaaS`.
+- [x] Tidak ada navigasi/fitur `Dapur`, `Pesanan`, `Pegawai`, `Multi Cabang`, `SaaS`.
 - [ ] Setiap tombol checkout dan setiap perubahan uang/stok aman terhadap retry.
-- [ ] Web QR menampilkan keberhasilan kirim draft, bukan menyatakan sudah dibayar.
-- [ ] Kas dan omzet benar-benar berdasarkan sale final, bukan data cart/QR pending.
+- [x] Web QR menampilkan keberhasilan kirim draft, bukan menyatakan sudah dibayar.
+- [x] Kas dan omzet benar-benar berdasarkan sale final, bukan data cart/QR pending.
 - [ ] Backup/restore, autentikasi, dan pengujian manual tablet lulus.
-- [ ] Keterbatasan printer/offline/PSP dinyatakan jelas jika belum diuji.
+- [x] Keterbatasan printer/offline/PSP dinyatakan jelas jika belum diuji.
 
 ---
 
@@ -328,6 +343,7 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 26 Okt 2026 | 03 | S03-01…S03-09 | DONE | `96c2c08` migrasi 0008–0009 + web Vue QR + panel QR Masuk + draft idempoten | `flutter test` 33/33; REST `test_qr_drafts.py` 37 PASS 0 FAIL; 19 screenshot `docs/evidence/sprint03/` via HTTPS tunnel | Hosting QR permanen = keputusan user; Android fisik ditunda |
 | 27 Okt 2026 | 04 | S04-01…S04-09 | DONE | migrasi 0010 inventori + 0011 fix TZ dashboard + Flutter stok/pembelian/resep-HPP | `flutter analyze` 0 error; `flutter test` 42/42; `test_inventory.py` 57 PASS; regresi POS 77 PASS + QR 37 PASS; npm build 299 kB; 14 screenshot `docs/evidence/sprint04/` | Android fisik ditunda; S01-08 menunggu remote GitHub |
 | 27 Okt 2026 | 05 | S05-01…S05-09 | DONE | migrasi 0012 energi/biaya/alokasi/kas/laporan + RPC definer + Flutter kalkulator/biaya/kas/laporan + dashboard detail | `flutter analyze` 0 error; `flutter test` 53/53; `test_operating_cost.py` 41 PASS (UAT-09–11); npm build lulus; 11 bukti `docs/evidence/sprint05/` (kalkulator 1,92 kWh/Rp 2.880, alokasi ditolak, kas selisih −500, CSV) | Android fisik ditunda; S01-08 menunggu remote GitHub |
+| 27 Okt 2026 | 06 | S06-01…S06-10 | PARTIAL / BLOCKED | perbaikan layout/keranjang HP, pengaturan read-only, audit keamanan/restore, build unsigned, dokumen serah terima | analyzer 0 issue; Flutter 134/134; backend 212 PASS; 29 probe publik; restore 25 tabel; dua smoke web; APK unsigned 58,1 MB | Retry refund/koreksi stok belum aman; signing, Android target, rotasi password, restore cloud/Storage dan hosting QR permanen belum lulus |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

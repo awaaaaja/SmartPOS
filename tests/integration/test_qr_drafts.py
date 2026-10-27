@@ -21,7 +21,7 @@ KEY = os.environ.get(
     "SUPABASE_PUBLISHABLE_KEY",
     "sb_publishable_OpvLMVvQLqYnNyaHCjyRiA_ekFP6HBK")
 OPERATOR_EMAIL = os.environ.get("OPERATOR_EMAIL", "operator@mejeng.id")
-OPERATOR_PASSWORD = os.environ.get("OPERATOR_PASSWORD", "MejengPos2026!")
+OPERATOR_PASSWORD = os.environ["OPERATOR_PASSWORD"]
 
 passed = 0
 failed = 0
@@ -228,18 +228,25 @@ def main():
     co_items = [{"product_id": i["product_id"], "qty": i["qty"],
                  "modifier_ids": [m["modifier_id"] for m in i["modifiers"]],
                  "note": i["note"] or ""} for i in claimed["items"]]
+    # Total sale = subtotal draft + pajak/layanan usaha (PRD 6.1), bukan
+    # subtotal mentah; nominal bayar harus menutup total itu.
+    status, st = req("/rest/v1/business_settings"
+                     "?select=tax_rate,service_rate", token)
+    tax = float(st[0]["tax_rate"]); svc = float(st[0]["service_rate"])
+    sub = claimed["subtotal"]
+    expected_total = (sub + int(sub * tax + 0.5) + int(sub * svc + 0.5))
     status, sale = rpc(token, "pos_checkout", {
         "p_items": co_items, "p_method": "CASH",
-        "p_paid": claimed["subtotal"], "p_dining_type": "DINE_IN",
+        "p_paid": expected_total, "p_dining_type": "DINE_IN",
         "p_table_id": claimed["table_id"], "p_idempotency_key": idem})
     check("checkout draft sukses", status == 200, str(sale)[:200])
-    check("total cocok subtotal draft",
-          status == 200 and sale["total"] == claimed["subtotal"],
-          f"{sale and sale.get('total')} vs {claimed['subtotal']}")
+    check("total = subtotal draft + pajak aktif",
+          status == 200 and sale["total"] == expected_total,
+          f"{sale and sale.get('total')} vs {expected_total}")
 
     status, sale2 = rpc(token, "pos_checkout", {
         "p_items": co_items, "p_method": "CASH",
-        "p_paid": claimed["subtotal"], "p_dining_type": "DINE_IN",
+        "p_paid": expected_total, "p_dining_type": "DINE_IN",
         "p_table_id": claimed["table_id"], "p_idempotency_key": idem})
     check("retry checkout = sale yang sama", status == 200
           and sale2["sale_id"] == sale["sale_id"]
