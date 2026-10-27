@@ -1,0 +1,32 @@
+﻿Bagian,Kunci,Nilai
+Periode,Dari,2026-10-21
+Periode,Sampai,2026-10-27
+Penjualan,Net sales,671000
+Penjualan,Refund,171000
+Penjualan,Transaksi,27
+Biaya,Biaya bahan (HPP resep) estimasi,48200
+Biaya,Aktual periode,3001000
+Biaya,Estimasi periode,416890
+Biaya,Ter alokasi,3000000
+
+Tren,Tanggal,Omzet,Transaksi
+Tren,2026-10-26,360000,14
+Tren,2026-10-27,311000,13
+
+Menu terlaris,Menu,Qty,Omzet
+Menu terlaris,"[DEMO] Seblak / Mie",18,288000
+Menu terlaris,"Es Teh Manis Jumbo",6,62000
+Menu terlaris,"MENU-RESEP-BEFBB5",4,80000
+Menu terlaris,"MENU-TANPA-RESEP-FC993E",3,15000
+Menu terlaris,"MENU-TANPA-RESEP-BEFBB5",3,15000
+Menu terlaris,"MENU-TANPA-RESEP-CE9E10",3,15000
+Menu terlaris,"MENU-X-a45f",2,40000
+Menu terlaris,"MENU-GORENGAN-CE9E10",2,16000
+Menu terlaris,"[DEMO] Nasi Goreng",2,39000
+Menu terlaris,"MENU-RESEP-CE9E10",2,40000
+
+Biaya per kategori,Jenis,Aktual,Estimasi
+Biaya per kategori,AIR,1000,400000
+Biaya per kategori,LISTRIK,0,8640
+Biaya per kategori,LPG,0,8250
+Biaya per kategori,SEWA,3000000,0

@@ -87,7 +87,9 @@ void main() {
     expect(find.text('Biaya Operasional'), findsOneWidget);
     await tester.tap(find.text('Biaya Operasional'));
     await tester.pumpAndSettle();
-    expect(find.text('Menyusul: Sprint 05 (biaya operasional)'), findsOneWidget);
+    // Halaman nyata (bukan placeholder): judul + tombol tambah biaya.
+    expect(find.text('Biaya Baru'), findsOneWidget);
+    expect(find.textContaining('Menyusul'), findsNothing);
   });
 
   testWidgets('tombol keluar memanggil signOut operator', (tester) async {

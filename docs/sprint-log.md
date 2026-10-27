@@ -1,5 +1,105 @@
 # Sprint Log
 
+## Sprint 05 — Biaya Operasional, Kalkulator, Kas dan Laporan
+Tanggal: 27 Oktober 2026
+Target/tiket: S05-01 … S05-09
+Status: **DONE** — semua tiket lulus dengan bukti nyata (migrasi + RPC Supabase asli, 41 integration test, Flutter 53 test, build web E2E di Chrome)
+
+### Yang dibangun
+- [x] **S05-01** Kalkulator energi: `energy_page.dart` — tab Listrik/LPG;
+  pratinjau live `kWh = (W × jam × load% ÷ 100) ÷ 1000` dan
+  `biaya_LPG = (isi_ulang ÷ jam_efektif) × jam_batch` + biaya/porsi;
+  server menghitung ulang rumus saat menyimpan.
+- [x] **S05-02** Tabel `equipment`/`energy_estimates`/`expenses`/
+  `cost_allocations` di migrasi
+  `supabase/migrations/20261027000012_operating_cost.sql` (terpush);
+  estimasi selalu menjadi expense `ESTIMATED`, tidak pernah otomatis aktual.
+- [x] **S05-03** Biaya operasional: `expenses_page.dart` — input LISTRIK/LPG/
+  AIR/KEMASAN/SEWA/INTERNET/LAINNYA, penanda ESTIMASI/AKTUAL terpisah di
+  list & laporan, URL bukti opsional, ubah tanggal.
+- [x] **S05-04** Alokasi biaya `cost_allocate` — server menolak
+  `allocation_exceeds_source` (juga saat nominal sumber diperkecil di bawah
+  alokasi lama); sheet alokasi per expense.
+- [x] **S05-05** Kas Shift `cash_page.dart` + RPC `cash_shift_open/status/
+  close` — hanya payment CASH menambah expected (transfer/QRIS
+  dikecualikan server); selisih `actual − expected` dihitung server;
+  partial unique index satu shift OPEN.
+- [x] **S05-06** Dashboard detail: 4 kartu dari `pos_reports` hari ini
+  (biaya bahan/HPP estimasi, biaya aktual, overhead estimasi, estimasi
+  hasil operasi) dengan label jujur "bukan laba bersih".
+- [x] **S05-07** Laporan `reports_page.dart` + RPC `pos_reports(p_from,p_to)`:
+  filter tanggal, tren omzet harian, menu terlaris, biaya per kategori
+  (aktual vs estimasi terpisah), refund mengurangi net sales, HPP bahan
+  dari resep aktif × unit_cost (dilabeli estimasi).
+- [x] **S05-08** Ekspor CSV (`buildReportCsv` + unduhan browser via
+  conditional import): BOM UTF-8, angka integer polos tanpa pemisah ribuan
+  agar makna tidak berubah di lembar kerja.
+- [x] **S05-09** Test: `tests/integration/test_operating_cost.py` (41 PASS)
+  + `test/features/operating_cost_test.dart` (11 test: rumus listrik/LPG/
+  per porsi, halaman, CSV, margin) → UAT-09–11 lulus.
+
+### Verifikasi
+- `supabase db push` migrasi `20261027000012_operating_cost.sql` → "Finished".
+- `python3 tests/integration/test_operating_cost.py` → **41 PASS, 0 FAIL**
+  (rumus 800W×3j×80%×Rp1.500 = 1,92 kWh / Rp 2.880; LPG 22.000/20×2,5 =
+  Rp 2.750; alokasi tepat=sumber OK, +1 ditolak, shrink sumber ditolak;
+  kas 100.000 + tunai, transfer dikecualikan, selisih −500; laporan =
+  hitungan DB; anon 401/403).
+- `flutter analyze` → 0 error (sisa 21 info dari file lama Sprint 01–04).
+- `flutter test` → **53/53 lulus** (11 baru Sprint 05 + regresi shell test
+  diperbarui: halaman Biaya Operasional kini halaman nyata, bukan placeholder).
+- `flutter build web --release` → ✓ (93,8 dtk) dengan dart-define produksi.
+- `npm run build` (apps/qr_web) → ✓ built in 2,88 dtk.
+
+### Bukti E2E (Chrome, build web final)
+| # | File | Membuktikan |
+|---|---|---|
+| 1 | `01_dashboard_awal.png` | S05-06: kartu HPP/biaya aktual/overhead estimasi/estimasi hasil operasi hari ini |
+| 2 | `02_kalkulator_listrik_pratinjau.png` | Demo wajib 800W×3j×80%×Rp1.500 → **1,920 kWh / Rp 2.880 / Rp 288 per porsi** |
+| 3 | `03_kalkulator_disimpan_estimasi.png` | Simpan → "Tersimpan … ESTIMATED (nilai server)" |
+| 4 | `04_kalkulator_lpg_pratinjau.png` | LPG 22.000/20j × 2,5j → Rp 1.100/jam, Rp 2.750 batch, Rp 275/porsi |
+| 5 | `05_biaya_estimasi_vs_aktual.png` | Listrik/LPG "dari kalkulator" ESTIMASI; sewa AKTUAL — chip & ikon terpisah |
+| 6 | `06_alokasi_ditolak_melebihi_sumber.png` | Sumber Rp 1.500.000 teralokasi penuh; +Rp 500.000 → snackbar "Total alokasi melebihi nominal biaya" |
+| 7 | `07_kas_shift_dibuka.png` | Shift dibuka kas awal Rp 100.000 |
+| 8 | `08_kas_expected_hanya_tunai.png` | Tunai net Rp 20.000 → expected Rp 120.000; transfer Rp 20.000 **tidak** menambah kas fisik |
+| 9 | `09_kas_tutup_selisih.png` | Tutup kas; DB: expected 120.000, actual 119.500, **variance −500** |
+| 10 | `10_laporan_penuh.png` | Net sales Rp 671.000 / refund Rp 171.000 / tren 2 hari / menu terlaris / biaya per kategori (AIR, LISTRIK, LPG, SEWA) aktual vs estimasi / catatan jujur |
+| 11 | `11_laporan_export.csv` | CSV terunduh & terbuka: angka integer polos, nilai = screenshot laporan |
+
+### Gate S05
+- [x] **UAT-09** Kalkulator listrik & LPG: rumus benar (client preview =
+  server recompute: 1,92 kWh & Rp 2.880; LPG Rp 2.750); estimasi vs aktual
+  dipisah di list, laporan, dan DB (`kind` ESTIMATED/ACTUAL).
+- [x] **UAT-10** Alokasi: total per sumber ≤ nominal (tepat = sumber OK,
+  +1 ditolak server; mengecilkan sumber di bawah alokasi lama ditolak);
+  laporan `allocated_total` = DB.
+- [x] **UAT-11** Tutup kas: hanya CASH menambah expected (transfer
+  dikecualikan); selisih −500 = actual 119.500 − expected 120.000, tercatat
+  di `cash_shifts` + audit event.
+
+### Temuan dan perbaikan saat pengujian
+- Masalah: pesan penolakan alokasi tampil "Terjadi kesalahan tak terduga".
+  Penyeban: `allocate()` melakukan cast `rpc(...) as Future<Map<…>>` —
+  Future<dynamic> melempar TypeError sebelum error server terbaca.
+  Perbaikan: `await` dulu, cast hasilnya (`operating_repository.dart`);
+  rebuild web → snackbar "Total alokasi melebihi nominal biaya" benar.
+- Masalah: test "keterangan < 3 huruf" gagal (200).
+  Penyebab: test memakai "singkat" (7 huruf) — lolos validasi ≥3.
+  Perbaikan: test diperbaiki ("ab"); kode benar.
+- Masalah: `shell_test.dart` mengharapkan placeholder "Menyusul: Sprint 05".
+  Perbaikan: ekspektasi diubah ke halaman nyata (tombol "Biaya Baru").
+- Catatan otomasi Chrome: Flutter web butuh klik `flt-semantics-placeholder`
+  setelah reload agar snapshot a11y tersedia; snackbar 4 dtk tertangkap
+  dengan klik → screenshot langsung beruntun.
+
+### Sisa pekerjaan / risiko
+- Pembuktian kas tutup selisih pada layar memakai nilai DB (snackbar
+  terlewat saat itu); angka variance −500 terverifikasi langsung dari
+  `cash_shifts`.
+- Android fisik belum diuji untuk Sprint 05 (perangkat tidak tersedia);
+  build web + 53 widget/unit test menjadi pengganti sementara.
+- S01-08 (GitHub Actions) masih menunggu remote GitHub.
+
 ## Sprint 04 — Stok, Pembelian, Resep, HPP
 Tanggal: 27 Oktober 2026
 Target/tiket: S04-01 … S04-09

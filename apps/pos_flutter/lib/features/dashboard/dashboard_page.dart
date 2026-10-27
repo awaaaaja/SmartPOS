@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../operating_cost/operating_repository.dart';
 import '../pos/pos_repository.dart';
 
 /// S02-09: ringkasan omzet dari transaksi final (net refund) via server.
@@ -75,19 +76,84 @@ class DashboardPage extends ConsumerWidget {
                         '${formatNumber(s.allTimeTransactions)} transaksi final',
                   ),
                 ];
-                if (!twoCol) {
-                  return Column(
-                    children: [
-                      for (final c in cards) ...[c, const SizedBox(height: 12)],
-                    ],
-                  );
-                }
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                final detail = ref.watch(dashboardReportProvider);
+                final detailCards = detail.maybeWhen(
+                  data: (r) => <Widget>[
+                    _StatCard(
+                      title: 'Biaya bahan hari ini (HPP resep, estimasi)',
+                      value: formatRupiah(r.hppIngredientCost),
+                      icon: Icons.inventory_2_rounded,
+                      color: warningColor,
+                      subtitle: 'resep aktif × harga bahan terkini',
+                    ),
+                    _StatCard(
+                      title: 'Biaya aktual hari ini',
+                      value: formatRupiah(r.expensesActualPeriod),
+                      icon: Icons.receipt_long_rounded,
+                      color: successColor,
+                      subtitle: 'tagihan nyata tercatat di Biaya Operasional',
+                    ),
+                    _StatCard(
+                      title: 'Overhead estimasi hari ini',
+                      value: formatRupiah(r.expensesEstimatedPeriod),
+                      icon: Icons.lightbulb_outline_rounded,
+                      color: warningColor,
+                      subtitle: 'asumsi/listrik-LPG dari kalkulator, bukan tagihan',
+                    ),
+                    _StatCard(
+                      title: 'Estimasi hasil operasi hari ini',
+                      value: formatRupiah(r.operatingMarginEstimate),
+                      icon: Icons.trending_up_rounded,
+                      color: brandPrimary,
+                      subtitle: 'net sales − biaya bahan − biaya aktual. '
+                          'Bukan laba bersih: tenaga kerja, susut & pajak '
+                          'belum lengkap.',
+                    ),
+                  ],
+                  orElse: () => const <Widget>[],
+                );
+                final primaryRow = twoCol
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = 0; i < cards.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 12),
+                            Expanded(child: cards[i]),
+                          ],
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          for (final c in cards) ...[
+                            c,
+                            const SizedBox(height: 12),
+                          ],
+                        ],
+                      );
+                return Column(
                   children: [
-                    for (var i = 0; i < cards.length; i++) ...[
-                      if (i > 0) const SizedBox(width: 12),
-                      Expanded(child: cards[i]),
+                    primaryRow,
+                    if (detailCards.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      if (twoCol)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var i = 0; i < detailCards.length; i++) ...[
+                              if (i > 0) const SizedBox(width: 12),
+                              Expanded(child: detailCards[i]),
+                            ],
+                          ],
+                        )
+                      else
+                        Column(
+                          children: [
+                            for (final c in detailCards) ...[
+                              c,
+                              const SizedBox(height: 12),
+                            ],
+                          ],
+                        ),
                     ],
                   ],
                 );

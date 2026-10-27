@@ -4,7 +4,7 @@
 | Metadata | Nilai |
 |---|---|
 | Tanggal | 26 Oktober 2026 |
-| Status | **Sprint 01–04 DONE** (bukti di `docs/sprint-log.md` + change log §13); Sprint 05–06 **TODO** |
+| Status | **Sprint 01–05 DONE** (bukti di `docs/sprint-log.md` + change log §13); Sprint 06 **TODO** |
 | Spesifikasi induk | `PRD.md` versi 2.1 |
 | Produk | Satu aplikasi Flutter untuk **satu operator** + satu web QR pelanggan |
 | UI | Tablet Android landscape prioritas, responsif HP, **brand `#930031`** dan Material Icons tanpa emoji |
@@ -195,6 +195,13 @@ flowchart LR
 
 **Demo:** input 800 W × 3 jam × load 80% × Rp1.500/kWh → tampil estimasi kWh/biaya; simpan expense **Estimasi** → bandingkan biaya aktual → lihat HPP dan laporan → tutup kas.
 
+**Gate S05:**
+- [x] **UAT-09** Kalkulator listrik dan LPG: rumus benar (pratinjau klien = hitungan ulang server: 1,92 kWh / Rp 2.880; LPG Rp 2.750); estimasi vs aktual dipisah di list, laporan, dan DB.
+- [x] **UAT-10** Alokasi biaya batch/periode: total per sumber ≤ nominal (tepat = sumber diterima; +Rp 1 ditolak server; mengecilkan sumber di bawah alokasi lama ditolak); laporan reconcile (`allocated_total` = DB).
+- [x] **UAT-11** Tutup kas: hanya pembayaran CASH menambah expected (transfer/QRIS dikecualikan server); selisih benar (expected 120.000, actual 119.500 → variance −500, tercatat di `cash_shifts`).
+
+Status: **DONE 27 Okt 2026** — bukti lengkap di `docs/sprint-log.md` (bagian Sprint 05): migrasi `20261027000012_operating_cost.sql` (terpush), `test_operating_cost.py` 41 PASS, `flutter test` 53/53, build web + 11 bukti E2E di `docs/evidence/sprint05/`.
+
 ---
 
 # 8. Sprint 06 – Penyempurnaan, QA, dan APK Rilis
@@ -320,6 +327,7 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 26 Okt 2026 | 02 | S02-01…S02-10 | DONE | migrasi 0005–0007 + API pos server-side + Flutter katalog/POS/riwayat/dashboard | `flutter analyze` 0 error; `flutter test` 29/29; REST integration 73 PASS 0 FAIL; alur E2E web Chrome 18 screenshot di `docs/evidence/sprint02/` | Pengujian HP Android ditunda (perangkat tidak tersedia); S01-08 tetap menunggu remote GitHub |
 | 26 Okt 2026 | 03 | S03-01…S03-09 | DONE | `96c2c08` migrasi 0008–0009 + web Vue QR + panel QR Masuk + draft idempoten | `flutter test` 33/33; REST `test_qr_drafts.py` 37 PASS 0 FAIL; 19 screenshot `docs/evidence/sprint03/` via HTTPS tunnel | Hosting QR permanen = keputusan user; Android fisik ditunda |
 | 27 Okt 2026 | 04 | S04-01…S04-09 | DONE | migrasi 0010 inventori + 0011 fix TZ dashboard + Flutter stok/pembelian/resep-HPP | `flutter analyze` 0 error; `flutter test` 42/42; `test_inventory.py` 57 PASS; regresi POS 77 PASS + QR 37 PASS; npm build 299 kB; 14 screenshot `docs/evidence/sprint04/` | Android fisik ditunda; S01-08 menunggu remote GitHub |
+| 27 Okt 2026 | 05 | S05-01…S05-09 | DONE | migrasi 0012 energi/biaya/alokasi/kas/laporan + RPC definer + Flutter kalkulator/biaya/kas/laporan + dashboard detail | `flutter analyze` 0 error; `flutter test` 53/53; `test_operating_cost.py` 41 PASS (UAT-09–11); npm build lulus; 11 bukti `docs/evidence/sprint05/` (kalkulator 1,92 kWh/Rp 2.880, alokasi ditolak, kas selisih −500, CSV) | Android fisik ditunda; S01-08 menunggu remote GitHub |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

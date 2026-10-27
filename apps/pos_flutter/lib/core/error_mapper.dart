@@ -29,6 +29,16 @@ String _mapBusinessError(String message) {
   if (m.startsWith('modifier_not_allowed')) {
     return 'Varian tidak tersedia untuk menu ini.';
   }
+  if (m.startsWith('allocation_exceeds_source')) {
+    return 'Total alokasi melebihi nominal biaya. Kurangi alokasi atau '
+        'ubah nominal biaya dulu.';
+  }
+  if (m.startsWith('shift_already_open')) {
+    return 'Sudah ada kas shift terbuka. Tutup dulu sebelum buka baru.';
+  }
+  if (m.startsWith('no_open_shift')) {
+    return 'Tidak ada kas shift terbuka. Buka shift dulu.';
+  }
   return 'Data tidak valid. Periksa isian lalu coba lagi.';
 }
 
