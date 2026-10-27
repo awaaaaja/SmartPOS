@@ -9,14 +9,14 @@ Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
 | Tiket | Status | Hasil / yang belum terbukti |
 |---|---|---|
 | S06-01 | PARTIAL | Audit 13 layar × 2 viewport × 3 state = 78 tes; perbaikan header/kartu overflow tujuh modul, POS tablet dua kolom, keranjang HP live dan form pembayaran scroll saat keyboard. Belum seluruh modal/populated state/keyboard di Android. |
-| S06-02 | PASS untuk checkout/QR/refund/koreksi stok | Regresi POS 77, inventori 57, QR 37, operasional 41 = **212 PASS, 0 FAIL** diulang terhadap hosted setelah migrasi `0013`. Checkout, QR submit, `pos_refund` dan `inv_adjust_stock` lulus idempotensi (9 tes SQL + 16 tes Flutter). RPC mutasi lain belum diaudit — lihat K06-01. |
+| S06-02 | PASS backend & klien QA | Regresi POS 77, inventori 57, QR 37, operasional 41 = **212 PASS, 0 FAIL** diulang terhadap hosted setelah `0014`. Audit semua RPC uang/stok selesai; empat celah lanjutan ditutup. 15 SQL + 155 Flutter lulus; smoke Chrome lost-response → reload → replay aman. UAT jaringan di tablet belum. |
 | S06-03 | PARTIAL | 29 probe hosted: 25 tabel privat anon tertutup + injection token + RPC internal ditolak. Non-operator ditolak di staging lokal. Scan pattern source/APK tidak menemukan secret server; password tes default dihapus. Rotasi password lama dan pemeriksaan riwayat sebelum distribusi masih wajib. |
 | S06-04 | PARTIAL | Dump privat + restore lokal 25 tabel/checksum dan 23 policy RLS; total uang cocok. Auth/Storage penuh, cloud staging, retensi terenkripsi dan crash-reporting release belum lulus. |
 | S06-05 | PARTIAL | Smoke Chrome manual sale #57 dan QR Q00114 → sale #58 lulus; subtotal 7.000, pajak 525, layanan 175, total 7.700, bayar 10.000, kembali 2.300. Bukan pengujian tablet target. |
 | S06-06 | PARTIAL | 1.000 produk memakai lazy list; metrik debug/widget dan latensi hosted dicatat. Belum profil native/FPS, tidak mengklaim UI bebas freeze pada tablet. |
 | S06-07 | DEFERRED | Printer ESC/POS/Bluetooth menunggu tipe perangkat; tidak menambah driver/fitur cetak fiktif. |
 | S06-08 | NOT IN SCOPE | Online-only, tanpa SQLite outbox. Operator harus mengetahui tidak ada sinkronisasi offline. |
-| S06-09 | PARTIAL | APK release compile berhasil setelah retry JVM IPv4; versi 1.0.0+1, 58.068.938 byte. **Unsigned**, verifikasi signature gagal sesuai harapan, belum dipasang. AAB tidak diperlukan untuk QA sideload dan belum dibangun. |
+| S06-09 | PARTIAL | APK release terbaru memuat `0013`–`0014`; versi 1.0.0+1, 58.281.930 byte. **Unsigned**, verifikasi signature exit 1, belum dipasang. AAB tidak diperlukan untuk QA sideload dan belum dibangun. |
 | S06-10 | PARTIAL | Changelog, instalasi/signing, setup Supabase, SOP dan checklist UAT tersedia. Latihan dan persetujuan operator belum dilakukan. |
 
 ### Perbaikan yang sudah diterapkan
@@ -38,10 +38,10 @@ Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
 
 ### Hasil dan bukti
 - `flutter analyze`: **No issues found**; `flutter test`: **134/134** saat audit
-  awal, kini **148/148** setelah tes retry (8 unit + 6 form/widget).
+  awal, **148/148** setelah `0013`, kini **155/155** setelah lanjutan `0014`.
   Log di `docs/evidence/sprint06/`.
 - 212 pemeriksaan integrasi dijalankan ulang terhadap hosted **setelah** migrasi
-  `0013`: **212 PASS, 0 FAIL** (POS 77, inventori 57, QR 37, operasional 41).
+  `0014`: **212 PASS, 0 FAIL** (POS 77, inventori 57, QR 37, operasional 41).
   Suite tetap memerlukan `OPERATOR_PASSWORD` environment.
 - Flutter web release dan Vue build berhasil. Delapan screenshot browser
   1024×768 / 390×844, angka smoke dicocokkan DB (`browser-smoke.json`).
@@ -85,14 +85,54 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
   kedua RPC dan tabel; 9 tes SQL lokal; 148 tes Flutter; analyzer 0 issue.
 - **Migrasi sudah diterapkan ke hosted** (`supabase db push`); regresi 4 suite
   terhadap hosted setelah migrasi: **212 PASS, 0 FAIL**.
-- **Sisa K06-01:** audit idempotensi RPC mutasi lain (`inv_create_purchase`,
-  `inv_produce_batch`, expense/energi, alokasi) — belum punya kunci; build &  distribusikan klien baru (klien lama kini gagal tertutup dengan
-  `missing_idempotency_key`); bukti jaringan putus di perangkat target.
+- Status di atas adalah hasil `0013`; audit lanjutan dan empat fix sisa selesai
+  di `0014` berikut. Distribusi klien dan UAT perangkat target tetap belum.
+
+### Lanjutan K06-01 — empat RPC sisa (SELESAI backend/klien QA)
+- Audit menemukan retry menggandakan PO/stok, batch/pemakaian bahan, CREATE biaya,
+  dan estimasi energi/expense. `inv_receive_purchase` dan buka/tutup kas sudah
+  memakai lock/guard status; `cost_allocate` memakai upsert, tidak menggandakan
+  alokasi. Checkout/QR mempunyai key sendiri; master bahan/resep bukan ledger.
+- Migrasi `20261027000014_mutation_retry_rest.sql` memperluas `mutation_requests`,
+  menutup empat implementasi `*_once` dari klien, dan memakai helper internal
+  `mutation_run_once` (tanpa grant klien). Key wajib 8–128 char, advisory lock,
+  payload conflict dan respons atomik; data historis tidak disentuh.
+- UPDATE `exp_save` tetap tanpa key/cache (penetapan nilai, bukan INSERT),
+  sehingga edit berikutnya tidak terkunci. Jalur ini juga memeriksa operator;
+  tes non-operator menolak UPDATE sebelum efek.
+- Repository Flutter mengirim key untuk keempat alur; form memulihkan payload
+  terkunci setelah timeout/relaunch. Pembandingan nested list/map pembelian kini
+  memakai `DeepCollectionEquality` dari `collection` yang sudah terpasang.
+  `http` yang sudah terpasang dinyatakan sebagai dev dependency untuk tes RPC
+  sebenarnya dengan transport palsu. Tidak menambah fitur/abstraksi outbox.
+- Tidak menambah buang-pending: replay lama harus dikonfirmasi sebelum niat baru.
+  Storage hilang/rusak tetap membutuhkan rekonsiliasi, bukan clear data aplikasi.
+- **Hosted:** backup definisi privat `pre-0014-functions.sql`, dry-run dan push
+  `0014` lulus. Probe `BEGIN/ROLLBACK`: PO/batch/biaya/energi masing-masing satu
+  efek, saldo 100+1−10=91, energi Rp2.880, empat konflik ditolak, empat cache;
+  fixture/key tersisa 0 setelah rollback (sequence ID boleh maju). Anon keempat
+  RPC 401; helper/legacy tanpa grant klien; tabel RLS aktif, policy 0.
+- **Tes:** 15 SQL lokal lulus (replay, 8 concurrent request, konflik, validasi,
+  rollback, izin); **155/155 Flutter**, analyzer 0 issue. Lima widget case baru
+  menguji repository nyata/serialisasi RPC + transport mock: purchase, batch,
+  expense, listrik, LPG; satu tes edit expense tanpa key dan satu nested equality.
+  Regresi hosted setelah migrasi: **212 PASS, 0 FAIL**.
+- **Chrome release:** respons energi sukses sengaja dijatuhkan; form pending
+  terkunci, reload/reopen pada 390×844 memulihkan isian, retry memakai key lama
+  dan `idempotent_replay=true`. DB tetap estimate #22/expense #42 satu baris,
+  Rp2.880 ESTIMATED, pending lokal bersih. Satu pasangan data QA dipertahankan
+  sebagai histori audit, bukan dihapus. Tiga screenshot tambahan (bukan Android).
+- **Build:** web 164,4 dtk dan APK 179,9 dtk lulus. APK 58.281.930 byte, SHA-256
+  `6afbfbb6cf3d36763bdcfd512113304a2f0e0aabb60cd0c9014fc3725d0a7289`.
+  Empat label retry terverifikasi di `libapp.so`. Masih **UNSIGNED**,
+  `apksigner verify` exit 1 (`Missing META-INF/MANIFEST.MF`).
+- Bukti terbaru: `evidence/sprint06/retry-rest-fix.json`; tidak ada Git push atau
+  rilis produksi. Klien lama tanpa key gagal tertutup setelah migrasi.
 
 ### Paket serah terima / gate tersisa
 `docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
-`docs/evidence/sprint06/README.md`. Gate tersisa: audit retry mutasi lain
-(K06-01 lanjutan), signing/instalasi (K06-02), Android target/manual operator
+`docs/evidence/sprint06/README.md`. K06-01 backend/klien QA selesai. Gate tersisa:
+signing/instalasi dan distribusi klien baru (K06-02), Android target/manual operator
 (K06-03), rotasi password lama (K06-05), pemulihan Supabase lengkap (K06-04)
 dan hosting QR permanen (K06-06). Tidak ada push/release produksi. S01-08 tetap
 menunggu remote GitHub, bukan diklaim hijau.

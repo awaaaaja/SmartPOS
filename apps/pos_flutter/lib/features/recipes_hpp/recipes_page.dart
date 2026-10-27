@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../../core/mutation_retry.dart';
 import '../inventory/inventory_repository.dart';
 
 /// S04-04/S04-07: Resep & HPP. Pilih menu -> tampil status resep jujur
@@ -325,8 +326,25 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
   }
 
   Future<void> _produceBatch(RecipeProduct product) async {
-    final qtyController = TextEditingController(text: '1');
-    final noteController = TextEditingController();
+    final repository = ref.read(inventoryRepositoryProvider);
+    PendingMutation? pending;
+    try {
+      pending = await repository.pendingProduction(product.id);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(error))));
+      }
+      return;
+    }
+    if (!mounted) return;
+    final qtyController = TextEditingController(
+      text: pending == null ? '1' : '${pending.params['p_qty_produced']}',
+    );
+    final noteController = TextEditingController(
+      text: pending?.params['p_note'] as String? ?? '',
+    );
 
     final ok = await showDialog<bool>(
       context: context,
@@ -334,43 +352,56 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
         title: Text('Produksi batch — ${product.name}'),
         content: SizedBox(
           width: 380,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: qtyController,
-                autofocus: true,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: qtyController,
+                  enabled: pending == null,
+                  autofocus: true,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Jumlah yang dihasilkan (porsi)',
+                    helperText:
+                        'Bahan dipotong di sini; penjualan tidak '
+                        'memotong lagi.',
+                    isDense: true,
+                  ),
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Jumlah yang dihasilkan (porsi)',
-                  helperText:
-                      'Bahan dipotong di sini; penjualan tidak '
-                      'memotong lagi.',
-                  isDense: true,
+                const SizedBox(height: 12),
+                TextField(
+                  controller: noteController,
+                  enabled: pending == null,
+                  decoration: const InputDecoration(
+                    labelText: 'Catatan (opsional)',
+                    isDense: true,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: noteController,
-                decoration: const InputDecoration(
-                  labelText: 'Catatan (opsional)',
-                  isDense: true,
-                ),
-              ),
-            ],
+                if (pending != null) ...[
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Permintaan sebelumnya belum terkonfirmasi. '
+                    'Ulangi produksi yang sama; jangan memotong bahan lagi.',
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
+            child: Text(pending == null ? 'Batal' : 'Tutup'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Catat produksi'),
+            child: Text(
+              pending == null ? 'Catat produksi' : 'Ulangi produksi yang sama',
+            ),
           ),
         ],
       ),
@@ -378,15 +409,13 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
     if (ok != true || !mounted) return;
 
     try {
-      await ref
-          .read(inventoryRepositoryProvider)
-          .produceBatch(
-            productId: product.id,
-            qtyProduced: double.tryParse(qtyController.text.trim()) ?? 0,
-            note: noteController.text.trim().isEmpty
-                ? null
-                : noteController.text.trim(),
-          );
+      await repository.produceBatch(
+        productId: product.id,
+        qtyProduced: double.tryParse(qtyController.text.trim()) ?? 0,
+        note: noteController.text.trim().isEmpty
+            ? null
+            : noteController.text.trim(),
+      );
       await _refresh(product.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

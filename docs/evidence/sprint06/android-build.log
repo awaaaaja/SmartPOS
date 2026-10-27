@@ -20,5 +20,6 @@ Got dependencies!
 Try `flutter pub outdated` for more information.
 Running Gradle task 'assembleRelease'...
 Picked up JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
-Running Gradle task 'assembleRelease'...                          456.0s
-✓ Built build/app/outputs/flutter-apk/app-release.apk (58.1MB)
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 14064 bytes (99.1% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Running Gradle task 'assembleRelease'...                          179.9s
+✓ Built build/app/outputs/flutter-apk/app-release.apk (58.3MB)

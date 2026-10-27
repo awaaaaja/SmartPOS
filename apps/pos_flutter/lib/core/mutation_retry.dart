@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,7 +60,8 @@ class MutationRetryStore {
     if (!_active.add(slot)) throw StateError('Mutation already in progress');
     try {
       var request = await pending(owner, operation, target);
-      if (request != null && !mapEquals(request.params, params)) {
+      if (request != null &&
+          !const DeepCollectionEquality().equals(request.params, params)) {
         throw StateError('pending_mutation_conflict');
       }
       if (request == null) {

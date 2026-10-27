@@ -75,6 +75,46 @@ void main() {
   });
 
   test(
+    'nested purchase items survive serialization and reject changed lines',
+    () async {
+      const payload = {
+        'p_items': [
+          {'ingredient_id': 1, 'qty': 2.0, 'unit': 'kg', 'total_price': 13000},
+        ],
+      };
+      String? key;
+      await expectLater(
+        submit((wire) async {
+          key = wire['p_idempotency_key'] as String;
+          throw TimeoutException('lost');
+        }, payload: payload),
+        throwsA(isA<TimeoutException>()),
+      );
+      store = MutationRetryStore(preferences);
+      await expectLater(
+        submit(
+          (_) async => fail('changed item must not reach RPC'),
+          payload: {
+            'p_items': [
+              {
+                'ingredient_id': 1,
+                'qty': 3.0,
+                'unit': 'kg',
+                'total_price': 13000,
+              },
+            ],
+          },
+        ),
+        throwsStateError,
+      );
+      await submit((wire) async {
+        expect(wire['p_idempotency_key'], key);
+        return 1;
+      }, payload: payload);
+    },
+  );
+
+  test(
     'business rejection allows correction, authorization/transport/conflict retain identity',
     () async {
       await expectLater(

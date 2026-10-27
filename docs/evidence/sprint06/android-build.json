@@ -1,20 +1,20 @@
 {
   "artifact": "apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk",
   "version": "1.0.0+1",
-  "bytes": 58183626,
-  "sha256": "a4a9588e4cd1443429bf0434a5b61db19e8d33448d81983bfe98aa1ad6e8f958",
-  "build_result": "PASS (180.2s) after IPv4 JVM retry; initial attempt failed DNS",
-  "rebuilt_for": "K06-01 client fix (mutation_retry store + refund/stock retry forms)",
+  "bytes": 58281930,
+  "sha256": "6afbfbb6cf3d36763bdcfd512113304a2f0e0aabb60cd0c9014fc3725d0a7289",
+  "build_result": "PASS (179.9s), JVM IPv4; first attempt of this rebuild succeeded",
+  "rebuilt_for": "K06-01 remaining four RPCs, nested payload equality and pending form restoration (0014)",
   "client_fix_present_in_binary": {
     "method": "strings on lib/arm64-v8a/libapp.so",
-    "Simpan Refund": 1,
-    "Ulangi refund yang sama": 1,
-    "Ulangi mutasi yang sama": 2,
-    "pending-mutation": 1,
-    "idempotency_key_conflict": 1
+    "Ulangi pembelian yang sama": true,
+    "Ulangi produksi yang sama": true,
+    "Ulangi biaya yang sama": true,
+    "Ulangi estimasi yang sama": true,
+    "pending-mutation": true
   },
   "signing": "UNSIGNED - MEJENG_KEYSTORE_PATH not provided; apksigner verify exit 1 (Missing META-INF/MANIFEST.MF); not installable/distributable",
-  "sensitive_pattern_scan": "PASS",
+  "sensitive_pattern_scan": "PASS: runtime secret values absent from source/test/migration/evidence/web files and all APK entries; values not printed",
   "matched_entries": [],
   "ab_is_present": false,
   "architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
@@ -22,6 +22,6 @@
   "target_sdk": 36,
   "qr_web_url": "not configured; permanent HTTPS hosting required",
   "installed_on_android": false,
-  "previous_artifact_sha256": "0a51b2095ce8ca6ea12efa5c14a8df2f2dc7dfa4759b74bf2f3715841864604b (pre-fix, superseded)",
+  "previous_artifact_sha256": "a4a9588e4cd1443429bf0434a5b61db19e8d33448d81983bfe98aa1ad6e8f958 (refund/stock-only fix, superseded)",
   "release_gate": "BLOCKED"
 }

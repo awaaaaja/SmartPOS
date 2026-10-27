@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pos_flutter/app/theme.dart';
+import 'package:pos_flutter/core/mutation_retry.dart';
 import 'package:pos_flutter/features/cash_shift/cash_page.dart';
 import 'package:pos_flutter/features/energy/energy_page.dart';
 import 'package:pos_flutter/features/expenses/expenses_page.dart';
@@ -16,9 +17,18 @@ import 'package:pos_flutter/features/reports/reports_page.dart';
 /// - laporan: refund mengurangi net sales, alokasi ≠ biaya (UAT-10)
 
 Widget _app(Widget child) => ProviderScope(
+      overrides: [operatingRepositoryProvider.overrideWithValue(_Operating())],
       child: MaterialApp(
           theme: buildAppTheme(), home: Scaffold(body: child)),
     );
+
+class _Operating implements OperatingRepository {
+  @override
+  Future<PendingMutation?> pendingEnergyEstimate() async => null;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
+}
 
 void main() {
   group('EnergyCalculator (UAT-09)', () {

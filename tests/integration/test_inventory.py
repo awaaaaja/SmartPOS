@@ -112,6 +112,7 @@ def main():
     # ------------------------------------------------------------------
     print("\n== S04-03: pembelian 1 kg -> saldo +1000 g (konversi) ==")
     status, po = rpc(token, "inv_create_purchase", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_supplier": "Toko Uji",
         "p_items": [{"ingredient_id": ing_g, "qty": 1, "unit": "kg",
                      "total_price": 13000}],
@@ -127,6 +128,7 @@ def main():
           ing and ing[0]["unit_cost"] == 13, str(ing))
 
     status, po_ml = rpc(token, "inv_create_purchase", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_items": [{"ingredient_id": ing_ml, "qty": 2, "unit": "l",
                      "total_price": 10000}],
         "p_status": "RECEIVED"})
@@ -139,6 +141,7 @@ def main():
     # ------------------------------------------------------------------
     print("\n== S04-03: ORDERED belum menambah saldo; RECEIVE sekali ==")
     status, po2 = rpc(token, "inv_create_purchase", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_items": [{"ingredient_id": ing_pcs, "qty": 10, "unit": "pcs",
                      "total_price": 25000}],
         "p_status": "ORDERED"})
@@ -327,6 +330,7 @@ def main():
     bal0 = req(f"/rest/v1/ingredients?select=balance&"
                f"id=eq.{ing_g}", token)[1][0]["balance"]
     status, batch = rpc(token, "inv_produce_batch", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_product_id": pid4, "p_qty_produced": 6, "p_note": "uji"})
     check("produksi batch sukses", status == 200, str(batch)[:200])
     bal1 = req(f"/rest/v1/ingredients?select=balance&"
@@ -400,6 +404,7 @@ def main():
     check("anon tidak bisa baca ledger", status in (401, 403) or anon == [],
           str(status))
     status, anon = req("/rest/v1/rpc/inv_create_purchase", body={
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_items": []})
     check("anon tidak bisa memanggil RPC inventori",
           status in (401, 403), str(status))

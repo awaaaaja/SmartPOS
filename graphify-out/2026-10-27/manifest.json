@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/error_mapper.dart": {
-    "mtime": 1793061740.1805134,
-    "ast_hash": "3a2dc0c2b58514c689091acf7684c921",
+    "mtime": 1793090238.6640608,
+    "ast_hash": "3b2e6517a969593019db969b8c4e78ad",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/formatters.dart": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/inventory/stock_page.dart": {
-    "mtime": 1793084106.4759445,
-    "ast_hash": "9bfa4ab8ff794de34ad7e41245e41b8e",
+    "mtime": 1793104043.828602,
+    "ast_hash": "aa5d1dc4232d1fce3bdc502a54107c07",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/pos_page.dart": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/pos_repository.dart": {
-    "mtime": 1793015482.612624,
-    "ast_hash": "a58a9f0c1a9cb32ddbc81568f991dc3a",
+    "mtime": 1793104043.8500643,
+    "ast_hash": "651c924219cbe4fee095e4787471d5f3",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/purchases/purchases_page.dart": {
@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/sales_history/history_page.dart": {
-    "mtime": 1793084106.4759445,
-    "ast_hash": "99cffa0f46f64245163a1be26a896068",
+    "mtime": 1793104043.925602,
+    "ast_hash": "e9d1dcca0cf6e3de10d414085867d6c5",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/settings/settings_page.dart": {
@@ -160,8 +160,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/core/error_mapper_test.dart": {
-    "mtime": 1793036150.9475877,
-    "ast_hash": "3d3b54c0589a4d4a46ee9c3711b9767d",
+    "mtime": 1793102707.8632882,
+    "ast_hash": "4947ca6283b1ae249683521d608070e0",
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/core/formatters_test.dart": {
@@ -260,13 +260,13 @@
     "semantic_hash": ""
   },
   "tests/integration/supabase_stub.sql": {
-    "mtime": 1793010053.8653681,
-    "ast_hash": "541934b5c8fcb462fac1f8cf1d10da42",
+    "mtime": 1793089692.4419274,
+    "ast_hash": "47900a0b780eb195f5b7a2c3baece66d",
     "semantic_hash": ""
   },
   "tests/integration/test_pos_api.py": {
-    "mtime": 1793083392.1539185,
-    "ast_hash": "4b382a1b875dbd3a0383f2d821f93765",
+    "mtime": 1793102545.6469867,
+    "ast_hash": "85547feb4672099d94d4b3596b586f7d",
     "semantic_hash": ""
   },
   "utils/supabase.ts": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1793010053.8653681,
-    "ast_hash": "28230954fb556401aed6287169f5cded",
+    "mtime": 1793089807.3406157,
+    "ast_hash": "0cd1e0d2648a7d41e5f57672f8a78b36",
     "semantic_hash": ""
   },
   "PRD.md": {
@@ -295,8 +295,8 @@
     "semantic_hash": ""
   },
   "Sprints.md": {
-    "mtime": 1793088077.7350469,
-    "ast_hash": "a3cdbb73f27380a5a850b0b3c736c46d",
+    "mtime": 1793105551.311287,
+    "ast_hash": "8c7d3d2d53c20809e487d050c4ff6bcb",
     "semantic_hash": ""
   },
   "apps/pos_flutter/README.md": {
@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/pubspec.yaml": {
-    "mtime": 1793084172.1676722,
-    "ast_hash": "399f8ecfbb493077d1a6329ddcdcf450",
+    "mtime": 1793090082.923364,
+    "ast_hash": "a60b600097f8b9e196f46c204e035c99",
     "semantic_hash": ""
   },
   "apps/pos_flutter/web/index.html": {
@@ -325,8 +325,8 @@
     "semantic_hash": ""
   },
   "docs/api-contracts.md": {
-    "mtime": 1793010021.340497,
-    "ast_hash": "16e9bb498adbb2642f7ba418d4cfbfb9",
+    "mtime": 1793104808.1204667,
+    "ast_hash": "b4d34f7e799a35d4167b114754cbbc06",
     "semantic_hash": ""
   },
   "docs/decision-log.md": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "docs/sprint-log.md": {
-    "mtime": 1793088077.7350469,
-    "ast_hash": "0ce2f6ac062bc3e7165ffb175ed78bc1",
+    "mtime": 1793105500.1391242,
+    "ast_hash": "62613e77bc008f3d4ec70e49868989b8",
     "semantic_hash": ""
   },
   "docs/ui-diff.md": {
@@ -675,8 +675,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/inventory/inventory_repository.dart": {
-    "mtime": 1793037674.3977144,
-    "ast_hash": "4b856f406ba5783aac2703c0e64ba8b8",
+    "mtime": 1793104043.720602,
+    "ast_hash": "bbe8bc51b9d48bbe5a23587d25d8d5bf",
     "semantic_hash": ""
   },
   "apps/pos_flutter/test/features/inventory_pages_test.dart": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_inventory.py": {
-    "mtime": 1793083392.1569185,
-    "ast_hash": "27148704b2c7efc83ce12ea87f4386ea",
+    "mtime": 1793102545.6469867,
+    "ast_hash": "1ba59b5f6d248b497f1c4b2a243784ea",
     "semantic_hash": ""
   },
   "docs/evidence/sprint04/01-dashboard-omzet-hari-ini.png": {
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_operating_cost.py": {
-    "mtime": 1793083392.1579185,
-    "ast_hash": "5dca516df50f333c8d0e2bb44cc84d75",
+    "mtime": 1793102545.6479867,
+    "ast_hash": "434c8ebdd34761f220c760dc101c8830",
     "semantic_hash": ""
   },
   "docs/evidence/sprint05/01_dashboard_awal.png": {
@@ -910,18 +910,18 @@
     "semantic_hash": ""
   },
   "docs/evidence/sprint06/README.md": {
-    "mtime": 1793088077.7350469,
-    "ast_hash": "3a59e27fdab2f94df9215fb694275f3d",
+    "mtime": 1793105380.0744872,
+    "ast_hash": "ea369b6da98a8bfc167579552a277e24",
     "semantic_hash": ""
   },
   "docs/handover.md": {
-    "mtime": 1793087322.4996235,
-    "ast_hash": "38d381568ce59302af57e0d1c9d9a315",
+    "mtime": 1793105455.4199822,
+    "ast_hash": "f29245cb267a992d1c5102bae3443ed8",
     "semantic_hash": ""
   },
   "docs/release-notes.md": {
-    "mtime": 1793087322.4976885,
-    "ast_hash": "ced3d340019f70980a01490dadadda38",
+    "mtime": 1793105632.853546,
+    "ast_hash": "904b967f162cf31abf432499387374a6",
     "semantic_hash": ""
   },
   "docs/evidence/sprint06/01_dashboard_tablet_web.png": {
@@ -962,6 +962,51 @@
   "docs/evidence/sprint06/08_pos_hp_web.png": {
     "mtime": 1793087691.9012609,
     "ast_hash": "be092f2f2c5b1421ea2c1ed12f0bed17",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/lib/core/mutation_retry.dart": {
+    "mtime": 1793104043.683602,
+    "ast_hash": "46c514d795d06bfbc584b07eaecb32b5",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/core/mutation_retry_test.dart": {
+    "mtime": 1793104043.934602,
+    "ast_hash": "dce9a67b7d5cee71ab60170c08a3cc7f",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/features/mutation_retry_forms_test.dart": {
+    "mtime": 1793104043.9626021,
+    "ast_hash": "80d5e10e31820b2844417de1b3588d85",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/helpers/memory_preferences.dart": {
+    "mtime": 1793102707.862288,
+    "ast_hash": "fac23822dfbab507e029ecc43dac5158",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/csv-browser.json": {
+    "mtime": 1793088709.3229115,
+    "ast_hash": "ffa532ff62d63d94aa290cd432256458",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/retry-fix.json": {
+    "mtime": 1793105367.0107462,
+    "ast_hash": "ef17b1e167633de7bc60bb465d330c95",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261027000013_mutation_retry.sql": {
+    "mtime": 1793090082.9211779,
+    "ast_hash": "decfd119c8ea9a666cd9980f3b9491c7",
+    "semantic_hash": ""
+  },
+  "tests/integration/test_mutation_retry.py": {
+    "mtime": 1793103922.1906211,
+    "ast_hash": "b9c751fe49690c14dc17f0448ad5be0e",
+    "semantic_hash": ""
+  },
+  ".hyperflow/tasks/fix-refund-stock-retry.md": {
+    "mtime": 1793104808.1194668,
+    "ast_hash": "21a160bc91b9cd11d1d2ef9b548a6444",
     "semantic_hash": ""
   }
 }

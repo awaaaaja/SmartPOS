@@ -354,26 +354,33 @@ class InventoryRepository {
 
   /// items: [{ingredient_id, qty, unit, total_price}] — qty boleh dalam
   /// kg/liter; server konversi ke satuan dasar.
+  Future<PendingMutation?> pendingPurchase() => _retries.pending(
+    _client.auth.currentUser?.id ?? '',
+    'inv_create_purchase',
+    0,
+  );
+
   Future<int> createPurchase({
     String? supplier,
     required List<Map<String, dynamic>> items,
     required String status,
     DateTime? purchasedAt,
-  }) async {
-    final row = await _client.rpc(
-      'inv_create_purchase',
-      params: {
-        'p_supplier': supplier,
-        'p_items': items,
-        'p_purchased_at': (purchasedAt ?? DateTime.now())
-            .toIso8601String()
-            .substring(0, 10),
-        'p_status': status,
-      },
-    );
-    return (Map<String, dynamic>.from(row as Map)['purchase_id'] as num)
-        .toInt();
-  }
+  }) => _retries.run(
+    owner: _client.auth.currentUser?.id ?? '',
+    operation: 'inv_create_purchase',
+    target: 0,
+    params: {
+      'p_supplier': supplier,
+      'p_items': items,
+      'p_purchased_at': purchasedAt?.toIso8601String().substring(0, 10),
+      'p_status': status,
+    },
+    send: (params) async {
+      final row = await _client.rpc('inv_create_purchase', params: params);
+      return (Map<String, dynamic>.from(row as Map)['purchase_id'] as num)
+          .toInt();
+    },
+  );
 
   Future<void> receivePurchase(int purchaseId) => _client.rpc(
     'inv_receive_purchase',
@@ -429,16 +436,27 @@ class InventoryRepository {
   }
 
   /// Produksi batch (gorengan): bahan dipotong sekali di sini.
+  Future<PendingMutation?> pendingProduction(int productId) => _retries.pending(
+    _client.auth.currentUser?.id ?? '',
+    'inv_produce_batch',
+    productId,
+  );
+
   Future<void> produceBatch({
     required int productId,
     required double qtyProduced,
     String? note,
-  }) => _client.rpc(
-    'inv_produce_batch',
+  }) => _retries.run<void>(
+    owner: _client.auth.currentUser?.id ?? '',
+    operation: 'inv_produce_batch',
+    target: productId,
     params: {
       'p_product_id': productId,
       'p_qty_produced': qtyProduced,
       'p_note': note,
+    },
+    send: (params) async {
+      await _client.rpc('inv_produce_batch', params: params);
     },
   );
 }

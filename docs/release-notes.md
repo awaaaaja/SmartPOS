@@ -1,7 +1,7 @@
 # Catatan kandidat MVP 1.0.0+1 — 27 Oktober 2026
 
-**Status: QA/PARTIAL, bukan rilis produksi.** Gate uang/stok, signing,
-perangkat target, dan pemulihan Supabase penuh belum lulus.
+**Status: QA/PARTIAL, bukan rilis produksi.** Retry backend/klien QA lulus;
+signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum lulus.
 
 ## Perubahan Sprint 06
 
@@ -43,23 +43,41 @@ perangkat target, dan pemulihan Supabase penuh belum lulus.
 - **Bukti**: `docs/evidence/sprint06/retry-fix.json` (replay hosted dalam
   `BEGIN/ROLLBACK` +100/+1, probe anon 401, 9 tes SQL, 148 tes Flutter,
   regresi hosted 212 PASS 0 FAIL). Detail: `docs/sprint-log.md` Sprint 06.
-- **Belum dicakup**: `inv_create_purchase`, `inv_produce_batch`, biaya
-  energi/expense dan alokasi belum punya pola key serupa; APK lama (tanpa
-  perbaikan klien) akan gagal tertutup setelah migrasi — build ulang wajib.
+- Empat celah sisa ditutup pada lanjutan `0014` di bawah. Hasil `0013` di atas
+  dipertahankan sebagai riwayat, bukan status akhir cakupan retry.
+
+## Lanjutan K06-01 — pembelian, produksi, biaya dan energi
+
+- Migrasi `20261027000014_mutation_retry_rest.sql` **terpasang di hosted**.
+  Keempat RPC CREATE/mutasi kini wajib key 8–128 karakter; helper internal
+  deduplikasi dan `*_once` tidak dapat dipanggil klien. UPDATE biaya tetap
+  tanpa cache/key agar edit berikutnya tidak terkunci; izin operator diperiksa.
+- Klien memakai penyimpanan retry yang sama, dengan pembandingan list/map
+  mendalam. Form mengembalikan isian lama yang terkunci setelah timeout/relaunch.
+  Tidak ada tombol buang pending atau outbox baru; konfirmasikan replay dahulu.
+- Audit RPC lain: checkout/QR sudah memakai key, penerimaan/kas memakai guard
+  status dan alokasi memakai upsert. Tidak menambah fitur baru.
+- **Bukti** `retry-rest-fix.json`: 15 SQL, 155 Flutter, analyzer 0 issue,
+  regresi hosted **212 PASS, 0 FAIL**. Replay hosted rollback empat RPC = satu
+  efek per key; konflik ditolak, anon 401, fixture probe tersisa 0.
+- Smoke Chrome listrik: respons sukses sengaja dihilangkan, browser dimuat ulang,
+  lalu retry menghasilkan `idempotent_replay=true`, estimate #22/expense #42 tetap
+  satu, Rp2.880 ESTIMATED. Tiga screenshot tambahan; **bukan uji Android/jaringan fisik**.
+- Klien lama tanpa key akan gagal tertutup setelah migrasi. Distribusi klien baru
+  bertanda tangan tetap wajib sebelum operator memakai aplikasi.
 
 ## Artefak lokal
 
 | Artefak | Hasil |
 |---|---|
-| `apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk` | 58.183.626 byte; **UNSIGNED**, belum dapat dipasang; sudah diperbarui memuat perbaikan K06-01 |
-| `apps/pos_flutter/build/web/` | Build release web berhasil (155 s), memuat perbaikan K06-01; hanya untuk QA |
+| `apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk` | 58.281.930 byte; **UNSIGNED**, belum dapat dipasang; memuat perbaikan `0013`–`0014` |
+| `apps/pos_flutter/build/web/` | Build release web berhasil (164,4 s), memuat perbaikan `0013`–`0014`; hanya untuk QA |
 | `apps/qr_web/dist/` | Build Vue berhasil; hosting HTTPS permanen belum ada |
 
 SHA-256 APK (setelah rebuild K06-01):
-`a4a9588e4cd1443429bf0434a5b61db19e8d33448d81983bfe98aa1ad6e8f958`.
-Artefak sebelumnya (`0a51b209…64604b`) sudah digantikan dan **tidak** memuat
-perbaikan retry — jangan dipakai. Build pertama percobaan lama gagal DNS Google
-Storage; percobaan JVM IPv4 berhasil (kali ini lulus percobaan pertama).
+`6afbfbb6cf3d36763bdcfd512113304a2f0e0aabb60cd0c9014fc3725d0a7289`.
+Artefak sebelumnya (`a4a9588e…f958`) digantikan; hanya memuat fix refund/koreksi,
+bukan empat RPC lanjutan. Build terbaru lulus percobaan pertama dengan JVM IPv4.
 `apksigner verify` menolak APK unsigned (exit 1), sesuai status artefaknya.
 File build/backup tidak masuk Git; keberadaannya lokal, bukan tautan distribusi.
 

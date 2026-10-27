@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pos_flutter/app/theme.dart';
 import 'package:pos_flutter/core/models/sale_models.dart';
+import 'package:pos_flutter/core/mutation_retry.dart';
 import 'package:pos_flutter/features/cash_shift/cash_page.dart';
 import 'package:pos_flutter/features/catalog/catalog_page.dart';
 import 'package:pos_flutter/features/catalog/catalog_repository.dart';
@@ -29,6 +30,17 @@ Future<T> _response<T>(String state, T value) => switch (state) {
   'error' => Future<T>.error(Exception('network unavailable')),
   _ => Future<T>.value(value),
 };
+
+class _Operating implements OperatingRepository {
+  _Operating(this.state);
+  final String state;
+
+  @override
+  Future<PendingMutation?> pendingEnergyEstimate() => _response(state, null);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
+}
 
 void main() {
   const pages = <String, Widget>{
@@ -72,6 +84,7 @@ void main() {
           await tester.pumpWidget(
             ProviderScope(
               overrides: [
+                operatingRepositoryProvider.overrideWithValue(_Operating(state)),
                 businessSettingsProvider.overrideWith(
                   (ref) => _response(state, {
                     'name': 'Waroeng MeJeng Kampoeng',

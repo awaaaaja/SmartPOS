@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../../core/mutation_retry.dart';
 import '../inventory/inventory_repository.dart';
 
 /// S04-03: Pembelian. Supplier opsional, bahan + qty (boleh kg/liter,
@@ -149,7 +150,20 @@ class PurchasesPage extends ConsumerWidget {
   /// Form pembelian multi-bahan. Satuan mengikuti satuan dasar bahan
   /// (dan kg/liter yang dikonversi server).
   Future<void> _createPurchase(BuildContext context, WidgetRef ref) async {
-    final ingredients = await ref.read(ingredientsProvider.future);
+    final repository = ref.read(inventoryRepositoryProvider);
+    PendingMutation? pending;
+    List<Ingredient> ingredients;
+    try {
+      pending = await repository.pendingPurchase();
+      ingredients = await ref.read(ingredientsProvider.future);
+    } catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(error))));
+      }
+      return;
+    }
     if (!context.mounted) return;
     if (ingredients.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -160,14 +174,25 @@ class PurchasesPage extends ConsumerWidget {
       return;
     }
 
-    final supplierController = TextEditingController();
-    final dateController = TextEditingController(
-      text: DateTime.now().toIso8601String().substring(0, 10),
+    final supplierController = TextEditingController(
+      text: pending?.params['p_supplier'] as String? ?? '',
     );
-    var status = 'RECEIVED';
-    final lines = [
-      _LineState(ingredientId: ingredients.first.id, qty: '', price: ''),
-    ];
+    final dateController = TextEditingController(
+      text: pending == null
+          ? DateTime.now().toIso8601String().substring(0, 10)
+          : pending.params['p_purchased_at'] as String? ?? '',
+    );
+    var status = pending?.params['p_status'] as String? ?? 'RECEIVED';
+    final lines = pending == null
+        ? [_LineState(ingredientId: ingredients.first.id, qty: '', price: '')]
+        : [
+            for (final item in pending.params['p_items'] as List)
+              _LineState(
+                ingredientId: (item['ingredient_id'] as num).toInt(),
+                qty: '${item['qty']}',
+                price: '${item['total_price']}',
+              ),
+          ];
 
     final ok = await showDialog<bool>(
       context: context,
@@ -192,6 +217,7 @@ class PurchasesPage extends ConsumerWidget {
                   children: [
                     TextField(
                       controller: supplierController,
+                      enabled: pending == null,
                       decoration: const InputDecoration(
                         labelText: 'Supplier (opsional)',
                       ),
@@ -202,6 +228,7 @@ class PurchasesPage extends ConsumerWidget {
                         Expanded(
                           child: TextField(
                             controller: dateController,
+                            enabled: pending == null,
                             decoration: const InputDecoration(
                               labelText: 'Tanggal (YYYY-MM-DD)',
                               isDense: true,
@@ -221,8 +248,9 @@ class PurchasesPage extends ConsumerWidget {
                             ),
                           ],
                           selected: {status},
-                          onSelectionChanged: (s) =>
-                              setLocal(() => status = s.first),
+                          onSelectionChanged: pending != null
+                              ? null
+                              : (s) => setLocal(() => status = s.first),
                         ),
                       ],
                     ),
@@ -248,10 +276,12 @@ class PurchasesPage extends ConsumerWidget {
                                       ),
                                     )
                                     .toList(),
-                                onChanged: (v) => setLocal(
-                                  () => lines[i].ingredientId =
-                                      v ?? lines[i].ingredientId,
-                                ),
+                                onChanged: pending != null
+                                    ? null
+                                    : (v) => setLocal(
+                                        () => lines[i].ingredientId =
+                                            v ?? lines[i].ingredientId,
+                                      ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -259,6 +289,7 @@ class PurchasesPage extends ConsumerWidget {
                               flex: 2,
                               child: TextFormField(
                                 initialValue: lines[i].qty,
+                                enabled: pending == null,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
                                       decimal: true,
@@ -277,6 +308,7 @@ class PurchasesPage extends ConsumerWidget {
                               flex: 3,
                               child: TextFormField(
                                 initialValue: lines[i].price,
+                                enabled: pending == null,
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   labelText: 'Total harga (Rp)',
@@ -289,7 +321,7 @@ class PurchasesPage extends ConsumerWidget {
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               icon: const Icon(Icons.close_rounded),
-                              onPressed: lines.length == 1
+                              onPressed: pending != null || lines.length == 1
                                   ? null
                                   : () => setLocal(() => lines.removeAt(i)),
                             ),
@@ -297,15 +329,17 @@ class PurchasesPage extends ConsumerWidget {
                         ),
                       ),
                     TextButton.icon(
-                      onPressed: () => setLocal(
-                        () => lines.add(
-                          _LineState(
-                            ingredientId: ingredients.first.id,
-                            qty: '',
-                            price: '',
-                          ),
-                        ),
-                      ),
+                      onPressed: pending != null
+                          ? null
+                          : () => setLocal(
+                              () => lines.add(
+                                _LineState(
+                                  ingredientId: ingredients.first.id,
+                                  qty: '',
+                                  price: '',
+                                ),
+                              ),
+                            ),
                       icon: const Icon(Icons.add_rounded),
                       label: const Text('Tambah baris'),
                     ),
@@ -324,6 +358,13 @@ class PurchasesPage extends ConsumerWidget {
                         color: textSecondary,
                       ),
                     ),
+                    if (pending != null) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Permintaan sebelumnya belum terkonfirmasi. '
+                        'Ulangi pembelian yang sama; jangan mencatat belanja baru.',
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -331,11 +372,13 @@ class PurchasesPage extends ConsumerWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal'),
+                child: Text(pending == null ? 'Batal' : 'Tutup'),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Simpan'),
+                child: Text(
+                  pending == null ? 'Simpan' : 'Ulangi pembelian yang sama',
+                ),
               ),
             ],
           );
@@ -344,25 +387,29 @@ class PurchasesPage extends ConsumerWidget {
     );
     if (ok != true || !context.mounted) return;
 
-    final items = <Map<String, dynamic>>[
-      for (final l in lines)
-        {
-          'ingredient_id': l.ingredientId,
-          'qty': double.tryParse(l.qty.trim()) ?? 0,
-          'unit': unitFor(ingredients, l.ingredientId),
-          'total_price': (double.tryParse(l.price.trim()) ?? 0).round(),
-        },
-    ];
+    final items = pending != null
+        ? (pending.params['p_items'] as List)
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList()
+        : <Map<String, dynamic>>[
+            for (final l in lines)
+              {
+                'ingredient_id': l.ingredientId,
+                'qty': double.tryParse(l.qty.trim()) ?? 0,
+                'unit': unitFor(ingredients, l.ingredientId),
+                'total_price': (double.tryParse(l.price.trim()) ?? 0).round(),
+              },
+          ];
 
     try {
-      await ref
-          .read(inventoryRepositoryProvider)
-          .createPurchase(
-            supplier: supplierController.text.trim(),
-            items: items,
-            status: status,
-            purchasedAt: DateTime.tryParse(dateController.text.trim()),
-          );
+      await repository.createPurchase(
+        supplier: pending == null
+            ? supplierController.text.trim()
+            : pending.params['p_supplier'] as String?,
+        items: items,
+        status: status,
+        purchasedAt: DateTime.tryParse(dateController.text.trim()),
+      );
       await _refresh(ref);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

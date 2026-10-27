@@ -82,6 +82,7 @@ def main():
     # kWh = 800 * 3 * 80 / 100 / 1000 = 1.92 kWh
     # biaya = 1.92 * 1500 = Rp 2.880
     status, est = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "ELECTRICITY", "p_watt": 800, "p_hours": 3,
         "p_load_factor": 80, "p_tariff": 1500, "p_portions": 10,
         "p_note": "uji kompor listrik"})
@@ -101,14 +102,17 @@ def main():
 
     # Input tidak valid ditolak server
     status, bad = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "ELECTRICITY", "p_watt": 0, "p_hours": 3,
         "p_load_factor": 80, "p_tariff": 1500, "p_portions": 10})
     check("watt 0 ditolak", status == 400, str(status))
     status, bad = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "ELECTRICITY", "p_watt": 800, "p_hours": 3,
         "p_load_factor": 150, "p_tariff": 1500, "p_portions": 10})
     check("faktor beban > 100% ditolak", status == 400, str(status))
     status, bad = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "SOLAR", "p_portions": 1})
     check("jenis energi asing ditolak", status == 400, str(status))
 
@@ -117,12 +121,14 @@ def main():
           "batch 2.5 jam) ==")
     # biaya = (22000 / 20) * 2.5 = Rp 2.750
     status, lpg = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "LPG", "p_refill_price": 22000, "p_effective_hours": 20,
         "p_batch_hours": 2.5, "p_portions": 8})
     check("estimasi LPG tersimpan", status == 200, str(lpg)[:200])
     check("biaya LPG = Rp 2.750", lpg.get("cost") == 2750,
           str(lpg.get("cost")))
     status, lpg2 = rpc(token, "energy_save_estimate", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_kind": "LPG", "p_refill_price": 22000, "p_effective_hours": 0,
         "p_batch_hours": 2.5, "p_portions": 8})
     check("jam efektif 0 ditolak", status == 400, str(status))
@@ -131,12 +137,14 @@ def main():
     print("\n== S05-03: biaya aktual vs estimasi ==")
     suffix = uuid.uuid4().hex[:6].upper()
     status, exp_a = rpc(token, "exp_save", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_type": "SEWA", "p_description": f"Sewa ruko {suffix}",
         "p_amount": 1500000, "p_kind": "ACTUAL"})
     check("expense aktual tersimpan", status == 200 and exp_a.get("id"),
           str(exp_a)[:200])
     a_id = exp_a["id"]
     status, exp_e = rpc(token, "exp_save", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_type": "AIR", "p_description": f"Perkiraan air {suffix}",
         "p_amount": 200000, "p_kind": "ESTIMATED"})
     check("expense estimasi tersimpan", status == 200 and exp_e.get("id"),
@@ -144,10 +152,12 @@ def main():
     e_id = exp_e["id"]
 
     status, bad = rpc(token, "exp_save", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_type": "PENERANGAN", "p_description": "tipe asing",
         "p_amount": 1000, "p_kind": "ACTUAL"})
     check("tipe biaya asing ditolak", status == 400, str(status))
     status, bad = rpc(token, "exp_save", {
+        "p_idempotency_key": uuid.uuid4().hex,
         "p_type": "AIR", "p_description": "ab",
         "p_amount": 1000, "p_kind": "ACTUAL"})
     check("keterangan < 3 huruf ditolak", status == 400, str(status))
@@ -286,7 +296,8 @@ def main():
 
     # ------------------------------------------------------------------
     print("\n== S05-09: anon ditolak ==")
-    for name, body in [("exp_save", {"p_type": "AIR", "p_description": "x y",
+    for name, body in [("exp_save", {"p_idempotency_key": uuid.uuid4().hex,
+                                     "p_type": "AIR", "p_description": "x y",
                                      "p_amount": 1, "p_kind": "ACTUAL"}),
                        ("cash_shift_open", {"p_opening_cash": 0}),
                        ("cost_allocate", {"p_expense_id": 1,

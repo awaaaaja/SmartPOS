@@ -94,6 +94,7 @@
     "note": "APK masih UNSIGNED; klien lama (sha 0a51b209…) tanpa fix akan menerima missing_idempotency_key pada refund/koreksi"
   },
   "release_gate": {
+    "follow_up": "Audit lanjutan dan empat fix sudah selesai; status terbaru di retry-rest-fix.json. Angka di file ini adalah hasil saat migrasi 0013.",
     "retry_safe_refund_and_stock": "TERPASANG & TERBUKTI di hosted (kode + DB)",
     "still_open": [
       "audit idempotensi RPC mutasi lain: inv_create_purchase, inv_produce_batch, expense/energi, alokasi",

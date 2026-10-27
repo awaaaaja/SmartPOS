@@ -14,6 +14,9 @@ browser HP menggunakan emulasi 390×844, bukan pengujian hardware.
 | `06_qr_masuk_web.png` | Draft Q00114 diterima POS, item/catatan/subtotal benar |
 | `07_qr_sale_final_web.png` | Checkout draft menjadi sale MJ-261027-0058 |
 | `08_pos_hp_web.png` | Flutter 390×844: katalog dan bottom navigation |
+| `09_energy_retry_pending_tablet_web.png` | Respons hosted energi sengaja dijatuhkan setelah commit; banner pending dan isian terkunci |
+| `10_energy_retry_reopen_mobile_web.png` | Reload/reopen 390×844 memulihkan permintaan energi yang sama, bukan membuat key baru |
+| `11_energy_retry_replay_mobile_web.png` | Replay energi sukses: estimate #22/expense #42 tetap satu, Rp2.880 ESTIMATED |
 | `browser-smoke.json` | Dua sale final dan Q00114 COMPLETED cocok DB; meja QA dinonaktifkan |
 | `csv-browser.json` | Klik Ekspor CSV aktual menghasilkan Blob UTF-8 BOM; net sales integer cocok layar |
 | `flutter-test.log` | 134/134 lulus: 53 sebelumnya + 78 layout + 2 interaksi POS + 1 list panjang |
@@ -28,11 +31,14 @@ browser HP menggunakan emulasi 390×844, bukan pengujian hardware.
 | `rpc-latency.json` | Lima request/endpoint, termasuk retry/kegagalan transport |
 | `retry-gap.json` | **Blocker awal**: partial refund dan koreksi stok identik berlaku dua kali |
 | `retry-fix.json` | **Perbaikan K06-01**: migrasi `0013` terpasang di hosted, uji replay dalam `BEGIN/ROLLBACK`, probe anon, 9 tes SQL, 148 tes Flutter, regresi hosted 212 PASS |
+| `retry-rest-fix.json` | **Lanjutan K06-01**: `0014` hosted, empat RPC satu efek/replay/konflik, anon 401, 15 SQL, 155 Flutter, 212 hosted PASS, Chrome lost-response/reload/replay energi |
+| `flutter-retry-rest-test.log`, `flutter-retry-rest-analyze.log`, `sql-retry-rest-test.log` | Hasil terbaru `0014`: 155 Flutter, analyzer 0 issue, 15 SQL |
+| `retry-rest-regression.log` | Empat suite hosted setelah `0014`, 212 PASS 0 FAIL; sebelum smoke browser energi tambahan |
 
 Regresi backend Sprint 06: POS **77**, inventori **57**, QR **37**, operasional
 **41** = **212 PASS, 0 FAIL** — dijalankan ulang terhadap hosted **setelah**
-migrasi `0013` dengan caller yang sudah mengirim `p_idempotency_key`
-(`retry-fix.json`). Suite memerlukan `OPERATOR_PASSWORD` environment dan
+migrasi `0014` dengan caller yang sudah mengirim `p_idempotency_key`
+(`retry-rest-fix.json`). Suite memerlukan `OPERATOR_PASSWORD` environment dan
 membuat data uji; jangan dijalankan pada database operasional aktif.
 
 78 layout case = 13 halaman × dua viewport × empty/loading/error (halaman statis
@@ -41,11 +47,12 @@ data panjang, aksesibilitas atau keyboard pada Android.
 Fixture katalog 1.000 item memverifikasi lazy rendering + scroll; waktu debug
 5.227/7.114 ms dari harness lokal bukan ukuran FPS atau profil native.
 
-`graphify update .` selesai (1.152 node, 1.539 edge); tool memperingatkan parser
+`graphify update .` terbaru selesai (1.320 node, 1.842 edge, 81 komunitas); parser
 SQL `tree_sitter_sql` belum terpasang dan sebagian JSON evidence tidak menghasilkan
-node. Pembaruan AST bukan pengganti tes SQL atau audit semantik dokumen.
+node. Dua node lama di luar corpus scan dipertahankan fail-closed; tidak dilakukan
+purge atau pelabelan semantik berbayar. AST bukan pengganti tes SQL/audit dokumen.
 
-**Gate:** retry `pos_refund`/`inv_adjust_stock` **sudah terpasang dan terbukti**
-di hosted (`retry-fix.json`); audit RPC mutasi lain, keystore/signature/instalasi,
-tablet target, rotasi password lama, full Supabase Auth/Storage restore, hosting QR
+**Gate:** audit retry RPC uang/stok **selesai backend & klien QA**; `0013`–`0014`
+terpasang dan terbukti di hosted (`retry-rest-fix.json`). Keystore/signature,
+distribusi klien, tablet target, rotasi password lama, full Supabase Auth/Storage restore, hosting QR
 permanen dan persetujuan operator **masih terbuka**. Lihat `../../handover.md`.

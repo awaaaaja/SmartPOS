@@ -1,0 +1,20 @@
+test_authorization_and_legacy_bypass_are_closed (__main__.MutationRetryTest.test_authorization_and_legacy_bypass_are_closed) ... ok
+test_concurrent_distinct_operations_are_not_deduplicated (__main__.MutationRetryTest.test_concurrent_distinct_operations_are_not_deduplicated) ... ok
+test_concurrent_same_key_commits_once (__main__.MutationRetryTest.test_concurrent_same_key_commits_once) ... ok
+test_expense_update_path_is_repeatable_without_key (__main__.MutationRetryTest.test_expense_update_path_is_repeatable_without_key) ... ok
+test_failed_and_rolled_back_attempts_do_not_reserve_key (__main__.MutationRetryTest.test_failed_and_rolled_back_attempts_do_not_reserve_key) ... ok
+test_missing_bad_keys_fail_without_side_effects (__main__.MutationRetryTest.test_missing_bad_keys_fail_without_side_effects) ... ok
+test_new_mutation_rollback_does_not_reserve_key (__main__.MutationRetryTest.test_new_mutation_rollback_does_not_reserve_key) ... ok
+test_new_mutations_concurrent_same_key_commits_once (__main__.MutationRetryTest.test_new_mutations_concurrent_same_key_commits_once) ... ok
+test_new_mutations_missing_key_and_legacy_path_closed (__main__.MutationRetryTest.test_new_mutations_missing_key_and_legacy_path_closed) ... ok
+test_new_mutations_payload_conflict_is_rejected (__main__.MutationRetryTest.test_new_mutations_payload_conflict_is_rejected) ... ok
+test_new_mutations_replay_uses_original_result (__main__.MutationRetryTest.test_new_mutations_replay_uses_original_result) ... ok
+test_payload_conflicts_and_target_changes_are_rejected (__main__.MutationRetryTest.test_payload_conflicts_and_target_changes_are_rejected) ... ok
+test_replay_lost_response_uses_original_result (__main__.MutationRetryTest.test_replay_lost_response_uses_original_result) ... ok
+test_unit_conversion_validation_and_unit_conflict (__main__.MutationRetryTest.test_unit_conversion_validation_and_unit_conflict) ... ok
+test_waste_and_negative_adjustment_replay (__main__.MutationRetryTest.test_waste_and_negative_adjustment_replay) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 8.877s
+
+OK

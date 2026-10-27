@@ -7,7 +7,7 @@ paket QA dan SOP latihan, bukan persetujuan go-live operator.
 
 | ID | Prioritas | Temuan dan tindakan sebelum rilis |
 |---|---|---|
-| K06-01 | P0 → **SELESAI untuk refund & koreksi stok; audit lanjutan terbuka** | Dulu: refund Rp100 identik dua kali menghasilkan Rp200, koreksi +1 dua kali menghasilkan +2. Kini `pos_refund`/`inv_adjust_stock` mewajibkan `p_idempotency_key` (8–128 char), mengunci per key, menolak payload berbeda pada key sama, dan menyimpan respons atomik di `mutation_requests`; form Flutter menyimpan key sebelum RPC dan memakainya ulang saat timeout/buka-ulang. **Migrasi `20261027000013` sudah diterapkan ke hosted** (lihat `evidence/sprint06/retry-fix.json`): uji replay di dalam `BEGIN/ROLLBACK` menghasilkan refund +100 dan stok +1, probe anon 401, regresi hosted 212 PASS, 9 tes SQL lokal lulus, 148 tes Flutter lulus. **Sisa:** (a) audit RPC mutasi lain (`inv_create_purchase`, `inv_produce_batch`, expense/energi, alokasi) belum punya kunci — gate penuh baru dicentang setelah ini; (b) build & distribusikan klien baru, karena klien lama tanpa key kini gagal tertutup (`missing_idempotency_key`); (c) bukti jaringan putus di tablet. Guard tombol saja bukan jaminan server. |
+| K06-01 | P0 → **SELESAI backend & klien QA** | Migrasi `0013`–`0014` **sudah terpasang di hosted**: refund, koreksi/waste, pembelian, produksi batch, CREATE biaya dan estimasi energi memakai key wajib, lock, konflik payload dan respons atomik. Form memulihkan isian/key lama setelah timeout/buka ulang. UPDATE biaya tetap dapat diulang tanpa cache; penerimaan/kas memakai guard status, alokasi memakai upsert. Bukti: `evidence/sprint06/retry-fix.json` dan `retry-rest-fix.json`; 15 tes SQL dan 155 Flutter lulus. **Bukan izin distribusi**: klien lama tanpa key gagal tertutup; pasang klien baru bertanda tangan (K06-02) dan buktikan putus-jaringan di tablet (K06-03). |
 | K06-02 | P0 | APK unsigned, tidak dapat dipasang. Pemilik harus menyediakan keystore, menguasai backup key/password, membangun ulang dan memverifikasi signature. Jangan distribusikan artefak unsigned sebagai release. |
 | K06-03 | P0 | Tidak ada Android/tablet/emulator terhubung. Bukti Sprint 06 berasal dari Chrome dan widget test, **bukan** perangkat target. Wajib instalasi, keyboard, rotasi, jaringan putus, transaksi, laporan dan cold-start di tablet. |
 | K06-04 | P0 | Restore bisnis lokal lulus, tetapi GoTrue lengkap (identities/sessions), Storage/foto, login staging cloud dan retensi backup terenkripsi di luar mesin belum dibuktikan. Tidak ada crash-reporting terkelola; observabilitas release belum diinstrumentasi/diuji. |
@@ -19,37 +19,43 @@ paket QA dan SOP latihan, bukan persetujuan go-live operator.
 Bukti kasus retry: `evidence/sprint06/retry-gap.json`; hanya database lokal
 terisolasi, dibungkus `BEGIN/ROLLBACK`, tidak mengubah uang/stok hosted.
 
-### Urutan rollout K06-01 (status: langkah 1–3 selesai)
+### Urutan rollout K06-01 (database & kode selesai; distribusi/UAT belum)
 
-1. **Database dulu** — ✅ **selesai**: `supabase/migrations/20261027000013_mutation_retry.sql`
-   diterapkan ke hosted lewat `supabase db push --db-url "$SUPABASE_DB_URL"`.
-   Migrasi ini menamai ulang implementasi lama menjadi `*_once` (hanya
-   postgres/service_role) dan membuat wrapper baru bertanda tangan
+1. **Database dulu** — ✅ **selesai**: migrasi `20261027000013_mutation_retry.sql`
+   dan `20261027000014_mutation_retry_rest.sql` diterapkan ke hosted lewat
+   `supabase db push --db-url "$SUPABASE_DB_URL"`. Keduanya menamai ulang
+   implementasi lama menjadi `*_once` (tanpa grant klien) dan membuat wrapper
    `p_idempotency_key`; **tidak** menyentuh baris historis. Definisi lama
-   disimpan untuk rollback di `/tmp/opencode/smart-pos-backups/pre-0013-functions.sql`.
+   disimpan di `/tmp/opencode/smart-pos-backups/pre-0013-functions.sql` dan
+   `pre-0014-functions.sql` (privat, di luar Git).
 2. **Klien baru** — ✅ kode selesai, **belum didistribusikan**: klien lama tanpa
-   key kini menerima `missing_idempotency_key` pada refund/koreksi (gagal tertutup,
+    key kini menerima `missing_idempotency_key` pada keenam RPC CREATE/mutasi (gagal tertutup,
    tidak dobel). Build ulang APK/web dan pasang sebelum operator memakai aplikasi
    lama; APK saat ini masih **unsigned** (K06-02).
 3. **Verifikasi** — ✅ selesai: `tests/integration/test_mutation_retry.py`
-   (9 tes, database segar dibuat/dihapus tes) lulus; replay di hosted dibungkus
+   (15 tes, database segar dibuat/dihapus tes) lulus; replay di hosted dibungkus
    `BEGIN/ROLLBACK` (refund +100, stok +1, konflik payload ditolak, sisa baris 0);
-   regresi hosted 212 PASS. Verifikasi aplikasi di perangkat target masih menunggu
-   K06-03.
-4. **Audit lanjutan** — ❌ **belum**: RPC mutasi lain (`inv_create_purchase`,
-   `inv_produce_batch`, expense/energi, alokasi) belum memiliki pola key yang
-   sama; tutup sebelum gate "semua mutasi uang/stok aman terhadap retry" dicentang.
+   pembelian/batch/biaya/energi masing-masing satu efek dan konflik ditolak
+   (`retry-rest-fix.json`). Data fixture habis setelah rollback; sequence ID boleh
+   maju. Verifikasi aplikasi di perangkat target masih menunggu K06-03.
+4. **Audit lanjutan** — ✅ selesai untuk RPC uang/stok saat ini: empat celah
+   ditutup oleh `0014`. Checkout/QR sudah punya key; penerimaan dan kas memakai
+   lock/guard status; alokasi memakai upsert. Ringkasan kontrak ada di `api-contracts.md`.
 
 Jika respons mutasi uang/stok tidak jelas, **jangan mengulang secara buta**:
 periksa struk/ledger/audit bersama pengelola. Setelah migrasi terpasang, retry
 dengan isian identik aman; permintaan ulang dengan isian **berbeda** akan
-ditolak `idempotency_key_conflict` — buka form baru untuk operasi berikutnya.
+ditolak `idempotency_key_conflict`. Selesaikan replay lama sampai mendapat respons,
+baru buka form normal untuk operasi berikutnya. Tidak ada tombol buang pending.
+Jika penyimpanan lokal rusak/hilang atau replay tak dapat diselesaikan, hentikan
+mutasi tersebut dan rekonsiliasi bersama pengelola; jangan clear data/uninstall
+untuk memaksa key baru. Penyimpanan identitas retry bukan outbox offline/backup.
 
 ## 2. Setup Supabase
 
 1. Gunakan proyek staging/produksi yang tepat. Simpan DB URL hanya di environment
    pengelola. Matikan pendaftaran publik; buat satu akun operator melalui Auth.
-2. Terapkan seluruh migrasi berurutan (`0001`…`0013`), jangan mengedit migrasi lama:
+2. Terapkan seluruh migrasi berurutan (`0001`…`0014`), jangan mengedit migrasi lama:
 
    ```bash
    supabase db push --db-url "$SUPABASE_DB_URL"
@@ -120,7 +126,9 @@ keranjang/draft/sesi dan backup aman. Jangan mengirim password lewat argumen bui
 
 ## 4. Migrasi, backup dan rollback
 
-- Sprint 06 ini tidak menambah migrasi; schema terakhir tetap `0012`.
+- Perbaikan Sprint 06 menambah migrasi `0013`–`0014`; schema terakhir `0014`.
+  Tidak mengubah baris historis. Klien sebelum perbaikan tidak kompatibel dengan
+  kewajiban key baru; jangan rollback aplikasi ke klien lama tanpa meninjau kontrak.
 - Backup sebelum migrasi/rilis. Latihan yang sudah dilakukan dan batasannya:
   [backup-restore.md](backup-restore.md).
 - Rollback aplikasi: gunakan build bertanda tangan sebelumnya yang sudah diuji,
@@ -142,13 +150,16 @@ keranjang/draft/sesi dan backup aman. Jangan mengirim password lewat argumen bui
    produksi batch mengikuti mode stok. Koreksi/waste wajib alasan. Mengulang
    koreksi yang sama setelah jaringan putus/respons hilang aman — tombol
    "Ulangi mutasi yang sama" memakai identitas lama dan efek terjadi sekali;
-   tetap hentikan retry pada mutasi lain yang belum punya kunci (lihat K06-01).
+    pola yang sama berlaku untuk pembelian dan produksi batch. Penerimaan kedua
+    dapat ditolak "sudah diterima"; periksa daftar, jangan buat pembelian pengganti.
 5. Refund lewat detail riwayat: cek nominal dan alasan, lalu cocokkan net sales.
    Ulangi refund yang sama aman (identitas disimpan sebelum kirim); isian berbeda
-   pada kunci lama ditolak `idempotency_key_conflict` — buat operasi baru lewat
-   form normal, jangan menimpa permintaan tertunda.
+    pada kunci lama ditolak `idempotency_key_conflict` — konfirmasikan replay dahulu,
+    baru buat operasi berikutnya lewat form normal.
 6. Energi adalah ESTIMASI, bukan tagihan AKTUAL. Periksa alokasi tidak melebihi
-   sumber. Laporan menyajikan estimasi margin, bukan klaim laba bersih.
+    sumber. Jika penyimpanan biaya/energi timeout, ulangi lewat tombol "Ulangi …
+    yang sama" (isian lama terkunci). Laporan menyajikan estimasi margin, bukan
+    klaim laba bersih.
 7. Tutup shift: hitung uang fisik; bandingkan expected CASH (bukan transfer/QRIS),
    masukkan actual dan alasan selisih. Uji ini di staging sebelum kas operasional.
 8. Offline: hentikan checkout, pulihkan jaringan dan periksa status transaksi.
@@ -159,7 +170,7 @@ keranjang/draft/sesi dan backup aman. Jangan mengirim password lewat argumen bui
 | Gate | Bukti/status saat ini |
 |---|---|
 | Tanpa Dapur/Pesanan/Pegawai/Multi-Cabang/SaaS/AI | Lulus pemeriksaan navigasi/source dan tes shell |
-| Semua mutasi uang/stok aman terhadap retry | **PARTIAL K06-01**: `pos_checkout`, QR submit, `pos_refund`, `inv_adjust_stock` lulus uji (9 SQL + 16 tes Flutter + regresi hosted 212 PASS) dan migrasi `0013` sudah terpasang; RPC mutasi lain belum diaudit |
+| Semua mutasi uang/stok aman terhadap retry | **LULUS backend & klien QA K06-01**: audit RPC selesai, migrasi `0013`–`0014` terpasang, 15 SQL + 155 Flutter lulus; UAT jaringan pada tablet tetap K06-03 |
 | QR mengakui draft, bukan pembayaran | Lulus browser: Q00114, tulisan “Pesanan belum dibayar” |
 | Kas/omzet dari sale final | 212 pemeriksaan backend lulus; dua smoke sale web, bukan draft pending |
 | Backup/auth/manual tablet | **PARTIAL** restore bisnis lokal + login web; Auth/Storage penuh dan tablet belum |
@@ -168,5 +179,5 @@ keranjang/draft/sesi dan backup aman. Jangan mengirim password lewat argumen bui
 | Operator menyelesaikan transaksi sendiri | **BELUM**; SOP tersedia, latihan/persetujuan manusia belum dilakukan |
 
 Persetujuan pemilik/operator: **belum diberikan**. Tanggal/device/hasil latihan
-diisi setelah K06-02…K06-06 dan audit lanjutan K06-01 selesai. S01-08 CI hosted
+diisi setelah K06-02…K06-06 selesai. S01-08 CI hosted
 juga masih menunggu remote GitHub; hasil lokal bukan klaim GitHub Actions hijau.

@@ -225,28 +225,30 @@ Status: **DONE 27 Okt 2026** — bukti lengkap di `docs/sprint-log.md` (bagian S
 bukan klaim seluruh tiket DONE. Rincian per tiket di `docs/sprint-log.md` (Sprint 06),
 paket instalasi/setup/SOP di `docs/handover.md`.
 
-- Analyzer 0 issue; Flutter **148/148** (78 kombinasi layar/state/viewport +
-  16 tes retry), regresi backend **212 PASS, 0 FAIL** dijalankan ulang terhadap
-  hosted setelah migrasi `0013`; 29 probe publik lulus.
+- Analyzer 0 issue; Flutter **155/155**, termasuk pemulihan retry pembelian,
+  produksi, biaya dan listrik/LPG. 15 tes SQL lulus. Regresi hosted dan probe
+  publik dirinci di `docs/evidence/sprint06/`.
 - Backup bisnis pulih ke staging PostgreSQL lokal (25 tabel/checksum, 23 policy),
   **bukan** full-restore Supabase Auth/Storage.
 - Dua alur smoke browser menghasilkan sale #57/#58; QR Q00114 COMPLETED.
   Delapan screenshot di `docs/evidence/sprint06/`, **bukan bukti tablet Android**.
 - Build APK 1.0.0+1 berhasil (58,1 MB), **unsigned**, belum bisa dipasang.
-- **K06-01 diperbaiki**: `pos_refund` & `inv_adjust_stock` kini mewajibkan
-  `p_idempotency_key`, menyimpan respons atomik, dan menolak payload berbeda;
-  form Flutter menyimpan key sebelum kirim. Migrasi `0013` **sudah terpasang di
-  hosted**; bukti `docs/evidence/sprint06/retry-fix.json`.
-- Blocker tersisa: audit retry RPC mutasi lain, signing/keystore, rotasi password
+- **K06-01 diperbaiki**: refund, koreksi/waste, pembelian, produksi batch,
+  CREATE biaya dan estimasi energi mewajibkan key; form menyimpan identitas
+  sebelum kirim dan memulihkan isian terkunci saat retry. Migrasi `0013`–`0014`
+  **sudah terpasang di hosted**; `retry-fix.json` dan `retry-rest-fix.json`.
+  RPC uang/stok lain diaudit: key checkout/QR, guard status penerimaan/kas,
+  upsert alokasi; UPDATE biaya tidak dikunci cache.
+- Blocker tersisa: signing/keystore dan distribusi klien baru, rotasi password
   lama, tablet/restore cloud dan hosting QR permanen. Printer ditunda, offline
   tidak dicakup.
 
 **Gate rilis wajib:**
 - [x] Tidak ada navigasi/fitur `Dapur`, `Pesanan`, `Pegawai`, `Multi Cabang`, `SaaS`.
-- [ ] Setiap tombol checkout dan setiap perubahan uang/stok aman terhadap retry —
-  **sebagian**: checkout, QR submit, refund dan koreksi/waste stok lulus
-  (server + klien + hosted terpasang); `inv_create_purchase`,
-  `inv_produce_batch`, expense/energi dan alokasi **belum diaudit**.
+- [x] Setiap tombol checkout dan setiap perubahan uang/stok aman terhadap retry —
+  **backend & klien QA**: audit RPC selesai; migrasi `0013`–`0014` hosted,
+  replay/konflik/concurrency SQL dan timeout/relaunch Flutter lulus. Bukan klaim
+  hardware: uji jaringan pada tablet dan distribusi klien bertanda tangan tetap wajib.
 - [x] Web QR menampilkan keberhasilan kirim draft, bukan menyatakan sudah dibayar.
 - [x] Kas dan omzet benar-benar berdasarkan sale final, bukan data cart/QR pending.
 - [ ] Backup/restore, autentikasi, dan pengujian manual tablet lulus.
@@ -353,6 +355,7 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 27 Okt 2026 | 05 | S05-01…S05-09 | DONE | migrasi 0012 energi/biaya/alokasi/kas/laporan + RPC definer + Flutter kalkulator/biaya/kas/laporan + dashboard detail | `flutter analyze` 0 error; `flutter test` 53/53; `test_operating_cost.py` 41 PASS (UAT-09–11); npm build lulus; 11 bukti `docs/evidence/sprint05/` (kalkulator 1,92 kWh/Rp 2.880, alokasi ditolak, kas selisih −500, CSV) | Android fisik ditunda; S01-08 menunggu remote GitHub |
 | 27 Okt 2026 | 06 | S06-01…S06-10 | PARTIAL / BLOCKED | perbaikan layout/keranjang HP, pengaturan read-only, audit keamanan/restore, build unsigned, dokumen serah terima | analyzer 0 issue; Flutter 134/134; backend 212 PASS; 29 probe publik; restore 25 tabel; dua smoke web; APK unsigned 58,1 MB | Retry refund/koreksi stok belum aman; signing, Android target, rotasi password, restore cloud/Storage dan hosting QR permanen belum lulus |
 | 27 Okt 2026 | 06 | K06-01 (fix) | PARTIAL → sebagian selesai | `4019874` → fix menyusul: migrasi `20261027000013_mutation_retry.sql` + `lib/core/mutation_retry.dart` + form riwayat/stok + `tests/integration/test_mutation_retry.py` (CI) | migrasi **diterapkan ke hosted**; replay `BEGIN/ROLLBACK` refund +100 / stok +1; probe anon 401; 9 tes SQL lulus; Flutter **148/148**; analyzer 0; regresi hosted **212 PASS 0 FAIL**; build web release lulus | Audit RPC mutasi lain belum; klien baru belum didistribusikan (APK masih unsigned); bukti putus-jaringan di tablet belum |
+| 27 Okt 2026 | 06 | K06-01 lanjutan | DONE backend/klien QA; release BLOCKED | migrasi `0014` hosted + retry pembelian/produksi/biaya/energi + nested equality + form restore | 15 SQL, 155 Flutter, analyzer 0; hosted 212 PASS; replay empat RPC satu efek; anon 401; Chrome respons energi hilang → reload → key sama, estimate #22/expense #42 satu; web/APK rebuild lulus | APK unsigned; belum didistribusikan; Android/manual operator, rotasi kredensial, restore penuh dan hosting QR tetap belum |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

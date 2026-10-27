@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../../core/mutation_retry.dart';
 import '../operating_cost/operating_repository.dart';
 
 /// S05-03/04: pengeluaran operasional dengan penanda ESTIMATED vs ACTUAL
@@ -12,7 +13,13 @@ class ExpensesPage extends ConsumerWidget {
   const ExpensesPage({super.key});
 
   static const _types = [
-    'LISTRIK', 'LPG', 'AIR', 'KEMASAN', 'SEWA', 'INTERNET', 'LAINNYA',
+    'LISTRIK',
+    'LPG',
+    'AIR',
+    'KEMASAN',
+    'SEWA',
+    'INTERNET',
+    'LAINNYA',
   ];
 
   Future<void> _refresh(WidgetRef ref) async {
@@ -38,8 +45,10 @@ class ExpensesPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Biaya Operasional',
-                          style: theme.textTheme.titleLarge),
+                      Text(
+                        'Biaya Operasional',
+                        style: theme.textTheme.titleLarge,
+                      ),
                       Text(
                         'Estimasi (asumsi) dan aktual (tagihan nyata) tidak '
                         'pernah digabung.',
@@ -63,14 +72,18 @@ class ExpensesPage extends ConsumerWidget {
               error: (e, _) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Text(mapErrorToMessage(e),
-                      textAlign: TextAlign.center),
+                  child: Text(
+                    mapErrorToMessage(e),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
               data: (list) => list.isEmpty
                   ? Center(
-                      child: Text('Belum ada biaya operasional.',
-                          style: theme.textTheme.bodyMedium),
+                      child: Text(
+                        'Belum ada biaya operasional.',
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     )
                   : RefreshIndicator(
                       onRefresh: () => _refresh(ref),
@@ -90,8 +103,9 @@ class ExpensesPage extends ConsumerWidget {
                                   e.isEstimated
                                       ? Icons.lightbulb_outline_rounded
                                       : Icons.receipt_long_rounded,
-                                  color:
-                                      e.isEstimated ? warningColor : successColor,
+                                  color: e.isEstimated
+                                      ? warningColor
+                                      : successColor,
                                 ),
                               ),
                               title: Text(e.description),
@@ -104,8 +118,10 @@ class ExpensesPage extends ConsumerWidget {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(formatRupiah(e.amount),
-                                      style: theme.textTheme.titleMedium),
+                                  Text(
+                                    formatRupiah(e.amount),
+                                    style: theme.textTheme.titleMedium,
+                                  ),
                                   PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert_rounded),
                                     onSelected: (v) {
@@ -117,8 +133,10 @@ class ExpensesPage extends ConsumerWidget {
                                           isScrollControlled: true,
                                           builder: (_) => Padding(
                                             padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets.bottom),
+                                              bottom: MediaQuery.of(
+                                                context,
+                                              ).viewInsets.bottom,
+                                            ),
                                             child: AllocationSheet(expense: e),
                                           ),
                                         );
@@ -126,11 +144,13 @@ class ExpensesPage extends ConsumerWidget {
                                     },
                                     itemBuilder: (_) => const [
                                       PopupMenuItem(
-                                          value: 'edit',
-                                          child: Text('Ubah biaya')),
+                                        value: 'edit',
+                                        child: Text('Ubah biaya'),
+                                      ),
                                       PopupMenuItem(
-                                          value: 'allocate',
-                                          child: Text('Alokasi biaya')),
+                                        value: 'allocate',
+                                        child: Text('Alokasi biaya'),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -153,7 +173,9 @@ class ExpensesPage extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (_) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: _ExpenseEditor(expense: expense),
       ),
     );
@@ -173,13 +195,56 @@ class _ExpenseEditorState extends ConsumerState<_ExpenseEditor> {
   final _formKey = GlobalKey<FormState>();
   late String _type = widget.expense?.type ?? 'LISTRIK';
   late String _kind = widget.expense?.kind ?? 'ACTUAL';
-  late final _desc = TextEditingController(text: widget.expense?.description ?? '');
+  late final _desc = TextEditingController(
+    text: widget.expense?.description ?? '',
+  );
   late final _amount = TextEditingController(
-      text: widget.expense == null ? '' : widget.expense!.amount.toString());
+    text: widget.expense == null ? '' : widget.expense!.amount.toString(),
+  );
   late final _evidence = TextEditingController(
-      text: widget.expense?.evidenceUrl ?? '');
+    text: widget.expense?.evidenceUrl ?? '',
+  );
   late DateTime _date = widget.expense?.expenseDate ?? DateTime.now();
   bool _saving = false;
+  bool _ready = false;
+  PendingMutation? _pending;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPending();
+  }
+
+  Future<void> _loadPending() async {
+    try {
+      final pending = widget.expense == null
+          ? await ref.read(operatingRepositoryProvider).pendingExpense()
+          : null;
+      if (!mounted) return;
+      if (pending != null) {
+        final p = pending.params;
+        _type = p['p_type'] as String;
+        _kind = p['p_kind'] as String;
+        _desc.text = p['p_description'] as String;
+        _amount.text = '${p['p_amount']}';
+        _evidence.text = p['p_evidence_url'] as String? ?? '';
+        _date =
+            DateTime.tryParse(p['p_expense_date'] as String? ?? '') ?? _date;
+      }
+      setState(() {
+        _pending = pending;
+        _ready = true;
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _ready = false;
+          _error = mapErrorToMessage(error);
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -190,25 +255,37 @@ class _ExpenseEditorState extends ConsumerState<_ExpenseEditor> {
   }
 
   Future<void> _save() async {
+    if (_saving || !_ready) return;
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
-      await ref.read(operatingRepositoryProvider).saveExpense(
+      await ref
+          .read(operatingRepositoryProvider)
+          .saveExpense(
             id: widget.expense?.id,
             type: _type,
             description: _desc.text.trim(),
             amount: int.parse(_amount.text.trim()),
             kind: _kind,
-            expenseDate: _date,
-            evidenceUrl: _evidence.text.trim(),
+            expenseDate: _pending == null
+                ? _date
+                : DateTime.tryParse(
+                    _pending!.params['p_expense_date'] as String? ?? '',
+                  ),
+            evidenceUrl: _pending == null
+                ? _evidence.text.trim()
+                : _pending!.params['p_evidence_url'] as String?,
           );
       if (!mounted) return;
       Navigator.of(context).pop();
       ref.invalidate(expensesProvider);
     } catch (e) {
+      await _loadPending();
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        setState(() => _error = mapErrorToMessage(e));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -218,7 +295,8 @@ class _ExpenseEditorState extends ConsumerState<_ExpenseEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
+    final editable = _ready && !_saving && _pending == null;
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Form(
         key: _formKey,
@@ -232,32 +310,41 @@ class _ExpenseEditorState extends ConsumerState<_ExpenseEditor> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
+              key: ValueKey(_type),
               initialValue: _type,
               decoration: const InputDecoration(
-                  labelText: 'Jenis', border: OutlineInputBorder()),
+                labelText: 'Jenis',
+                border: OutlineInputBorder(),
+              ),
               items: [
                 for (final t in ExpensesPage._types)
                   DropdownMenuItem(value: t, child: Text(t)),
               ],
-              onChanged: (v) => setState(() => _type = v ?? _type),
+              onChanged: editable
+                  ? (v) => setState(() => _type = v ?? _type)
+                  : null,
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _desc,
+              enabled: editable,
               decoration: const InputDecoration(
-                  labelText: 'Keterangan',
-                  border: OutlineInputBorder()),
+                labelText: 'Keterangan',
+                border: OutlineInputBorder(),
+              ),
               validator: (v) =>
                   (v == null || v.trim().length < 3) ? 'Minimal 3 huruf' : null,
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _amount,
+              enabled: editable,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                  labelText: 'Nominal (Rp)',
-                  prefixText: 'Rp ',
-                  border: OutlineInputBorder()),
+                labelText: 'Nominal (Rp)',
+                prefixText: 'Rp ',
+                border: OutlineInputBorder(),
+              ),
               validator: (v) {
                 final n = int.tryParse((v ?? '').trim());
                 if (n == null || n < 0) return 'Nominal tidak valid';
@@ -268,56 +355,81 @@ class _ExpenseEditorState extends ConsumerState<_ExpenseEditor> {
             SegmentedButton<String>(
               segments: const [
                 ButtonSegment(
-                    value: 'ACTUAL',
-                    label: Text('AKTUAL'),
-                    icon: Icon(Icons.receipt_long_rounded)),
+                  value: 'ACTUAL',
+                  label: Text('AKTUAL'),
+                  icon: Icon(Icons.receipt_long_rounded),
+                ),
                 ButtonSegment(
-                    value: 'ESTIMATED',
-                    label: Text('ESTIMASI'),
-                    icon: Icon(Icons.lightbulb_outline_rounded)),
+                  value: 'ESTIMATED',
+                  label: Text('ESTIMASI'),
+                  icon: Icon(Icons.lightbulb_outline_rounded),
+                ),
               ],
               selected: {_kind},
-              onSelectionChanged: (s) => setState(() => _kind = s.first),
+              onSelectionChanged: editable
+                  ? (s) => setState(() => _kind = s.first)
+                  : null,
             ),
             const SizedBox(height: 6),
             Text(
               _kind == 'ACTUAL'
                   ? 'Aktual = tagihan/pengeluaran nyata.'
                   : 'Estimasi = asumsi operasional; jangan dipakai sebagai '
-                      'bukti pembayaran.',
+                        'bukti pembayaran.',
               style: theme.textTheme.bodySmall,
             ),
             const SizedBox(height: 10),
             TextFormField(
               controller: _evidence,
+              enabled: editable,
               decoration: const InputDecoration(
-                  labelText: 'URL bukti (opsional)',
-                  border: OutlineInputBorder()),
+                labelText: 'URL bukti (opsional)',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
-              onPressed: () async {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: _date,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2100),
-                );
-                if (picked != null) setState(() => _date = picked);
-              },
+              onPressed: !editable
+                  ? null
+                  : () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: _date,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) setState(() => _date = picked);
+                    },
               icon: const Icon(Icons.event_rounded),
               label: Text('Tanggal: ${formatWibDate(_date.toUtc())}'),
             ),
+            if (_pending != null) ...[
+              const SizedBox(height: 10),
+              const Text(
+                'Permintaan sebelumnya belum terkonfirmasi. '
+                'Ulangi biaya yang sama; jangan membuat biaya baru.',
+              ),
+            ],
+            if (_error != null)
+              Text(_error!, style: const TextStyle(color: errorColor)),
+            if (!_ready)
+              TextButton(
+                onPressed: _loadPending,
+                child: const Text('Muat ulang permintaan'),
+              ),
             const SizedBox(height: 14),
             FilledButton.icon(
-              onPressed: _saving ? null : _save,
+              onPressed: _saving || !_ready ? null : _save,
               icon: _saving
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : const Icon(Icons.save_rounded),
-              label: const Text('Simpan'),
+              label: Text(
+                _pending == null ? 'Simpan' : 'Ulangi biaya yang sama',
+              ),
             ),
           ],
         ),
@@ -353,12 +465,15 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
     final target = _target.text.trim();
     if (target.length < 2 || amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Target dan nominal tidak valid.')));
+        const SnackBar(content: Text('Target dan nominal tidak valid.')),
+      );
       return;
     }
     setState(() => _saving = true);
     try {
-      await ref.read(operatingRepositoryProvider).allocate(
+      await ref
+          .read(operatingRepositoryProvider)
+          .allocate(
             expenseId: widget.expense.id,
             targetRef: target,
             amount: amount,
@@ -368,8 +483,9 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
       ref.invalidate(allocationsProvider(widget.expense.id));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -406,8 +522,9 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
                   Text(
                     'Ter alokasi ${formatRupiah(used)} dari '
                     '${formatRupiah(widget.expense.amount)}',
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   for (final a in list)
@@ -421,17 +538,19 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
                   TextField(
                     controller: _target,
                     decoration: const InputDecoration(
-                        labelText: 'Target (mis. batch-gorengan)',
-                        border: OutlineInputBorder()),
+                      labelText: 'Target (mis. batch-gorengan)',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _amount,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                        labelText: 'Nominal alokasi (Rp)',
-                        prefixText: 'Rp ',
-                        border: OutlineInputBorder()),
+                      labelText: 'Nominal alokasi (Rp)',
+                      prefixText: 'Rp ',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   FilledButton.icon(
@@ -440,7 +559,8 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2))
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : const Icon(Icons.call_split_rounded),
                     label: const Text('Alokasikan'),
                   ),

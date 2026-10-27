@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-27",
+  "finding": "K06-01 remaining money/stock RPC retry safety",
+  "migration": "supabase/migrations/20261027000014_mutation_retry_rest.sql",
+  "previous_evidence": "retry-fix.json",
+  "operations": ["inv_create_purchase", "inv_produce_batch", "exp_save (CREATE)", "energy_save_estimate"],
+  "hosted": {
+    "project_ref": "hdvscajiezznyiwmkjjv",
+    "applied": true,
+    "method": "supabase db push --db-url $SUPABASE_DB_URL",
+    "pre_migration_function_backup": "/tmp/opencode/smart-pos-backups/pre-0014-functions.sql (0600, outside Git)",
+    "historical_rows_changed_by_migration": 0,
+    "new_wrappers_execute_authenticated": true,
+    "new_wrappers_execute_anon": false,
+    "legacy_once_execute_authenticated": false,
+    "internal_helper_execute_authenticated": false,
+    "mutation_requests_rls": true,
+    "mutation_requests_policies": 0,
+    "mutation_requests_select_anon": false,
+    "mutation_requests_select_authenticated": false
+  },
+  "hosted_rollback_probe": {
+    "method": "single psql session, BEGIN/ROLLBACK, isolated fixtures, operator JWT claim; sequence IDs can advance despite rollback",
+    "purchase_replay": true,
+    "production_replay": true,
+    "expense_replay": true,
+    "energy_replay": true,
+    "same_response_except_replay_flag": true,
+    "all_payload_conflicts_rejected": true,
+    "purchase_rows": 1,
+    "production_rows": 1,
+    "expense_rows": 1,
+    "energy_rows": 1,
+    "energy_cost": 2880,
+    "ingredient_balance": "100 + 1 purchase - 10 production = 91 (not 82)",
+    "cached_requests": 4,
+    "expense_update_repeatable_without_key": true,
+    "probe_keys_after_rollback": 0,
+    "fixture_ingredients_after_rollback": 0,
+    "fixture_products_after_rollback": 0
+  },
+  "anon_rest_probes": {
+    "inv_create_purchase": {"http": 401, "message": "permission denied for function inv_create_purchase"},
+    "inv_produce_batch": {"http": 401, "message": "permission denied for function inv_produce_batch"},
+    "exp_save": {"http": 401, "message": "permission denied for function exp_save"},
+    "energy_save_estimate": {"http": 401, "message": "permission denied for function energy_save_estimate"}
+  },
+  "local_sql_suite": {
+    "file": "tests/integration/test_mutation_retry.py",
+    "database": "fresh disposable PostgreSQL 18 database, all migrations applied",
+    "tests": 15,
+    "result": "OK",
+    "covers": ["lost response replay", "8 concurrent requests per operation commit once", "payload conflict", "missing/bad keys", "anon/non-operator/legacy/helper denial", "failed or rolled-back transaction does not reserve key", "repeatable expense UPDATE without cache and non-operator denial", "single stock/ledger/audit effect"]
+  },
+  "flutter": {
+    "analyze": "No issues found",
+    "tests_total": 155,
+    "result": "All tests passed",
+    "additional_unit_test": "nested purchase list/map equality after serialization and changed-line conflict",
+    "additional_tests_file": "test/features/remaining_mutation_retry_test.dart",
+    "additional_widget_cases": ["purchase", "batch production", "expense CREATE", "electricity", "LPG"],
+    "widget_method": "real repositories + Supabase RPC serialization, mocked HTTP commits then loses response; recreate app/store, restore locked fields, replay same key/payload once, subsequent intent receives new key",
+    "additional_repository_case": "expense UPDATE remains repeatable without a key/pending slot",
+    "pending_recovery": "no discard button; complete original replay before next intent; storage wipe/corruption requires ledger reconciliation"
+  },
+  "hosted_regression": {
+    "test_pos_api.py": "77 PASS, 0 FAIL",
+    "test_inventory.py": "57 PASS, 0 FAIL",
+    "test_qr_drafts.py": "37 PASS, 0 FAIL",
+    "test_operating_cost.py": "41 PASS, 0 FAIL",
+    "total": "212 PASS, 0 FAIL",
+    "timing": "after migration 0014, before additional browser energy smoke",
+    "note": "suites create QA data; not suitable for an active operational database"
+  },
+  "browser": {
+    "platform": "Chrome Linux, Flutter release web; NOT Android hardware",
+    "viewports": ["1024x768", "390x844 mobile emulation"],
+    "method": "intercept fetch after a successful hosted energy_save_estimate commit, record response and throw TypeError to simulate lost response; reload browser and reopen form; retry without interception",
+    "first": {"key": "6a79ecb2662cb468f4a853a730b85909", "idempotent_replay": false, "estimate_id": 22, "expense_id": 42, "cost": 2880},
+    "retry": {"key": "6a79ecb2662cb468f4a853a730b85909", "idempotent_replay": true, "estimate_id": 22, "expense_id": 42, "cost": 2880},
+    "pending_fields_locked_after_reload": true,
+    "local_pending_keys_after_confirmation": 0,
+    "database_check": {"energy_rows_for_note": 1, "expense_rows": 1, "expense_kind": "ESTIMATED", "amount": 2880, "cached_rows": 1},
+    "qa_note": "QA-Retry-0014-browser",
+    "qa_data_retained": "one estimate and one ESTIMATED expense retained as audit history; not deleted",
+    "screenshots": ["09_energy_retry_pending_tablet_web.png", "10_energy_retry_reopen_mobile_web.png", "11_energy_retry_replay_mobile_web.png"],
+    "limit": "only energy exercised end-to-end in Chrome; all four operations and LPG covered by widget/SQL tests; not a physical network-disconnect test"
+  },
+  "builds": {
+    "web": "release succeeded in 164.4s",
+    "apk": "release succeeded in 179.9s; 58,281,930 bytes; see android-build.json",
+    "apk_sha256": "6afbfbb6cf3d36763bdcfd512113304a2f0e0aabb60cd0c9014fc3725d0a7289",
+    "signing": "UNSIGNED; apksigner verify exit 1, Missing META-INF/MANIFEST.MF; not installable/distributable"
+  },
+  "secret_value_scan": "PASS; runtime secret values absent from source/test/migration/evidence/web files and all APK entries; values not printed",
+  "graphify": {
+    "command": "graphify update .",
+    "nodes": 1320,
+    "edges": 1842,
+    "communities": 81,
+    "limits": "AST-only; SQL parser absent, some JSON evidence yields no nodes; two pre-existing excluded nodes retained fail-closed; no paid semantic relabel/full purge"
+  },
+  "release_gate": {
+    "retry_backend_and_client_qa": "PASS for audited current money/stock RPCs",
+    "still_blocked": ["owner signing key and client distribution", "Android/tablet/manual operator UAT", "full Supabase Auth/Storage restore and release observability", "credential rotation", "permanent HTTPS QR hosting"],
+    "overall": "Sprint 06 PARTIAL / NOT PRODUCTION READY"
+  }
+}

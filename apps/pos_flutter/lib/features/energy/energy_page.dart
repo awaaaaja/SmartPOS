@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../../core/mutation_retry.dart';
 import '../operating_cost/operating_repository.dart';
 
 /// S05-01/02: kalkulator energi interaktif. Pratinjau live kWh/biaya per
@@ -35,7 +36,53 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
   final _portions = TextEditingController(text: '10');
   final _note = TextEditingController();
   bool _saving = false;
+  bool _ready = false;
+  PendingMutation? _pending;
+  String? _error;
   EnergyEstimate? _last;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPending();
+  }
+
+  Future<void> _loadPending() async {
+    try {
+      final pending = await ref
+          .read(operatingRepositoryProvider)
+          .pendingEnergyEstimate();
+      if (!mounted) return;
+      if (pending != null) {
+        final p = pending.params;
+        for (final (controller, key) in [
+          (_watt, 'p_watt'),
+          (_hours, 'p_hours'),
+          (_load, 'p_load_factor'),
+          (_tariff, 'p_tariff'),
+          (_refill, 'p_refill_price'),
+          (_effHours, 'p_effective_hours'),
+          (_batchHours, 'p_batch_hours'),
+          (_portions, 'p_portions'),
+          (_note, 'p_note'),
+        ]) {
+          controller.text = p[key]?.toString() ?? '';
+        }
+        _tabs.index = p['p_kind'] == 'ELECTRICITY' ? 0 : 1;
+      }
+      setState(() {
+        _pending = pending;
+        _ready = true;
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _ready = false;
+          _error = mapErrorToMessage(error);
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -60,12 +107,16 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
       double.tryParse(c.text.trim().replaceAll(',', '.'));
 
   Future<void> _save(bool isElectric) async {
+    if (_saving || !_ready) return;
     final portions = int.tryParse(_portions.text.trim());
     if (portions == null || portions <= 0) {
       _toast('Jumlah porsi valid wajib diisi.');
       return;
     }
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
       final result = await ref
           .read(operatingRepositoryProvider)
@@ -82,14 +133,18 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
             note: _note.text.trim().isEmpty ? null : _note.text.trim(),
           );
       if (!mounted) return;
-      setState(() => _last = result);
+      setState(() {
+        _last = result;
+        _pending = null;
+      });
       ref.invalidate(expensesProvider);
       _toast(
         'Estimasi tersimpan sebagai biaya ESTIMATED '
         '${formatRupiah(result.cost)} (bukan biaya aktual).',
       );
     } catch (e) {
-      if (mounted) _toast(mapErrorToMessage(e));
+      await _loadPending();
+      if (mounted) setState(() => _error = mapErrorToMessage(e));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -121,6 +176,27 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
               style: theme.textTheme.bodySmall,
             ),
           ),
+          if (_pending != null || _error != null || !_ready)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_pending != null)
+                    const Text(
+                      'Permintaan sebelumnya belum terkonfirmasi. '
+                      'Ulangi estimasi yang sama; jangan membuat biaya baru.',
+                    ),
+                  if (_error != null)
+                    Text(_error!, style: const TextStyle(color: errorColor)),
+                  if (!_ready)
+                    TextButton(
+                      onPressed: _loadPending,
+                      child: const Text('Muat ulang permintaan'),
+                    ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
             child: TabBar(
@@ -202,7 +278,13 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
         _noteField(),
         const SizedBox(height: 8),
         FilledButton.icon(
-          onPressed: _saving ? null : () => _save(true),
+          onPressed:
+              _saving ||
+                  !_ready ||
+                  (_pending != null &&
+                      _pending!.params['p_kind'] != 'ELECTRICITY')
+              ? null
+              : () => _save(true),
           icon: _saving
               ? const SizedBox(
                   width: 16,
@@ -210,7 +292,11 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.save_rounded),
-          label: const Text('Simpan sebagai Biaya Estimasi'),
+          label: Text(
+            _pending == null
+                ? 'Simpan sebagai Biaya Estimasi'
+                : 'Ulangi estimasi yang sama',
+          ),
         ),
         if (_last != null && _last!.kind == 'ELECTRICITY') ...[
           const SizedBox(height: 8),
@@ -277,7 +363,12 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
         _noteField(),
         const SizedBox(height: 8),
         FilledButton.icon(
-          onPressed: _saving ? null : () => _save(false),
+          onPressed:
+              _saving ||
+                  !_ready ||
+                  (_pending != null && _pending!.params['p_kind'] != 'LPG')
+              ? null
+              : () => _save(false),
           icon: _saving
               ? const SizedBox(
                   width: 16,
@@ -285,7 +376,11 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.save_rounded),
-          label: const Text('Simpan sebagai Biaya Estimasi'),
+          label: Text(
+            _pending == null
+                ? 'Simpan sebagai Biaya Estimasi'
+                : 'Ulangi estimasi yang sama',
+          ),
         ),
         if (_last != null && _last!.kind == 'LPG') ...[
           const SizedBox(height: 8),
@@ -346,6 +441,7 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
         padding: const EdgeInsets.only(bottom: 10),
         child: TextField(
           controller: c,
+          enabled: _ready && !_saving && _pending == null,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             labelText: label,
@@ -360,6 +456,7 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
     padding: const EdgeInsets.only(bottom: 10),
     child: TextField(
       controller: _portions,
+      enabled: _ready && !_saving && _pending == null,
       keyboardType: TextInputType.number,
       decoration: const InputDecoration(
         labelText: 'Jumlah porsi valid',
@@ -372,6 +469,7 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
 
   Widget _noteField() => TextField(
     controller: _note,
+    enabled: _ready && !_saving && _pending == null,
     decoration: const InputDecoration(
       labelText: 'Catatan (opsional)',
       prefixIcon: Icon(Icons.notes_rounded),

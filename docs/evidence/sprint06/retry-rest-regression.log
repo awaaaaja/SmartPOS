@@ -1,0 +1,302 @@
+test_pos_api.py
+PASS  login operator
+PASS  baca products sebagai operator
+PASS  baca modifiers
+
+== Skenario uang & rounding quote ==
+PASS  quote qty=1 harga=10000 disc=0% -> subtotal=10000 diskon=0
+PASS  quote qty=1 harga=10000 disc=0% -> subtotal=10000 diskon=0
+PASS  quote qty=1 harga=10000 disc=0% -> subtotal=10000 diskon=0
+PASS  quote qty=3 harga=10000 disc=0% -> subtotal=30000 diskon=0
+PASS  quote qty=7 harga=10000 disc=0% -> subtotal=70000 diskon=0
+PASS  quote qty=2 harga=10000 disc=5% -> subtotal=20000 diskon=1000
+PASS  quote qty=4 harga=10000 disc=7% -> subtotal=40000 diskon=2800
+PASS  quote qty=5 harga=10000 disc=10% -> subtotal=50000 diskon=5000
+PASS  quote qty=1 harga=10000 disc=15% -> subtotal=10000 diskon=1500
+PASS  quote qty=9 harga=10000 disc=33% -> subtotal=90000 diskon=29700
+PASS  quote qty=1 harga=10000 disc=50% -> subtotal=10000 diskon=5000
+PASS  quote qty=99 harga=10000 disc=100% -> subtotal=990000 diskon=990000
+PASS  quote qty=2 harga=10000 disc=13% -> subtotal=20000 diskon=2600
+PASS  quote qty=6 harga=10000 disc=17% -> subtotal=60000 diskon=10200
+PASS  quote qty=8 harga=10000 disc=25% -> subtotal=80000 diskon=20000
+PASS  quote qty=3 harga=10000 disc=3% -> subtotal=30000 diskon=900
+PASS  quote qty=1 harga=10000 disc=12% -> subtotal=10000 diskon=1200
+PASS  quote qty=4 harga=10000 disc=6% -> subtotal=40000 diskon=2400
+PASS  quote qty=5 harga=10000 disc=9% -> subtotal=50000 diskon=4500
+PASS  quote qty=7 harga=10000 disc=11% -> subtotal=70000 diskon=7700
+PASS  quote qty=1 + modifier Cincau
+PASS  quote qty=2 + modifier Cincau
+PASS  quote qty=5 + modifier Cincau
+PASS  quote 2 item campur + diskon 7%
+
+== Validasi input ilegal ==
+PASS  keranjang kosong ditolak
+PASS  diskon 101% ditolak
+PASS  diskon negatif ditolak
+PASS  qty 0 ditolak
+PASS  product id fiktif ditolak
+PASS  modifier tak terkait product ditolak
+
+== Skenario pajak & biaya layanan (rounding) ==
+PASS  baca settings
+PASS  set tarif pajak=0.11 layanan=0.05
+PASS  pajak 0.11/layanan 0.05 qty=1 disc=0%
+PASS  pajak 0.11/layanan 0.05 qty=3 disc=7%
+PASS  pajak 0.11/layanan 0.05 qty=7 disc=13%
+PASS  pajak 0.11/layanan 0.05 qty=1 disc=50%
+PASS  pajak 0.11/layanan 0.05 qty=9 disc=33%
+PASS  pajak 0.11/layanan 0.05 qty=13 disc=25%
+PASS  pajak 0.11/layanan 0.05 qty=2 disc=9%
+PASS  set tarif pajak=0.10 layanan=0.00
+PASS  pajak 0.10/layanan 0.00 qty=1 disc=0%
+PASS  pajak 0.10/layanan 0.00 qty=3 disc=7%
+PASS  pajak 0.10/layanan 0.00 qty=7 disc=13%
+PASS  pajak 0.10/layanan 0.00 qty=1 disc=50%
+PASS  pajak 0.10/layanan 0.00 qty=9 disc=33%
+PASS  pajak 0.10/layanan 0.00 qty=13 disc=25%
+PASS  pajak 0.10/layanan 0.00 qty=2 disc=9%
+PASS  set tarif pajak=0.075 layanan=0.025
+PASS  pajak 0.075/layanan 0.025 qty=1 disc=0%
+PASS  pajak 0.075/layanan 0.025 qty=3 disc=7%
+PASS  pajak 0.075/layanan 0.025 qty=7 disc=13%
+PASS  pajak 0.075/layanan 0.025 qty=1 disc=50%
+PASS  pajak 0.075/layanan 0.025 qty=9 disc=33%
+PASS  pajak 0.075/layanan 0.025 qty=13 disc=25%
+PASS  pajak 0.075/layanan 0.025 qty=2 disc=9%
+PASS  kembalikan tarif semula
+    -> 21 skenario pajak/layanan diuji
+
+== Checkout & idempotency ==
+PASS  checkout pertama sukses
+PASS  total checkout sesuai quote server
+PASS  kembalian benar
+PASS  double tap key sama = sale sama (idempoten)
+PASS  10 retry beruntun key sama -> tetap satu sale
+PASS  bayar kurang dari total ditolak
+
+== Snapshot harga saat master diubah ==
+PASS  ubah harga master
+PASS  quote baru memakai harga baru
+PASS  struk sale lama TIDAK berubah setelah harga diedit
+
+== Refund ==
+PASS  refund parsial sukses
+PASS  refund penuh -> status REFUNDED
+PASS  refund melebihi total ditolak
+PASS  sale asli tetap ada (uang historis tidak dihapus)
+PASS  dashboard summary dari sale final
+    -> {"today_refunds": 306402, "today_revenue": 725798, "all_time_revenue": 1085798, "today_transactions": 37, "all_time_transactions": 51}
+
+== Anon ditolak ==
+PASS  anon pos_quote ditolak
+PASS  anon pos_checkout ditolak
+PASS  anon baca sales -> []
+PASS  anon pos_refund ditolak
+
+=== HASIL: 77 PASS, 0 FAIL (total 77 pemeriksaan, 23+ skenario uang) ===
+
+test_inventory.py
+PASS  login operator
+
+== S04-01: master bahan + satuan dasar ==
+PASS  bahan gram terbuat
+PASS  bahan mililiter terbuat
+PASS  bahan pcs terbuat
+PASS  satuan dasar selain g/ml/pcs ditolak
+
+== S04-03: pembelian 1 kg -> saldo +1000 g (konversi) ==
+PASS  pembelian kg diterima
+PASS  total = harga beli
+PASS  saldo 1 kg = 1000 g
+PASS  unit_cost = 13.000/1000g = 13
+PASS  pembelian 2 L -> 2000 ml
+
+== S04-03: ORDERED belum menambah saldo; RECEIVE sekali ==
+PASS  pembelian ORDERED dibuat
+PASS  ORDERED belum menambah saldo
+PASS  receive -> RECEIVED
+PASS  saldo +10 sekali
+PASS  receive kedua ditolak (tak dobel)
+PASS  saldo tetap 10 setelah retry
+PASS  ledger PURCHASE tercatat tepat 1 baris untuk po ini
+
+== S04-04: resep versi + HPP per porsi ==
+PASS  produk uji resep terbuat
+PASS  sebelum resep: has_recipe=false
+PASS  resep v1 tersimpan
+PASS  yield terbaca
+PASS  HPP per porsi sesuai formula
+PASS  item HPP telusur ke bahan+satuan+unit_cost
+PASS  resep v2 tersimpan
+PASS  riwayat versi lengkap (v1 nonaktif tetap ada)
+PASS  resep v3 (kembali ke komposisi uji)
+
+== S04-06: sale final memotong bahan tepat sekali ==
+PASS  checkout sukses
+PASS  stok tepung berkurang 200 g sekali
+PASS  ledger RECIPE per sale = 1 baris per bahan
+PASS  retry idempoten -> sale sama
+PASS  retry TIDAK menggandakan pengurangan
+PASS  ledger RECIPE tetap 2 baris setelah retry (tak bertambah)
+
+== UAT-06: stok kurang -> checkout ditolak ==
+PASS  produk uji boros terbuat
+PASS  resep boros tersimpan
+PASS  checkout ditolak insufficient_stock
+PASS  sale TIDAK tersimpan saat ditolak (rollback)
+
+== S04-07: produk tanpa resep -> tanpa klaim ==
+PASS  produk tanpa resep terbuat
+PASS  tanpa resep: has_recipe=false (status jujur)
+PASS  checkout produk tanpa resep sukses
+PASS  stok TIDAK diklaim untuk produk tanpa resep
+
+== S04-07: produk BATCH — potong saat produksi saja ==
+PASS  produk gorengan terbuat
+PASS  produk gorengan ber-mode BATCH
+PASS  resep batch tersimpan
+PASS  produksi batch sukses
+PASS  produksi memotong 300 g sekali
+PASS  penjualan batch sukses
+PASS  penjualan TIDAK memotong bahan lagi (tanpa dobel)
+
+== S04-02: waste/koreksi beralasan ==
+PASS  alasan < 3 huruf ditolak
+PASS  waste tercatat
+PASS  ledger WASTE beralasan
+PASS  koreksi +25 tercatat
+PASS  sumber selain ADJUSTMENT/WASTE ditolak
+
+== S04-05: ledger append-only ==
+PASS  UPDATE ledger tidak mengubah baris (SELECT-only)
+PASS  DELETE ledger tidak menghapus baris
+
+== RLS: anon tertutup ==
+PASS  anon tidak bisa baca bahan
+PASS  anon tidak bisa baca ledger
+PASS  anon tidak bisa memanggil RPC inventori
+
+Ringkasan: 57 PASS, 0 FAIL
+
+test_qr_drafts.py
+PASS  login operator
+PASS  baca products
+
+== Persiapan meja uji ==
+PASS  meja uji terbuat
+
+== Submit draft publik ==
+PASS  submit valid (anon) -> 200
+PASS  draft PENDING
+PASS  subtotal = harga server x qty
+PASS  ada ref_code
+PASS  snapshot nama produk
+
+== Dua HP bersamaan ==
+PASS  HP kedua submit -> draft kedua
+
+== Retry idempoten ==
+PASS  retry key sama -> draft sama
+
+== Token salah ==
+PASS  token salah ditolak
+PASS  qty 0 ditolak
+PASS  items kosong ditolak
+
+== Omzet sebelum/sesudah draft ==
+PASS  omzet terbaca
+PASS  draft tidak menambah omzet
+
+== Rate limit ==
+PASS  percobaan ke-6 ditolak rate limit
+PASS  rate limit aktif (<=6 percobaan)
+
+== Anon tertutup rapat ==
+PASS  anon baca qr_drafts = kosong/403
+PASS  anon qr_list_drafts ditolak
+PASS  anon qr_claim_draft ditolak
+PASS  anon qr_cancel_draft ditolak
+PASS  anon qr_complete_draft ditolak
+PASS  anon pos_checkout ditolak
+
+== List & claim (operator) ==
+PASS  list drafts berisi PENDING
+PASS  draft ke-2 (HP-2) juga tampil
+PASS  claim sukses
+PASS  item terbawa saat claim
+PASS  claim kedua ditolak (sudah CLAIMED)
+PASS  draft ter-claim hilang dari daftar PENDING
+
+== Checkout draft (mesin POS Sprint 02) ==
+PASS  checkout draft sukses
+PASS  total = subtotal draft + pajak aktif
+PASS  retry checkout = sale yang sama
+PASS  draft ditandai COMPLETED
+PASS  omzet naik setelah bayar
+
+== Cancel draft ==
+PASS  cancel sukses
+PASS  draft ter-cancel tidak bisa di-claim
+PASS  cancel id asing ditolak
+
+37 PASS, 0 FAIL
+
+test_operating_cost.py
+PASS  login operator
+
+== S05-01: kalkulator listrik 800W x 3j x 80% x Rp1.500 ==
+PASS  estimasi listrik tersimpan
+PASS  kWh = 1.92
+PASS  biaya = Rp 2.880
+PASS  estimasi ikut sebagai expense ESTIMATED (bukan ACTUAL)
+PASS  watt 0 ditolak
+PASS  faktor beban > 100% ditolak
+PASS  jenis energi asing ditolak
+
+== S05-01: kalkulator LPG (isi ulang Rp22.000 / 20 jam, batch 2.5 jam) ==
+PASS  estimasi LPG tersimpan
+PASS  biaya LPG = Rp 2.750
+PASS  jam efektif 0 ditolak
+
+== S05-03: biaya aktual vs estimasi ==
+PASS  expense aktual tersimpan
+PASS  expense estimasi tersimpan
+PASS  tipe biaya asing ditolak
+PASS  keterangan < 3 huruf ditolak
+
+== S05-04: alokasi tidak boleh melebihi sumber (UAT-10) ==
+PASS  alokasi 500.000 dari 1.500.000 diterima
+PASS  total alokasi tepat = sumber diterima
+PASS  alokasi melebihi sumber ditolak server
+PASS  mengecilkan sumber di bawah alokasi ditolak
+
+== S05-05: kas shift (UAT-11) ==
+PASS  status shift terbaca
+PASS  buka shift dengan kas awal Rp100.000
+PASS  shift kedua ditolak (satu shift terbuka)
+PASS  checkout tunai sukses
+PASS  checkout transfer sukses
+PASS  expected = awal + penjualan tunai (transfer dikecualikan)
+PASS  tutup kas menghitung selisih -500
+PASS  expected tercatat saat tutup
+PASS  tutup tanpa shift terbuka ditolak
+
+== S05-07: laporan (refund mengurangi net sales) ==
+PASS  refund penuh sukses
+PASS  laporan terbaca
+PASS  net sales laporan = hitungan DB
+PASS  refund laporan = total refund DB
+PASS  biaya aktual laporan = DB
+PASS  biaya estimasi laporan = DB
+PASS  estimasi tidak dijumlahkan ke aktual
+PASS  total alokasi laporan = DB dan <= sumber
+
+== S05-09: anon ditolak ==
+PASS  anon ditolak exp_save
+PASS  anon ditolak cash_shift_open
+PASS  anon ditolak cost_allocate
+PASS  anon baca expenses = tertutup
+PASS  anon baca cash_shifts = tertutup
+
+============================================================
+TOTAL: 41 PASS, 0 FAIL

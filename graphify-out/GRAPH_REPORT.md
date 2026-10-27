@@ -1,16 +1,16 @@
 # Graph Report - Smart_POS  (2026-10-27)
 
 ## Corpus Check
-- 105 files · ~507,027 words
+- 107 files · ~454,179 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1252 nodes · 1694 edges · 76 communities (68 shown, 8 thin omitted)
+- 1320 nodes · 1842 edges · 81 communities (73 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4019874c`
+- Built from commit: `0b95afee`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - catalog_repository.dart
 - history_page.dart
 - pos_repository.dart
-- package:flutter_riverpod/flutter_riverpod.dart
+- dashboard_page.dart
 - shell.dart
 - catalog_page.dart
 - sale_models.dart
@@ -57,7 +57,7 @@
 - supabase.ts
 - purchases_page.dart
 - qr_page.dart
-- qr_inbox_sheet_test.dart
+- package:flutter_riverpod/flutter_riverpod.dart
 - package:supabase_flutter/supabase_flutter.dart
 - categoriesProvider
 - TablesQrPage
@@ -65,14 +65,14 @@
 - test_qr_drafts.py
 - expenses_page.dart
 - stock_page.dart
-- _HppDetail
+- remaining_mutation_retry_test.dart
 - inventory_pages_test.dart
 - MutationRetryTest
 - test_inventory.py
-- package:flutter_test/flutter_test.dart
+- destinations.dart
 - energy_page.dart
 - login_page.dart
-- ConsumerWidget
+- cash_page.dart
 - page_layout_test.dart
 - module_placeholder.dart
 - test_operating_cost.py
@@ -85,37 +85,42 @@
 - pos_mobile_test.dart
 - memory_preferences.dart
 - Qty
-- DashboardPage
+- ../../core/error_mapper.dart
 - fix-refund-stock-retry.md
+- auth_repository.dart
+- reportProvider
+- _SaleDetailSheetState
+- AuthRepository
+- _EnergyPageState
 
 ## God Nodes (most connected - your core abstractions)
-1. `_` - 96 edges
-2. `MutationRetryTest` - 15 edges
+1. `_` - 105 edges
+2. `MutationRetryTest` - 30 edges
 3. `catalogRepositoryProvider` - 8 edges
-4. `ingredientsProvider` - 8 edges
-5. `_PosPageState` - 8 edges
-6. `operatingRepositoryProvider` - 7 edges
-7. `_RecipesHppPageState` - 7 edges
-8. `5. PROMPT PER SPRINT — EKSEKUSI BERURUTAN` - 7 edges
-9. `Serah terima QA MVP — 27 Oktober 2026` - 7 edges
-10. `Sprint Log` - 7 edges
+4. `inventoryRepositoryProvider` - 8 edges
+5. `ingredientsProvider` - 8 edges
+6. `_PosPageState` - 8 edges
+7. `_RecipesHppPageState` - 8 edges
+8. `quoted()` - 8 edges
+9. `5. PROMPT PER SPRINT — EKSEKUSI BERURUTAN` - 7 edges
+10. `Serah terima QA MVP — 27 Oktober 2026` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `_AppShellState` --references--> `authRepositoryProvider`  [EXTRACTED]
   apps/pos_flutter/lib/app/shell.dart → apps/pos_flutter/lib/features/auth/auth_repository.dart
+- `build` --references--> `authRepositoryProvider`  [EXTRACTED]
+  apps/pos_flutter/lib/app/shell.dart → apps/pos_flutter/lib/features/auth/auth_repository.dart
+- `_` --references--> `MutationRetryStore`  [EXTRACTED]
+  apps/pos_flutter/lib/features/operating_cost/operating_repository.dart → apps/pos_flutter/lib/core/mutation_retry.dart
 - `_submit` --references--> `authRepositoryProvider`  [EXTRACTED]
   apps/pos_flutter/lib/features/auth/login_page.dart → apps/pos_flutter/lib/features/auth/auth_repository.dart
-- `CashShiftPage` --references--> `operatingRepositoryProvider`  [EXTRACTED]
-  apps/pos_flutter/lib/features/cash_shift/cash_page.dart → apps/pos_flutter/lib/features/operating_cost/operating_repository.dart
 - `_openShift` --references--> `operatingRepositoryProvider`  [EXTRACTED]
   apps/pos_flutter/lib/features/cash_shift/cash_page.dart → apps/pos_flutter/lib/features/operating_cost/operating_repository.dart
-- `CatalogPage` --references--> `catalogRepositoryProvider`  [EXTRACTED]
-  apps/pos_flutter/lib/features/catalog/catalog_page.dart → apps/pos_flutter/lib/features/catalog/catalog_repository.dart
 
 ## Import Cycles
 - None detected.
 
-## Communities (76 total, 8 thin omitted)
+## Communities (81 total, 8 thin omitted)
 
 ### Community 0 - "StatelessWidget"
 Cohesion: 0.12
@@ -135,15 +140,15 @@ Nodes (26): _amount, build, _busy, createState, dispose, _error, _loadPending, _
 
 ### Community 4 - "pos_repository.dart"
 Cohesion: 0.05
-Nodes (43): add, basePrice, build, CartController, CartLine, CartState, changeQty, checkout (+35 more)
+Nodes (40): add, basePrice, build, CartController, CartLine, CartState, changeQty, checkout (+32 more)
 
-### Community 5 - "package:flutter_riverpod/flutter_riverpod.dart"
-Cohesion: 0.12
-Nodes (19): app/theme.dart, _closeShift, _row, color, icon, _StatCard, subtitle, title (+11 more)
+### Community 5 - "dashboard_page.dart"
+Cohesion: 0.22
+Nodes (8): color, icon, _StatCard, subtitle, title, value, Color, ../pos/pos_repository.dart
 
 ### Community 6 - "shell.dart"
-Cohesion: 0.07
-Nodes (29): createState, _current, destination, onRetry, onSelected, onTap, _openOthers, _pageFor (+21 more)
+Cohesion: 0.06
+Nodes (32): AuthGate, build, createState, _current, destination, onRetry, onSelected, onTap (+24 more)
 
 ### Community 7 - "catalog_page.dart"
 Cohesion: 0.06
@@ -162,8 +167,8 @@ Cohesion: 0.07
 Nodes (26): 10. Persyaratan Non-Fungsional, 11. Uji Penerimaan Utama (UAT), 12. Release Scope dan Rencana Implementasi, 13. Kriteria Rilis, 1.1 Masalah yang diselesaikan, 1.2 Ukuran keberhasilan yang harus diuji, 1. Ringkasan Produk, 2.1 Dalam cakupan (+18 more)
 
 ### Community 11 - "catalog_models.dart"
-Cohesion: 0.09
-Nodes (22): archivedAt, categoryId, categoryName, effectiveAt, fromJson, id, isActive, isArchived (+14 more)
+Cohesion: 0.08
+Nodes (23): archivedAt, categoryId, categoryName, effectiveAt, fromJson, id, isActive, isArchived (+15 more)
 
 ### Community 12 - "Sprints.md"
 Cohesion: 0.10
@@ -179,15 +184,15 @@ Nodes (15): abs, base, body, formatNumber, formatRupiah, formatWib, formatWibDat
 
 ### Community 15 - "Sprint 02 — Katalog & Kasir POS (End-to-End)"
 Cohesion: 0.05
-Nodes (39): Acceptance Criteria, Acceptance Criteria, Alur bukti end-to-end (Chrome, bukan mock), Blocker yang ditemukan: K06-01 — retry menggandakan mutasi (DIPERBAIKI), Bukti E2E (Chrome, build web final), Bukti E2E (Chrome, build web final, tablet 1280×800), Gate S04, Gate S05 (+31 more)
+Nodes (40): Acceptance Criteria, Acceptance Criteria, Alur bukti end-to-end (Chrome, bukan mock), Blocker yang ditemukan: K06-01 — retry menggandakan mutasi (DIPERBAIKI), Bukti E2E (Chrome, build web final), Bukti E2E (Chrome, build web final, tablet 1280×800), Gate S04, Gate S05 (+32 more)
 
 ### Community 16 - "theme.dart"
 Cohesion: 0.14
 Nodes (13): borderColor, brandDark, brandPrimary, brandSoft, buildAppTheme, canvasColor, errorColor, scheme (+5 more)
 
 ### Community 17 - "mutation_retry_forms_test.dart"
-Cohesion: 0.06
-Nodes (31): adjustStock, _app, balance, _fields, ingredient, main, movements, noSuchMethod (+23 more)
+Cohesion: 0.07
+Nodes (29): adjustStock, _app, balance, _fields, ingredient, main, movements, noSuchMethod (+21 more)
 
 ### Community 18 - "login_page_test.dart"
 Cohesion: 0.18
@@ -203,19 +208,19 @@ Nodes (10): @immutable, Modifier, PriceHistoryEntry, Product, ProductCategory, D
 
 ### Community 21 - "_"
 Cohesion: 0.03
-Nodes (74): _, actualAmount, actualCash, allocate, allocatedTotal, allocations, amount, cashSales (+66 more)
+Nodes (78): _, actualAmount, actualCash, allocate, allocatedTotal, allocations, amount, cashSales (+70 more)
 
 ### Community 22 - "_PosPageState"
-Cohesion: 0.20
-Nodes (12): build, _claimDraft, _completeClaimedDrafts, _openCartSheet, _openPayment, PosPage, _PosPageState, cartControllerProvider (+4 more)
+Cohesion: 0.29
+Nodes (8): _claimDraft, _completeClaimedDrafts, _openCartSheet, _openPayment, PosPage, _PosPageState, cartControllerProvider, qrDraftRepositoryProvider
 
 ### Community 23 - "shell_test.dart"
-Cohesion: 0.14
-Nodes (13): AuthRepository, currentUser, _FakeAuthRepository, main, _setSurface, signedOut, signIn, signOut (+5 more)
+Cohesion: 0.18
+Nodes (10): currentUser, main, _setSurface, signedOut, signIn, signOut, _wrap, package:pos_flutter/app/shell.dart (+2 more)
 
 ### Community 24 - "package:flutter/material.dart"
-Cohesion: 0.20
-Nodes (9): main, main, main, package:flutter/material.dart, package:pos_flutter/app/theme.dart, package:pos_flutter/core/models/catalog_models.dart, package:pos_flutter/core/widgets/module_placeholder.dart, package:pos_flutter/features/catalog/catalog_page.dart (+1 more)
+Cohesion: 0.16
+Nodes (12): main, main, main, main, package:flutter/material.dart, package:flutter_test/flutter_test.dart, package:pos_flutter/app/theme.dart, package:pos_flutter/core/formatters.dart (+4 more)
 
 ### Community 25 - "App.vue"
 Cohesion: 0.06
@@ -227,15 +232,15 @@ Nodes (7): _addCategory, _confirmArchive, _editProduct, _ProductTile, _ProductTi
 
 ### Community 27 - "Serah terima QA MVP — 27 Oktober 2026"
 Cohesion: 0.07
-Nodes (26): Backup dan latihan restore Sprint 06, Bukti yang sudah ada, Prosedur pengulangan (staging saja), Evidence Sprint 06 — QA, bukan persetujuan produksi, 1. Blocker / known issues, 2. Setup Supabase, 3. Build, signing dan pemasangan Android, 4. Migrasi, backup dan rollback (+18 more)
+Nodes (27): Backup dan latihan restore Sprint 06, Bukti yang sudah ada, Prosedur pengulangan (staging saja), Evidence Sprint 06 — QA, bukan persetujuan produksi, 1. Blocker / known issues, 2. Setup Supabase, 3. Build, signing dan pemasangan Android, 4. Migrasi, backup dan rollback (+19 more)
 
 ### Community 28 - "Decision Log"
 Cohesion: 0.29
 Nodes (6): D-01 (2026-10-26) — API bisnis authoritative = fungsi Postgres (bukan FastAPI terpisah), D-02 (2026-10-26) — Penanda satu operator = `business_settings.operator_email`, D-03 (2026-10-26) — Token meja disimpan sebagai hash SHA-256, D-04 (2026-10-26) — WIB dihitung manual (UTC+7), bukan paket zona waktu, D-05 (2026-10-26) — Konfigurasi Flutter via `--dart-define`, layar konfigurasi jujur, Decision Log
 
 ### Community 29 - "API Contracts"
-Cohesion: 0.29
-Nodes (6): API Contracts, Keamanan, Mutasi yang wajib idempotency key (S06, migrasi `0013`), Operator (sesi login, via authenticated + RLS), Publik (tanpa sesi, via anon key), `rpc get_public_menu(p_table_token text) -> jsonb`
+Cohesion: 0.25
+Nodes (7): API Contracts, Keamanan, Mutasi yang wajib idempotency key (S06, migrasi `0013`–`0014`), Operator (sesi login, via authenticated + RLS), Publik (tanpa sesi, via anon key), `rpc get_public_menu(p_table_token text) -> jsonb`, RPC lain dalam audit retry uang/stok
 
 ### Community 30 - "test_pos_api.py"
 Cohesion: 0.53
@@ -251,55 +256,55 @@ Nodes (35): cancel, claim, _client, complete, createdAt, createTable, draftId, f
 
 ### Community 34 - "inventory_repository.dart"
 Cohesion: 0.03
-Nodes (57): adjustStock, balance, balanceAfter, baseUnit, _client, cost, createdAt, createPurchase (+49 more)
+Nodes (59): adjustStock, balance, balanceAfter, baseUnit, _client, cost, createdAt, createPurchase (+51 more)
 
 ### Community 36 - "reports_page.dart"
-Cohesion: 0.20
-Nodes (13): reportProvider, reportRangeProvider, b, build, buildReportCsv, _card, _pickRange, _refresh (+5 more)
+Cohesion: 0.16
+Nodes (12): app/theme.dart, build, QrInboxSheet, b, _card, _stat, _statsGrid, toString (+4 more)
 
 ### Community 44 - "purchases_page.dart"
 Cohesion: 0.13
-Nodes (15): Purchase, purchasesProvider, build, _formatDate, ingredientId, _LineState, onReceive, price (+7 more)
+Nodes (16): Purchase, purchasesProvider, build, _formatDate, ingredientId, _LineState, onReceive, price (+8 more)
 
 ### Community 45 - "qr_page.dart"
 Cohesion: 0.13
 Nodes (14): _createTable, onRotate, onToggle, qrUrlFor, qrWebBaseUrl, _rotate, _showTokenDialog, table (+6 more)
 
-### Community 46 - "qr_inbox_sheet_test.dart"
+### Community 46 - "package:flutter_riverpod/flutter_riverpod.dart"
 Cohesion: 0.22
-Nodes (8): _draft, _harness, main, _open, pumpAndSettle, tap, package:pos_flutter/features/pos/qr_inbox_sheet.dart, package:pos_flutter/features/tables_qr/tables_repository.dart
+Nodes (8): _draft, _harness, main, _open, pumpAndSettle, tap, package:flutter_riverpod/flutter_riverpod.dart, package:pos_flutter/features/pos/qr_inbox_sheet.dart
 
 ### Community 47 - "package:supabase_flutter/supabase_flutter.dart"
 Cohesion: 0.16
 Nodes (11): file, saveCsvFile, writeAsString, m, _mapBusinessError, mapErrorToMessage, main, dart:async (+3 more)
 
 ### Community 48 - "categoriesProvider"
-Cohesion: 0.25
-Nodes (8): build, CatalogPage, _CategorySheet, _CategorySheetState, _ProductDialog, _ProductDialogState, categoriesProvider, productsProvider
+Cohesion: 0.33
+Nodes (7): build, CatalogPage, _CategorySheet, _CategorySheetState, categoriesProvider, productsProvider, build
 
 ### Community 49 - "TablesQrPage"
 Cohesion: 0.40
 Nodes (5): build, TablesQrPage, _toggle, tablesListProvider, tablesRepositoryProvider
 
 ### Community 50 - "recipes_page.dart"
-Cohesion: 0.12
-Nodes (16): RecipeProduct, createState, ingredientId, onBatch, onChanged, onEdit, _produceBatch, product (+8 more)
+Cohesion: 0.11
+Nodes (20): hppProvider, RecipeProduct, recipeProductsProvider, recipeVersionsProvider, build, createState, _HppDetail, ingredientId (+12 more)
 
 ### Community 51 - "test_qr_drafts.py"
 Cohesion: 0.80
 Nodes (4): check(), main(), req(), rpc()
 
 ### Community 52 - "expenses_page.dart"
-Cohesion: 0.05
-Nodes (42): AppDestination, byGroup, group, _groupFinance, _groupMain, _groupProduct, groups, icon (+34 more)
+Cohesion: 0.08
+Nodes (29): _allocate, AllocationSheet, _AllocationSheetState, _amount, build, createState, _date, _desc (+21 more)
 
 ### Community 53 - "stock_page.dart"
-Cohesion: 0.13
-Nodes (18): Ingredient, ingredientSearchProvider, ingredientsProvider, build, createState, dispose, _editIngredient, ingredient (+10 more)
+Cohesion: 0.11
+Nodes (22): Ingredient, ingredientSearchProvider, ingredientsProvider, inventoryRepositoryProvider, _adjust, build, createState, dispose (+14 more)
 
-### Community 54 - "_HppDetail"
-Cohesion: 0.50
-Nodes (5): hppProvider, recipeProductsProvider, recipeVersionsProvider, build, _HppDetail
+### Community 54 - "remaining_mutation_retry_test.dart"
+Cohesion: 0.07
+Nodes (26): _app, calls, client, close, inventory, loseFirst, main, _open (+18 more)
 
 ### Community 55 - "inventory_pages_test.dart"
 Cohesion: 0.29
@@ -309,25 +314,25 @@ Nodes (6): _app, main, package:pos_flutter/features/inventory/inventory_reposito
 Cohesion: 0.57
 Nodes (6): check(), main(), make_product(), POST products tidak mengembalikan baris -> query balik by name., req(), rpc()
 
-### Community 58 - "package:flutter_test/flutter_test.dart"
-Cohesion: 0.25
-Nodes (6): main, line, main, package:flutter_test/flutter_test.dart, package:pos_flutter/core/formatters.dart, package:pos_flutter/features/pos/pos_repository.dart
+### Community 58 - "destinations.dart"
+Cohesion: 0.14
+Nodes (13): AppDestination, byGroup, group, _groupFinance, _groupMain, _groupProduct, groups, icon (+5 more)
 
 ### Community 59 - "energy_page.dart"
-Cohesion: 0.07
-Nodes (26): _batchHours, build, createState, dispose, _effHours, _electricForm, _field, _hours (+18 more)
+Cohesion: 0.06
+Nodes (31): _batchHours, build, createState, dispose, _effHours, _electricForm, _error, _field (+23 more)
 
 ### Community 60 - "login_page.dart"
-Cohesion: 0.07
-Nodes (28): AuthGate, build, async, authRepositoryProvider, authStateProvider, _client, currentUser, isAuthenticatedProvider (+20 more)
+Cohesion: 0.14
+Nodes (15): authRepositoryProvider, build, createState, dispose, _emailController, _error, _formKey, LoginPage (+7 more)
 
-### Community 61 - "ConsumerWidget"
-Cohesion: 0.22
-Nodes (9): build, CashShiftPage, inventoryRepositoryProvider, _adjust, cashStatusProvider, PurchasesPage, _receive, SettingsPage (+1 more)
+### Community 61 - "cash_page.dart"
+Cohesion: 0.24
+Nodes (9): build, CashShiftPage, _closeShift, _openShift, _row, _loadPending, cashStatusProvider, operatingRepositoryProvider (+1 more)
 
 ### Community 62 - "page_layout_test.dart"
-Cohesion: 0.13
-Nodes (17): main, pages, report, _app, _day0, _day1, main, package:pos_flutter/features/cash_shift/cash_page.dart (+9 more)
+Cohesion: 0.09
+Nodes (24): OperatingRepository, main, noSuchMethod, _Operating, pages, pendingEnergyEstimate, report, state (+16 more)
 
 ### Community 63 - "module_placeholder.dart"
 Cohesion: 0.25
@@ -338,8 +343,8 @@ Cohesion: 0.52
 Nodes (6): check(), err_code(), main(), Ambil message dari error PostgREST (P0001 -> pesan kita)., req(), rpc()
 
 ### Community 65 - "ConsumerState"
-Cohesion: 0.15
-Nodes (17): AppShell, _AppShellState, EnergyPage, _EnergyPageState, _ModifierSheet, _ModifierSheetState, _PaymentSheet, _PaymentSheetState (+9 more)
+Cohesion: 0.20
+Nodes (14): AppShell, _AppShellState, _ProductDialog, _ProductDialogState, _ExpenseEditor, _ExpenseEditorState, _ModifierSheet, _ModifierSheetState (+6 more)
 
 ### Community 66 - "csv_export_web.dart"
 Cohesion: 0.33
@@ -347,7 +352,7 @@ Nodes (5): blob, saveCsvFile, url, dart:js_interop, package:web/web.dart
 
 ### Community 67 - "mutation_retry.dart"
 Cohesion: 0.12
-Nodes (15): _active, decode, encode, key, mutationRetryStoreProvider, params, pending, PendingMutation (+7 more)
+Nodes (16): _active, decode, encode, key, mutationRetryStoreProvider, params, pending, PendingMutation (+8 more)
 
 ### Community 69 - "main.dart"
 Cohesion: 0.22
@@ -358,8 +363,8 @@ Cohesion: 0.17
 Nodes (11): MutationRetryStore, main, params, preferences, store, submit, FormatException, ../helpers/memory_preferences.dart (+3 more)
 
 ### Community 71 - "pos_mobile_test.dart"
-Cohesion: 0.29
-Nodes (6): main, noSuchMethod, quote, quotedQty, package:pos_flutter/core/models/sale_models.dart, package:pos_flutter/features/pos/pos_page.dart
+Cohesion: 0.13
+Nodes (13): PosRepository, line, main, _Pos, main, noSuchMethod, quote, quotedQty (+5 more)
 
 ### Community 72 - "memory_preferences.dart"
 Cohesion: 0.20
@@ -369,26 +374,46 @@ Nodes (9): failures, getString, MemoryPreferences, noSuchMethod, remove, setStri
 Cohesion: 0.40
 Nodes (5): InventoryRepository, RecipeHpp, RecipeVersion, _Inventory, Qty
 
-### Community 74 - "DashboardPage"
+### Community 74 - "../../core/error_mapper.dart"
+Cohesion: 0.20
+Nodes (10): build, DashboardPage, dashboardReportProvider, dashboardSummaryProvider, build, businessSettingsProvider, SettingsPage, ../auth/auth_repository.dart (+2 more)
+
+### Community 76 - "auth_repository.dart"
+Cohesion: 0.18
+Nodes (10): async, _client, currentUser, isAuthenticatedProvider, maybeWhen, signIn, signOut, supabaseClientProvider (+2 more)
+
+### Community 77 - "reportProvider"
+Cohesion: 0.33
+Nodes (7): reportProvider, reportRangeProvider, build, buildReportCsv, _pickRange, _refresh, ReportsPage
+
+### Community 78 - "_SaleDetailSheetState"
+Cohesion: 0.50
+Nodes (4): posRepositoryProvider, initState, _SaleDetailSheet, _SaleDetailSheetState
+
+### Community 79 - "AuthRepository"
 Cohesion: 0.67
-Nodes (4): build, DashboardPage, dashboardReportProvider, dashboardSummaryProvider
+Nodes (3): AuthRepository, _FakeAuthRepository, _RecordingAuthRepository
+
+### Community 80 - "_EnergyPageState"
+Cohesion: 0.67
+Nodes (3): EnergyPage, _EnergyPageState, SingleTickerProviderStateMixin
 
 ## Knowledge Gaps
-- **783 isolated node(s):** `label`, `icon`, `group`, `mobileLabel`, `_groupMain` (+778 more)
+- **824 isolated node(s):** `label`, `icon`, `group`, `mobileLabel`, `_groupMain` (+819 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `_` connect `_` to `inventory_repository.dart`, `reports_page.dart`, `package:flutter_riverpod/flutter_riverpod.dart`, `sale_models.dart`, `DashboardPage`, `catalog_models.dart`, `package:supabase_flutter/supabase_flutter.dart`, `recipes_page.dart`, `login_page_test.dart`, `expenses_page.dart`, `energy_page.dart`, `login_page.dart`, `ConsumerWidget`?**
-  _High betweenness centrality (0.108) - this node is a cross-community bridge._
-- **Why does `MutationRetryStore` connect `mutation_retry_test.dart` to `mutation_retry_forms_test.dart`, `inventory_repository.dart`, `mutation_retry.dart`, `pos_repository.dart`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `_RecipesHppPageState` connect `recipes_page.dart` to `Qty`, `ConsumerState`, `stock_page.dart`, `_HppDetail`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `_` connect `_` to `inventory_repository.dart`, `reports_page.dart`, `mutation_retry_test.dart`, `sale_models.dart`, `../../core/error_mapper.dart`, `catalog_models.dart`, `auth_repository.dart`, `reportProvider`, `package:flutter_riverpod/flutter_riverpod.dart`, `package:supabase_flutter/supabase_flutter.dart`, `recipes_page.dart`, `login_page_test.dart`, `expenses_page.dart`, `stock_page.dart`, `energy_page.dart`, `cash_page.dart`, `page_layout_test.dart`?**
+  _High betweenness centrality (0.123) - this node is a cross-community bridge._
+- **Why does `MutationRetryStore` connect `mutation_retry_test.dart` to `inventory_repository.dart`, `mutation_retry.dart`, `pos_repository.dart`, `mutation_retry_forms_test.dart`, `_`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `Product` connect `@immutable` to `pos_page.dart`, `catalog_models.dart`, `catalog_page.dart`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `label`, `icon`, `group` to the rest of the system?**
-  _783 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _824 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `StatelessWidget` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
 - **Should `pos_page.dart` be split into smaller, more focused modules?**
