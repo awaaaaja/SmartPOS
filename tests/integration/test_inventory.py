@@ -348,11 +348,12 @@ def main():
     # ------------------------------------------------------------------
     print("\n== S04-02: waste/koreksi beralasan ==")
     status, werr = rpc(token, "inv_adjust_stock", {
-        "p_ingredient_id": ing_g, "p_qty": 50, "p_reason": "x"})
+        "p_ingredient_id": ing_g, "p_qty": 50, "p_reason": "x",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("alasan < 3 huruf ditolak", status == 400, str(status))
     status, waste = rpc(token, "inv_adjust_stock", {
         "p_ingredient_id": ing_g, "p_qty": 50, "p_source": "WASTE",
-        "p_reason": "jatuh ke lantai"})
+        "p_reason": "jatuh ke lantai", "p_idempotency_key": uuid.uuid4().hex})
     check("waste tercatat", status == 200, str(waste)[:200])
     status, moves = req(
         f"/rest/v1/stock_movements?select=reason,source&"
@@ -362,11 +363,11 @@ def main():
           "jatuh ke lantai" in moves[0]["reason"], str(moves))
     status, adj = rpc(token, "inv_adjust_stock", {
         "p_ingredient_id": ing_g, "p_qty": 25, "p_source": "ADJUSTMENT",
-        "p_reason": "stock opname fisik"})
+        "p_reason": "stock opname fisik", "p_idempotency_key": uuid.uuid4().hex})
     check("koreksi +25 tercatat", status == 200, str(adj)[:200])
     status, bad = rpc(token, "inv_adjust_stock", {
         "p_ingredient_id": ing_g, "p_qty": 10, "p_source": "MAGIC",
-        "p_reason": "sumber tidak dikenal"})
+        "p_reason": "sumber tidak dikenal", "p_idempotency_key": uuid.uuid4().hex})
     check("sumber selain ADJUSTMENT/WASTE ditolak", status == 400,
           str(status))
 

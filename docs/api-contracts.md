@@ -43,6 +43,27 @@ Menu aktif untuk satu meja. Token salah/dirotasi → exception `invalid_table_to
 - Quote/checkout/refund/stok: Sprint 02–04, dipindahkan ke fungsi RPC atomik
   dengan idempotency key (belum ada di Sprint 01).
 
+### Mutasi yang wajib idempotency key (S06, migrasi `0013`)
+
+| RPC | Signature | Params |
+|---|---|---|
+| `pos_refund` | `pos_refund(bigint, integer, text, text) -> jsonb` | `p_sale_id`, `p_amount`, `p_reason`, **`p_idempotency_key` (wajib, 8–128 char)** |
+| `inv_adjust_stock` | `inv_adjust_stock(bigint, numeric, text, text, text, text) -> jsonb` | `p_ingredient_id`, `p_qty`, `p_unit`, `p_reason`, `p_source` (`ADJUSTMENT`/`WASTE`), **`p_idempotency_key` (wajib, 8–128 char)** |
+
+- Key tanpa baris → efek dieksekusi sekali dan respons disimpan di
+  `mutation_requests` (private, tanpa RLS SELECT untuk klien) pada transaksi yang sama.
+- Key sudah ada + payload identik → respons tersimpan dikembalikan,
+  `idempotent_replay: true`; efek tidak diulang.
+- Key sudah ada + payload berbeda (target/qty/unit/reason/sumber) →
+  exception `idempotency_key_conflict`, tanpa efek.
+- Key hilang/pendek/terlalu panjang → `missing_idempotency_key` (jalur lama tanpa
+  key ditutup; implementasi lama tersimpan sebagai `pos_refund_once` /
+  `inv_adjust_stock_once` tanpa grant).
+- Kunci diadopsi per `(operation, key)` + advisory lock transaksi sehingga
+  permintaan serentak dengan key sama hanya meng-commit satu efek.
+- Koreksi `ADJUSTMENT` boleh negatif (stok turun); `WASTE` selalu positif
+  dan dikurangi server — validasi memakai magnitudo, bukan tanda.
+
 ## Keamanan
 
 - `anon` tidak punya policy SELECT/INSERT apa pun pada tabel privat.

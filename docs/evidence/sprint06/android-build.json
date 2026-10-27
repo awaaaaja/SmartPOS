@@ -1,13 +1,27 @@
 {
   "artifact": "apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk",
   "version": "1.0.0+1",
-  "bytes": 58068938,
-  "sha256": "0a51b2095ce8ca6ea12efa5c14a8df2f2dc7dfa4759b74bf2f3715841864604b",
-  "build_result": "PASS after IPv4 JVM retry; initial attempt failed DNS",
-  "signing": "UNSIGNED - MEJENG_KEYSTORE_PATH not provided; not installable/distributable",
+  "bytes": 58183626,
+  "sha256": "a4a9588e4cd1443429bf0434a5b61db19e8d33448d81983bfe98aa1ad6e8f958",
+  "build_result": "PASS (180.2s) after IPv4 JVM retry; initial attempt failed DNS",
+  "rebuilt_for": "K06-01 client fix (mutation_retry store + refund/stock retry forms)",
+  "client_fix_present_in_binary": {
+    "method": "strings on lib/arm64-v8a/libapp.so",
+    "Simpan Refund": 1,
+    "Ulangi refund yang sama": 1,
+    "Ulangi mutasi yang sama": 2,
+    "pending-mutation": 1,
+    "idempotency_key_conflict": 1
+  },
+  "signing": "UNSIGNED - MEJENG_KEYSTORE_PATH not provided; apksigner verify exit 1 (Missing META-INF/MANIFEST.MF); not installable/distributable",
   "sensitive_pattern_scan": "PASS",
   "matched_entries": [],
+  "ab_is_present": false,
+  "architectures": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+  "min_sdk": 24,
+  "target_sdk": 36,
   "qr_web_url": "not configured; permanent HTTPS hosting required",
   "installed_on_android": false,
+  "previous_artifact_sha256": "0a51b2095ce8ca6ea12efa5c14a8df2f2dc7dfa4759b74bf2f3715841864604b (pre-fix, superseded)",
   "release_gate": "BLOCKED"
 }

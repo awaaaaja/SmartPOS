@@ -1,7 +1,7 @@
 {
   "apps/pos_flutter/android/app/build.gradle.kts": {
-    "mtime": 1793009010.4725502,
-    "ast_hash": "8caecf1a1a23c214bd5247f2fca1fdc0",
+    "mtime": 1793084570.6115332,
+    "ast_hash": "29444f5d0cd5c207cba262af4601f233",
     "semantic_hash": ""
   },
   "apps/pos_flutter/android/app/src/main/kotlin/com/waroengmejeng/pos_flutter/MainActivity.kt": {
@@ -70,13 +70,13 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/cash_shift/cash_page.dart": {
-    "mtime": 1793061915.448856,
-    "ast_hash": "ce8fd5ce0414e9a1ab5ca2b67a6ff378",
+    "mtime": 1793083753.3227355,
+    "ast_hash": "8ec830a47b5baab6c026b3ea04dade10",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/catalog/catalog_page.dart": {
-    "mtime": 1793016109.6083055,
-    "ast_hash": "1cfe5ce01e6de724a5ff13c87d75e63e",
+    "mtime": 1793084106.4789445,
+    "ast_hash": "91efc9cb3db554cb6100f9eca2d51d14",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/catalog/catalog_repository.dart": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/dashboard/dashboard_page.dart": {
-    "mtime": 1793062072.266668,
-    "ast_hash": "d8fdd5dc516b4e7036a540df3b2eb654",
+    "mtime": 1793083753.887738,
+    "ast_hash": "8e55a81076079aa132fb7d6a7f62e3d0",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/energy/energy_page.dart": {
-    "mtime": 1793062107.6852212,
-    "ast_hash": "776e4bbfd710d42b26c88ebbaa23d4dc",
+    "mtime": 1793083753.7557373,
+    "ast_hash": "2a2819360f3599450a2a4e6693e6dfd4",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/expenses/expenses_page.dart": {
@@ -100,13 +100,13 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/inventory/stock_page.dart": {
-    "mtime": 1793040099.849811,
-    "ast_hash": "e6bcf5de5b63d9ffc852b0c219c22602",
+    "mtime": 1793084106.4759445,
+    "ast_hash": "9bfa4ab8ff794de34ad7e41245e41b8e",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/pos_page.dart": {
-    "mtime": 1793022020.3678138,
-    "ast_hash": "894497dfb68869ddb567e77cdcfc714a",
+    "mtime": 1793088123.0218434,
+    "ast_hash": "2bdff58c81517d4ed07041fcaec2eac0",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/pos_repository.dart": {
@@ -115,33 +115,33 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/purchases/purchases_page.dart": {
-    "mtime": 1793038655.5414083,
-    "ast_hash": "d3706c882c5129185d2b19b51bb35c13",
+    "mtime": 1793084106.4789445,
+    "ast_hash": "1720eae2337431397a1dfd63dc328e57",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/recipes_hpp/recipes_page.dart": {
-    "mtime": 1793035863.6468332,
-    "ast_hash": "05afdf8f8245ff9f06aaf58dc3a9b73e",
+    "mtime": 1793084172.1696723,
+    "ast_hash": "ae8d5fffe5da26377bd62279d9fc2753",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/reports/reports_page.dart": {
-    "mtime": 1793061993.840005,
-    "ast_hash": "f3b6a190cf6caf1535243bb493b8d98f",
+    "mtime": 1793083753.8507378,
+    "ast_hash": "7606bed92368205d8e88c278bc6fda35",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/sales_history/history_page.dart": {
-    "mtime": 1793017811.6099567,
-    "ast_hash": "d2099f835a4115f9b1875e19bec2c7c5",
+    "mtime": 1793084106.4759445,
+    "ast_hash": "99cffa0f46f64245163a1be26a896068",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/settings/settings_page.dart": {
-    "mtime": 1793009303.311561,
-    "ast_hash": "321f1bcbcff316c002c48ba94d7e809e",
+    "mtime": 1793088123.0348437,
+    "ast_hash": "72a40ef505011b50670d0e4d43847db0",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/tables_qr/qr_page.dart": {
-    "mtime": 1793020292.4021053,
-    "ast_hash": "0d5449d347533efc6eef7e1bfcabdb15",
+    "mtime": 1793084106.4789445,
+    "ast_hash": "704e315d79be7c20a17d77bc0236561b",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/main.dart": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_pos_api.py": {
-    "mtime": 1793034557.895899,
-    "ast_hash": "ecbc857eacc3f7b8a82fac78976d00d2",
+    "mtime": 1793083392.1539185,
+    "ast_hash": "4b382a1b875dbd3a0383f2d821f93765",
     "semantic_hash": ""
   },
   "utils/supabase.ts": {
@@ -290,13 +290,13 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793009980.1326602,
-    "ast_hash": "07a7857a433e455b08a51f770ca978d0",
+    "mtime": 1793088077.7330468,
+    "ast_hash": "c3a6ca56bf26cbd8fc0cd467d6bbd2f5",
     "semantic_hash": ""
   },
   "Sprints.md": {
-    "mtime": 1793066634.4699922,
-    "ast_hash": "1d4ad6485bb712c891d946ebdd4d767f",
+    "mtime": 1793088077.7350469,
+    "ast_hash": "a3cdbb73f27380a5a850b0b3c736c46d",
     "semantic_hash": ""
   },
   "apps/pos_flutter/README.md": {
@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/pubspec.yaml": {
-    "mtime": 1793019685.532718,
-    "ast_hash": "f398257812814176cd348a620bbe71e7",
+    "mtime": 1793084172.1676722,
+    "ast_hash": "399f8ecfbb493077d1a6329ddcdcf450",
     "semantic_hash": ""
   },
   "apps/pos_flutter/web/index.html": {
@@ -335,13 +335,13 @@
     "semantic_hash": ""
   },
   "docs/sprint-log.md": {
-    "mtime": 1793066556.0677183,
-    "ast_hash": "1a0f53834db22a3539cd138b173d9258",
+    "mtime": 1793088077.7350469,
+    "ast_hash": "0ce2f6ac062bc3e7165ffb175ed78bc1",
     "semantic_hash": ""
   },
   "docs/ui-diff.md": {
-    "mtime": 1793010549.4764054,
-    "ast_hash": "f69fe26639baf087f790bdb713110e5d",
+    "mtime": 1793088077.7350469,
+    "ast_hash": "142fe3930d683d0a432cdf62be0746cd",
     "semantic_hash": ""
   },
   "index.html": {
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/pos/qr_inbox_sheet.dart": {
-    "mtime": 1793023116.1675224,
-    "ast_hash": "aac0f97d57f0e85994b54edeeac98b06",
+    "mtime": 1793084106.4769444,
+    "ast_hash": "5f2f5cbfe409f473fa8441e73ec108c3",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/tables_qr/tables_repository.dart": {
@@ -570,8 +570,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_qr_drafts.py": {
-    "mtime": 1793019270.7518022,
-    "ast_hash": "f3a89df1f70c70a70e4adf3c1582907c",
+    "mtime": 1793083392.1610007,
+    "ast_hash": "dc631c59779cdc698abbad8d01b23ed3",
     "semantic_hash": ""
   },
   "docs/evidence/sprint03/01-halaman-meja-qr.png": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_inventory.py": {
-    "mtime": 1793033443.6412733,
-    "ast_hash": "ae76b684752e1dc54028f223bfc51e66",
+    "mtime": 1793083392.1569185,
+    "ast_hash": "27148704b2c7efc83ce12ea87f4386ea",
     "semantic_hash": ""
   },
   "docs/evidence/sprint04/01-dashboard-omzet-hari-ini.png": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/csv_export.dart": {
-    "mtime": 1793061933.9878914,
-    "ast_hash": "96930508765411e9028b44d74d3fb29d",
+    "mtime": 1793088122.8388402,
+    "ast_hash": "7a6b933f49ac0a81aec684a7b318e47c",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/csv_export_stub.dart": {
@@ -780,8 +780,8 @@
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/core/csv_export_web.dart": {
-    "mtime": 1793061942.9369085,
-    "ast_hash": "dfae8f3d4fec3c02e9cc6ed369c90ed8",
+    "mtime": 1793088122.8418403,
+    "ast_hash": "7ef444616243de1a25909215e01fefce",
     "semantic_hash": ""
   },
   "apps/pos_flutter/lib/features/operating_cost/operating_repository.dart": {
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "tests/integration/test_operating_cost.py": {
-    "mtime": 1793061361.2056384,
-    "ast_hash": "5f5a5a923883daff1b9338b385a64f70",
+    "mtime": 1793083392.1579185,
+    "ast_hash": "5dca516df50f333c8d0e2bb44cc84d75",
     "semantic_hash": ""
   },
   "docs/evidence/sprint05/01_dashboard_awal.png": {
@@ -852,6 +852,116 @@
   "docs/evidence/sprint05/10_laporan_penuh.png": {
     "mtime": 1793066120.2311957,
     "ast_hash": "c1375d10a47abb5a7cbc13b96172850b",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/app/page_layout_test.dart": {
+    "mtime": 1793088123.059844,
+    "ast_hash": "76aed0abb7c719caca9e809021c8e630",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/features/catalog_large_list_test.dart": {
+    "mtime": 1793088123.0778444,
+    "ast_hash": "9b66b19bfc46c02fb718df2d632df68c",
+    "semantic_hash": ""
+  },
+  "apps/pos_flutter/test/features/pos_mobile_test.dart": {
+    "mtime": 1793088123.0738444,
+    "ast_hash": "ee4e3992c71e141d83b76e171fcdc582",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/android-build.json": {
+    "mtime": 1793086364.5007474,
+    "ast_hash": "96be848bee2e699666745aa4a49083a0",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/backup-restore.json": {
+    "mtime": 1793084419.8305979,
+    "ast_hash": "ba2962669d6be096e5bdae45799b6e26",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/browser-smoke.json": {
+    "mtime": 1793087898.5541253,
+    "ast_hash": "84a0b36c72121472824ff39f2d6a9006",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/non-operator-rls.json": {
+    "mtime": 1793085074.4391222,
+    "ast_hash": "c992b35f91bee2655bc21d2b1347b993",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/public-security.json": {
+    "mtime": 1793085635.2031105,
+    "ast_hash": "46cb2a18bccae03af64979fad41c44b8",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/retry-gap.json": {
+    "mtime": 1793085860.7684913,
+    "ast_hash": "6dbb068b971075cc440e484f4b465980",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/rpc-latency.json": {
+    "mtime": 1793085634.1798491,
+    "ast_hash": "025f713694660e2b312d4a514d13f8fa",
+    "semantic_hash": ""
+  },
+  "docs/backup-restore.md": {
+    "mtime": 1793087322.4999223,
+    "ast_hash": "cf245f1476fedd504f4ef6d1cf365972",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/README.md": {
+    "mtime": 1793088077.7350469,
+    "ast_hash": "3a59e27fdab2f94df9215fb694275f3d",
+    "semantic_hash": ""
+  },
+  "docs/handover.md": {
+    "mtime": 1793087322.4996235,
+    "ast_hash": "38d381568ce59302af57e0d1c9d9a315",
+    "semantic_hash": ""
+  },
+  "docs/release-notes.md": {
+    "mtime": 1793087322.4976885,
+    "ast_hash": "ced3d340019f70980a01490dadadda38",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/01_dashboard_tablet_web.png": {
+    "mtime": 1793086438.9193761,
+    "ast_hash": "6c60f5d4ddffddc5aac88cc5b92a87af",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/02_pos_tablet_dua_kolom_web.png": {
+    "mtime": 1793086464.2641466,
+    "ast_hash": "e7b5c2e26f8ca15fc54623252a7d2368",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/03_bayar_pajak_layanan_web.png": {
+    "mtime": 1793086565.9792383,
+    "ast_hash": "d0762cf01ff38b1517c0fd73bac2affb",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/04_sale_manual_final_web.png": {
+    "mtime": 1793086659.8190906,
+    "ast_hash": "ade89edd362af954095fff65181e5a2d",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/05_qr_draft_belum_dibayar_web.png": {
+    "mtime": 1793086845.1414542,
+    "ast_hash": "77b8652b1e8942e093bdae5d98a78686",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/06_qr_masuk_web.png": {
+    "mtime": 1793086961.1044538,
+    "ast_hash": "3ff6bf3a0861ffa9b911c447753427d3",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/07_qr_sale_final_web.png": {
+    "mtime": 1793087391.0521278,
+    "ast_hash": "909ba32091fed0db21d19c56e1225182",
+    "semantic_hash": ""
+  },
+  "docs/evidence/sprint06/08_pos_hp_web.png": {
+    "mtime": 1793087691.9012609,
+    "ast_hash": "be092f2f2c5b1421ea2c1ed12f0bed17",
     "semantic_hash": ""
   }
 }

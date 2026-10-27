@@ -9,7 +9,7 @@ Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
 | Tiket | Status | Hasil / yang belum terbukti |
 |---|---|---|
 | S06-01 | PARTIAL | Audit 13 layar × 2 viewport × 3 state = 78 tes; perbaikan header/kartu overflow tujuh modul, POS tablet dua kolom, keranjang HP live dan form pembayaran scroll saat keyboard. Belum seluruh modal/populated state/keyboard di Android. |
-| S06-02 | PASS terbatas | Regresi POS 77, inventori 57, QR 37, operasional 41 = 212 PASS. Checkout dan QR replay aman; tidak berlaku untuk semua mutasi (lihat blocker). |
+| S06-02 | PASS untuk checkout/QR/refund/koreksi stok | Regresi POS 77, inventori 57, QR 37, operasional 41 = **212 PASS, 0 FAIL** diulang terhadap hosted setelah migrasi `0013`. Checkout, QR submit, `pos_refund` dan `inv_adjust_stock` lulus idempotensi (9 tes SQL + 16 tes Flutter). RPC mutasi lain belum diaudit — lihat K06-01. |
 | S06-03 | PARTIAL | 29 probe hosted: 25 tabel privat anon tertutup + injection token + RPC internal ditolak. Non-operator ditolak di staging lokal. Scan pattern source/APK tidak menemukan secret server; password tes default dihapus. Rotasi password lama dan pemeriksaan riwayat sebelum distribusi masih wajib. |
 | S06-04 | PARTIAL | Dump privat + restore lokal 25 tabel/checksum dan 23 policy RLS; total uang cocok. Auth/Storage penuh, cloud staging, retensi terenkripsi dan crash-reporting release belum lulus. |
 | S06-05 | PARTIAL | Smoke Chrome manual sale #57 dan QR Q00114 → sale #58 lulus; subtotal 7.000, pajak 525, layanan 175, total 7.700, bayar 10.000, kembali 2.300. Bukan pengujian tablet target. |
@@ -37,11 +37,12 @@ Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
   sudah terpasang transitif. Tidak menambah dependency printer/offline/analytics.
 
 ### Hasil dan bukti
-- `flutter analyze`: **No issues found**; `flutter test`: **134/134**.
+- `flutter analyze`: **No issues found**; `flutter test`: **134/134** saat audit
+  awal, kini **148/148** setelah tes retry (8 unit + 6 form/widget).
   Log di `docs/evidence/sprint06/`.
-- 212 pemeriksaan integrasi telah lulus pada Sprint 06 sebelum restart sesi;
-  tidak diulang seluruhnya hanya untuk membuat log baru. Perubahan berikutnya
-  pada suite tersebut hanya kewajiban password environment.
+- 212 pemeriksaan integrasi dijalankan ulang terhadap hosted **setelah** migrasi
+  `0013`: **212 PASS, 0 FAIL** (POS 77, inventori 57, QR 37, operasional 41).
+  Suite tetap memerlukan `OPERATOR_PASSWORD` environment.
 - Flutter web release dan Vue build berhasil. Delapan screenshot browser
   1024×768 / 390×844, angka smoke dicocokkan DB (`browser-smoke.json`).
   Meja QA dinonaktifkan sesudah pengujian; dua sale QA tetap historis, tidak dihapus.
@@ -58,21 +59,43 @@ Status: **PARTIAL / RELEASE BLOCKED** — jangan menyatakan siap produksi.
   atau angka FPS. Tidak menambah cache spekulatif berdasarkan angka ini.
 - SHA-256/path APK dan scan pola sensitif: `android-build.json`.
 
-### Blocker keselamatan yang ditemukan (belum diperbaiki)
+### Blocker yang ditemukan: K06-01 — retry menggandakan mutasi (DIPERBAIKI)
 Di staging lokal hasil restore, dua panggilan `pos_refund(..., 100, ...)`
 identik menghasilkan total refund Rp200; dua koreksi stok +1 menghasilkan +2.
 Reproduksi dibungkus `BEGIN/ROLLBACK`; uang/stok hosted tidak diubah.
 API tersebut tidak punya kunci idempotensi. **Tombol busy/guard UI tidak cukup**
-untuk timeout setelah server commit. Bukti `retry-gap.json`.
-Kontrak server+form harus diperbaiki dan diuji replay/concurrency sebelum gate
-“setiap perubahan uang/stok aman terhadap retry” boleh dicentang.
+untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
+
+**Perbaikan (27 Okt 2026):**
+- Migrasi `20261027000013_mutation_retry.sql` — tabel `mutation_requests`
+  (RLS aktif, 0 policy, tanpa SELECT untuk anon/authenticated), wrapper
+  `pos_refund(4 arg)` & `inv_adjust_stock(6 arg)` dengan `p_idempotency_key`
+  wajib, advisory lock per key + PK, cek payload identik, respons atomik;
+  implementasi lama direname `*_once` dan dicabut grant-nya. Koreksi negatif
+  `ADJUSTMENT` kini divalidasi lewat magnitudo (bug sampingan yang ditemukan
+  saat menulis tes).
+- Klien: `lib/core/mutation_retry.dart` menyimpan key+payload di
+  `SharedPreferencesAsync` **sebelum** RPC, memakainya ulang saat timeout/buka
+  ulang, menolak payload berbeda, dan hanya menghapus entri setelah konfirmasi
+  bisnis. Form riwayat dan form koreksi/waste tidak ditutup saat submit, input
+  terkunci saat pending, tombol berganti "Ulangi … yang sama".
+- Bukti `evidence/sprint06/retry-fix.json`: replay hosted dalam
+  `BEGIN/ROLLBACK` → refund **+100**, stok **+1**, `idempotent_replay` benar,
+  payload beda → `idempotency_key_conflict`, sisa baris 0; probe anon 401 pada
+  kedua RPC dan tabel; 9 tes SQL lokal; 148 tes Flutter; analyzer 0 issue.
+- **Migrasi sudah diterapkan ke hosted** (`supabase db push`); regresi 4 suite
+  terhadap hosted setelah migrasi: **212 PASS, 0 FAIL**.
+- **Sisa K06-01:** audit idempotensi RPC mutasi lain (`inv_create_purchase`,
+  `inv_produce_batch`, expense/energi, alokasi) — belum punya kunci; build &  distribusikan klien baru (klien lama kini gagal tertutup dengan
+  `missing_idempotency_key`); bukti jaringan putus di perangkat target.
 
 ### Paket serah terima / gate tersisa
 `docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
-`docs/evidence/sprint06/README.md`. Gate belum lulus: mutasi retry, signing,
-Android target/manual operator, rotasi password lama, pemulihan Supabase lengkap
-dan hosting QR permanen. Tidak ada push/release produksi. S01-08 tetap menunggu
-remote GitHub, bukan diklaim hijau.
+`docs/evidence/sprint06/README.md`. Gate tersisa: audit retry mutasi lain
+(K06-01 lanjutan), signing/instalasi (K06-02), Android target/manual operator
+(K06-03), rotasi password lama (K06-05), pemulihan Supabase lengkap (K06-04)
+dan hosting QR permanen (K06-06). Tidak ada push/release produksi. S01-08 tetap
+menunggu remote GitHub, bukan diklaim hijau.
 `graphify update .` selesai; warning parser SQL belum terpasang dan JSON evidence
 tanpa node dicatat, tidak disamakan dengan kegagalan tes aplikasi.
 

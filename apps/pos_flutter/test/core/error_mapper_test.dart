@@ -56,5 +56,19 @@ void main() {
       final message = mapErrorToMessage(StateError('boom'));
       expect(message, contains('kesalahan'));
     });
+
+    test('koneksi putus tidak mengklaim mutasi pasti belum tersimpan', () {
+      final message = mapErrorToMessage(const SocketException('lost response'));
+      expect(message, contains('belum terkonfirmasi'));
+      expect(message, isNot(contains('Transaksi belum tersimpan')));
+    });
+
+    test('key konflik dan request pending memberi arahan aman', () {
+      expect(mapErrorToMessage(const PostgrestException(
+          message: 'idempotency_key_conflict', code: 'P0001')),
+          contains('Jangan membuat operasi baru'));
+      expect(mapErrorToMessage(StateError('pending_mutation_conflict')),
+          contains('Buka ulang form'));
+    });
   });
 }

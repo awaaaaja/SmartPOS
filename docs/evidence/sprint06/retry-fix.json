@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-27",
+  "finding": "retry-fix",
+  "original_gap_evidence": "retry-gap.json",
+  "migration": "supabase/migrations/20261027000013_mutation_retry.sql",
+  "hosted": {
+    "project_ref": "hdvscajiezznyiwmkjjv",
+    "applied": true,
+    "method": "supabase db push --db-url $SUPABASE_DB_URL",
+    "pre_state": {
+      "migration_tail": "20261027000012",
+      "mutation_requests": false,
+      "pos_refund_args": "p_sale_id bigint, p_amount integer, p_reason text",
+      "inv_adjust_stock_args": "p_ingredient_id bigint, p_qty numeric, p_unit text, p_reason text, p_source text"
+    },
+    "post_state": {
+      "pos_refund_args": "p_sale_id bigint, p_amount integer, p_reason text, p_idempotency_key text",
+      "inv_adjust_stock_args": "p_ingredient_id bigint, p_qty numeric, p_unit text, p_reason text, p_source text, p_idempotency_key text",
+      "legacy_functions": "pos_refund_once, inv_adjust_stock_once (execute only postgres/service_role)",
+      "mutation_requests_rls": true,
+      "mutation_requests_policies": 0,
+      "select_for_anon": false,
+      "select_for_authenticated": false,
+      "execute_new_fn_for_anon": false,
+      "execute_new_fn_for_authenticated": true,
+      "execute_legacy_for_authenticated": false,
+      "historical_rows_changed": 0
+    },
+    "pre_migration_function_backup": "/tmp/opencode/smart-pos-backups/pre-0013-functions.sql (0600, outside git)"
+  },
+  "hosted_rollback_test": {
+    "method": "single psql session, BEGIN ... ROLLBACK; jwt claims = operator email; no committed change",
+    "refund_delta": 100,
+    "expected_refund_delta": 100,
+    "stock_delta": 1.0,
+    "expected_stock_delta": 1.0,
+    "first_replay_flag": false,
+    "second_replay_flag": true,
+    "same_response_body": true,
+    "payload_conflict_error": "idempotency_key_conflict",
+    "mutation_rows_seen_in_tx": 2,
+    "mutation_rows_after_rollback": 0,
+    "refund_rows_after_rollback": 0
+  },
+  "post_rollback_state_check": {
+    "mutation_rows_left": 0,
+    "verify_keys_left": 0,
+    "refund_rows_left": 0
+  },
+  "anon_rest_probes_after_migration": {
+    "rpc/pos_refund": {"http": 401, "message": "permission denied for function pos_refund"},
+    "rpc/inv_adjust_stock": {"http": 401, "message": "permission denied for function inv_adjust_stock"},
+    "rest/mutation_requests": {"http": 401, "message": "permission denied for table mutation_requests"},
+    "note": "401 (bukan 404) membuktikan PostgREST memuat signature baru; tidak ada baris terbaca"
+  },
+  "local_sql_suite": {
+    "file": "tests/integration/test_mutation_retry.py",
+    "database": "local PostgreSQL 18, fresh db created/dropped by test",
+    "tests": 9,
+    "result": "OK",
+    "covers": [
+      "replay setelah respons hilang mengembalikan hasil tersimpan",
+      "8 permintaan serentak key sama -> 1 efek committed",
+      "operasi berbeda dengan key berbeda tidak ikut terdeduplikasi",
+      "konflik payload/target/unit pada key sama ditolak",
+      "key hilang/pendek/terlalu panjang -> missing_idempotency_key tanpa efek",
+      "percobaan gagal/rollback tidak mengunci key",
+      "WASTE dan koreksi negatif (ADJUSTMENT) tervalidasi + replay",
+      "konversi satuan dan konflik unit",
+      "anon/non-operator/legacy path ditolak"
+    ],
+    "ci": "ditambahkan ke .github/workflows/ci.yml setelah job migrations"
+  },
+  "flutter": {
+    "analyze": "No issues found",
+    "tests_total": 148,
+    "new_unit_tests": "test/core/mutation_retry_test.dart (8 kasus: key disimpan sebelum RPC, timeout+reopen, payload berbeda ditolak, klasifikasi error, storage write gagal, cleanup gagal, double submit, isolasi akun, data korup)",
+    "new_widget_tests": "test/features/mutation_retry_forms_test.dart (refund parsial/penuh + koreksi + waste: timeout -> tombol ulang -> form terkunci -> reopen memakai key lama, efek terjadi sekali)",
+    "error_mapper": "koneksi putus tidak lagi mengklaim 'Transaksi belum tersimpan'; pesan konflik/pending diarahkan"
+  },
+  "hosted_regression": {
+    "suites": {
+      "test_pos_api.py": "77 PASS, 0 FAIL",
+      "test_inventory.py": "57 PASS, 0 FAIL",
+      "test_qr_drafts.py": "37 PASS, 0 FAIL",
+      "test_operating_cost.py": "41 PASS, 0 FAIL"
+    },
+    "total": "212 PASS, 0 FAIL",
+    "note": "dijalankan terhadap hosted SETELAH migrasi 0013; caller tes sudah mengirim p_idempotency_key"
+  },
+  "web_build": "flutter build web --release sukses (155s)",
+  "client_distribution": {
+    "apk_rebuilt": "58.183.626 byte, sha256 a4a9588e4cd1443429bf0434a5b61db19e8d33448d81983bfe98aa1ad6e8f958 (lihat android-build.json)",
+    "note": "APK masih UNSIGNED; klien lama (sha 0a51b209…) tanpa fix akan menerima missing_idempotency_key pada refund/koreksi"
+  },
+  "release_gate": {
+    "retry_safe_refund_and_stock": "TERPASANG & TERBUKTI di hosted (kode + DB)",
+    "still_open": [
+      "audit idempotensi RPC mutasi lain: inv_create_purchase, inv_produce_batch, expense/energi, alokasi",
+      "klien lama tanpa key akan gagal: build ulang + distribusikan klien baru",
+      "bukti interaksi jaringan putus pada tablet/perangkat target (K06-03)"
+    ],
+    "overall": "PARTIAL - blocker K06-01 turun dari P0-terbuka menjadi audit-lanjutan; K06-02..K06-06 tetap terbuka"
+  }
+}

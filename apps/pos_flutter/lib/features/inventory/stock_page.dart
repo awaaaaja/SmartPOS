@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
+import '../../core/mutation_retry.dart';
 import 'inventory_repository.dart';
 
 /// S04-02: Stok Bahan. Daftar master bahan + saldo, pencarian, status
@@ -240,111 +241,188 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
 
   /// Koreksi (bertanda +/-) atau waste (selalu pengurangan) — wajib alasan.
   Future<void> _adjust(Ingredient ingredient) async {
-    final qtyController = TextEditingController();
-    final reasonController = TextEditingController();
-    var source = 'ADJUSTMENT';
+    final repository = ref.read(inventoryRepositoryProvider);
+    PendingMutation? pending;
+    try {
+      pending = await repository.pendingAdjustment(ingredient.id);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(error))));
+      }
+      return;
+    }
+    if (!mounted) return;
+    final qtyController = TextEditingController(
+      text: pending == null ? '' : '${pending.params['p_qty']}',
+    );
+    final reasonController = TextEditingController(
+      text: pending?.params['p_reason'] as String? ?? '',
+    );
+    var source = pending?.params['p_source'] as String? ?? 'ADJUSTMENT';
+    var busy = false;
+    var hasPending = pending != null;
+    String? errorMessage;
 
     final ok = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
-          title: Text('Mutasi stok — ${ingredient.name}'),
-          content: SizedBox(
-            width: 380,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Saldo saat ini: ${formatNumber(ingredient.balance)} '
-                  '${ingredient.baseUnit}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SegmentedButton<String>(
-                  segments: const [
-                    ButtonSegment(
-                      value: 'ADJUSTMENT',
-                      label: Text('Koreksi'),
-                      icon: Icon(Icons.tune_rounded),
+        builder: (ctx, setLocal) => PopScope(
+          canPop: !busy,
+          child: AlertDialog(
+            title: Text('Mutasi stok — ${ingredient.name}'),
+            content: SizedBox(
+              width: 380,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Saldo saat ini: ${formatNumber(ingredient.balance)} '
+                      '${ingredient.baseUnit}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: textSecondary,
+                      ),
                     ),
-                    ButtonSegment(
-                      value: 'WASTE',
-                      label: Text('Waste'),
-                      icon: Icon(Icons.delete_sweep_rounded),
+                    const SizedBox(height: 12),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(
+                          value: 'ADJUSTMENT',
+                          label: Text('Koreksi'),
+                          icon: Icon(Icons.tune_rounded),
+                        ),
+                        ButtonSegment(
+                          value: 'WASTE',
+                          label: Text('Waste'),
+                          icon: Icon(Icons.delete_sweep_rounded),
+                        ),
+                      ],
+                      selected: {source},
+                      onSelectionChanged: busy || hasPending
+                          ? null
+                          : (s) => setLocal(() => source = s.first),
                     ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: qtyController,
+                      enabled: !busy && !hasPending,
+                      autofocus: true,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: source == 'WASTE'
+                            ? 'Jumlah yang hilang (${ingredient.baseUnit})'
+                            : 'Penyesuaian (tanda +/-, '
+                                  '${ingredient.baseUnit})',
+                        helperText: source == 'WASTE'
+                            ? 'Selalu mengurangi stok.'
+                            : 'Contoh: -25 bila fisik lebih sedikit.',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: reasonController,
+                      enabled: !busy && !hasPending,
+                      decoration: const InputDecoration(
+                        labelText: 'Alasan (wajib, min. 3 huruf)',
+                        hintText: 'mis. stock opname, jatuh ke lantai',
+                      ),
+                    ),
+                    if (hasPending) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Permintaan sebelumnya belum terkonfirmasi. '
+                        'Ulangi mutasi yang sama tanpa mengubah isian.',
+                      ),
+                    ],
+                    if (errorMessage != null) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        errorMessage!,
+                        style: const TextStyle(color: errorColor),
+                      ),
+                    ],
                   ],
-                  selected: {source},
-                  onSelectionChanged: (s) => setLocal(() => source = s.first),
                 ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: qtyController,
-                  autofocus: true,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: source == 'WASTE'
-                        ? 'Jumlah yang hilang (${ingredient.baseUnit})'
-                        : 'Penyesuaian (tanda +/-, '
-                              '${ingredient.baseUnit})',
-                    helperText: source == 'WASTE'
-                        ? 'Selalu mengurangi stok.'
-                        : 'Contoh: -25 bila fisik lebih sedikit.',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Alasan (wajib, min. 3 huruf)',
-                    hintText: 'mis. stock opname, jatuh ke lantai',
-                  ),
-                ),
-              ],
+              ),
             ),
+            actions: [
+              TextButton(
+                onPressed: busy ? null : () => Navigator.pop(ctx, false),
+                child: Text(hasPending ? 'Tutup' : 'Batal'),
+              ),
+              FilledButton(
+                onPressed: busy
+                    ? null
+                    : () async {
+                        if (busy) return;
+                        final qty = double.tryParse(qtyController.text.trim());
+                        final reason = reasonController.text.trim();
+                        if (qty == null ||
+                            !qty.isFinite ||
+                            qty == 0 ||
+                            (source == 'WASTE' && qty < 0) ||
+                            reason.length < 3) {
+                          setLocal(
+                            () => errorMessage =
+                                'Isi jumlah valid dan alasan minimal 3 huruf.',
+                          );
+                          return;
+                        }
+                        setLocal(() {
+                          busy = true;
+                          errorMessage = null;
+                        });
+                        try {
+                          await repository.adjustStock(
+                            ingredientId: ingredient.id,
+                            qty: qty,
+                            reason: reason,
+                            source: source,
+                          );
+                          if (ctx.mounted) Navigator.pop(ctx, true);
+                        } catch (error) {
+                          // Pembacaan gagal juga tetap tertutup: jangan mengganti key/payload.
+                          var stillPending = true;
+                          try {
+                            stillPending =
+                                await repository.pendingAdjustment(
+                                  ingredient.id,
+                                ) !=
+                                null;
+                          } catch (_) {}
+                          if (ctx.mounted) {
+                            setLocal(() {
+                              busy = false;
+                              hasPending = stillPending;
+                              errorMessage = mapErrorToMessage(error);
+                            });
+                          }
+                        }
+                      },
+                child: Text(
+                  hasPending ? 'Ulangi mutasi yang sama' : 'Catat mutasi',
+                ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Catat mutasi'),
-            ),
-          ],
         ),
       ),
     );
     if (ok != true || !mounted) return;
 
-    try {
-      await ref
-          .read(inventoryRepositoryProvider)
-          .adjustStock(
-            ingredientId: ingredient.id,
-            qty: double.tryParse(qtyController.text.trim()) ?? 0,
-            reason: reasonController.text.trim(),
-            source: source,
-          );
-      ref.invalidate(ingredientsProvider);
-      ref.invalidate(stockMovementsProvider(ingredient.id));
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Mutasi tercatat di ledger.')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
-      }
+    ref.invalidate(ingredientsProvider);
+    ref.invalidate(stockMovementsProvider(ingredient.id));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mutasi tercatat di ledger.')),
+      );
     }
   }
 

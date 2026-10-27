@@ -225,20 +225,28 @@ Status: **DONE 27 Okt 2026** — bukti lengkap di `docs/sprint-log.md` (bagian S
 bukan klaim seluruh tiket DONE. Rincian per tiket di `docs/sprint-log.md` (Sprint 06),
 paket instalasi/setup/SOP di `docs/handover.md`.
 
-- Analyzer 0 issue; Flutter 134/134 (termasuk 78 kombinasi layar/state/viewport),
-  regresi backend 212 pemeriksaan lulus; 29 probe publik lulus.
+- Analyzer 0 issue; Flutter **148/148** (78 kombinasi layar/state/viewport +
+  16 tes retry), regresi backend **212 PASS, 0 FAIL** dijalankan ulang terhadap
+  hosted setelah migrasi `0013`; 29 probe publik lulus.
 - Backup bisnis pulih ke staging PostgreSQL lokal (25 tabel/checksum, 23 policy),
   **bukan** full-restore Supabase Auth/Storage.
 - Dua alur smoke browser menghasilkan sale #57/#58; QR Q00114 COMPLETED.
   Delapan screenshot di `docs/evidence/sprint06/`, **bukan bukti tablet Android**.
 - Build APK 1.0.0+1 berhasil (58,1 MB), **unsigned**, belum bisa dipasang.
-- Blocker nyata: retry refund parsial/koreksi stok menggandakan mutasi di staging,
-  signing belum disediakan, password lama perlu rotasi, tablet/restore cloud dan
-  hosting QR permanen belum lulus. Printer ditunda, offline tidak dicakup.
+- **K06-01 diperbaiki**: `pos_refund` & `inv_adjust_stock` kini mewajibkan
+  `p_idempotency_key`, menyimpan respons atomik, dan menolak payload berbeda;
+  form Flutter menyimpan key sebelum kirim. Migrasi `0013` **sudah terpasang di
+  hosted**; bukti `docs/evidence/sprint06/retry-fix.json`.
+- Blocker tersisa: audit retry RPC mutasi lain, signing/keystore, rotasi password
+  lama, tablet/restore cloud dan hosting QR permanen. Printer ditunda, offline
+  tidak dicakup.
 
 **Gate rilis wajib:**
 - [x] Tidak ada navigasi/fitur `Dapur`, `Pesanan`, `Pegawai`, `Multi Cabang`, `SaaS`.
-- [ ] Setiap tombol checkout dan setiap perubahan uang/stok aman terhadap retry.
+- [ ] Setiap tombol checkout dan setiap perubahan uang/stok aman terhadap retry —
+  **sebagian**: checkout, QR submit, refund dan koreksi/waste stok lulus
+  (server + klien + hosted terpasang); `inv_create_purchase`,
+  `inv_produce_batch`, expense/energi dan alokasi **belum diaudit**.
 - [x] Web QR menampilkan keberhasilan kirim draft, bukan menyatakan sudah dibayar.
 - [x] Kas dan omzet benar-benar berdasarkan sale final, bukan data cart/QR pending.
 - [ ] Backup/restore, autentikasi, dan pengujian manual tablet lulus.
@@ -344,6 +352,7 @@ Tidak membuat `features/orders`, `features/kitchen`, `features/employees`, atau 
 | 27 Okt 2026 | 04 | S04-01…S04-09 | DONE | migrasi 0010 inventori + 0011 fix TZ dashboard + Flutter stok/pembelian/resep-HPP | `flutter analyze` 0 error; `flutter test` 42/42; `test_inventory.py` 57 PASS; regresi POS 77 PASS + QR 37 PASS; npm build 299 kB; 14 screenshot `docs/evidence/sprint04/` | Android fisik ditunda; S01-08 menunggu remote GitHub |
 | 27 Okt 2026 | 05 | S05-01…S05-09 | DONE | migrasi 0012 energi/biaya/alokasi/kas/laporan + RPC definer + Flutter kalkulator/biaya/kas/laporan + dashboard detail | `flutter analyze` 0 error; `flutter test` 53/53; `test_operating_cost.py` 41 PASS (UAT-09–11); npm build lulus; 11 bukti `docs/evidence/sprint05/` (kalkulator 1,92 kWh/Rp 2.880, alokasi ditolak, kas selisih −500, CSV) | Android fisik ditunda; S01-08 menunggu remote GitHub |
 | 27 Okt 2026 | 06 | S06-01…S06-10 | PARTIAL / BLOCKED | perbaikan layout/keranjang HP, pengaturan read-only, audit keamanan/restore, build unsigned, dokumen serah terima | analyzer 0 issue; Flutter 134/134; backend 212 PASS; 29 probe publik; restore 25 tabel; dua smoke web; APK unsigned 58,1 MB | Retry refund/koreksi stok belum aman; signing, Android target, rotasi password, restore cloud/Storage dan hosting QR permanen belum lulus |
+| 27 Okt 2026 | 06 | K06-01 (fix) | PARTIAL → sebagian selesai | `4019874` → fix menyusul: migrasi `20261027000013_mutation_retry.sql` + `lib/core/mutation_retry.dart` + form riwayat/stok + `tests/integration/test_mutation_retry.py` (CI) | migrasi **diterapkan ke hosted**; replay `BEGIN/ROLLBACK` refund +100 / stok +1; probe anon 401; 9 tes SQL lulus; Flutter **148/148**; analyzer 0; regresi hosted **212 PASS 0 FAIL**; build web release lulus | Audit RPC mutasi lain belum; klien baru belum didistribusikan (APK masih unsigned); bukti putus-jaringan di tablet belum |
 
 **Change Log v2.0:**
 - Menghapus Sprint 0 Observasi dan mengganti Sprint 01 dengan setup serta pembangunan dasar.

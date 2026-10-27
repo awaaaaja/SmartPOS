@@ -5,6 +5,8 @@ import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
 import '../../core/models/sale_models.dart';
+import '../../core/mutation_retry.dart';
+import '../operating_cost/operating_repository.dart';
 import '../pos/pos_repository.dart';
 
 /// S02-08: riwayat penjualan final + struk snapshot + refund beralasan.
@@ -34,10 +36,9 @@ class _SalesHistoryPageState extends ConsumerState<SalesHistoryPage> {
                 Expanded(
                   child: Text(
                     'Riwayat Penjualan',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w700),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -61,13 +62,17 @@ class _SalesHistoryPageState extends ConsumerState<SalesHistoryPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline_rounded,
-                        size: 40, color: warningColor),
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      size: 40,
+                      color: warningColor,
+                    ),
                     const SizedBox(height: 12),
                     Text(mapErrorToMessage(e), textAlign: TextAlign.center),
                     const SizedBox(height: 12),
                     FilledButton.icon(
-                      onPressed: () => ref.invalidate(salesListProvider(_search)),
+                      onPressed: () =>
+                          ref.invalidate(salesListProvider(_search)),
                       icon: const Icon(Icons.refresh_rounded),
                       label: const Text('Coba lagi'),
                     ),
@@ -76,15 +81,16 @@ class _SalesHistoryPageState extends ConsumerState<SalesHistoryPage> {
               ),
               data: (items) => items.isEmpty
                   ? const Center(
-                      child: Text('Belum ada transaksi.',
-                          style: TextStyle(color: textSecondary)),
+                      child: Text(
+                        'Belum ada transaksi.',
+                        style: TextStyle(color: textSecondary),
+                      ),
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
                       itemCount: items.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 8),
-                      itemBuilder: (context, i) =>
-                          _SaleTile(sale: items[i]),
+                      itemBuilder: (context, i) => _SaleTile(sale: items[i]),
                     ),
             ),
           ),
@@ -114,9 +120,10 @@ class _SaleTile extends StatelessWidget {
             color: sale.status == 'REFUNDED' ? errorColor : brandPrimary,
           ),
         ),
-        title: Text(sale.receiptNo,
-            style:
-                const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          sale.receiptNo,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         subtitle: Text(
           '${formatWib(sale.createdAt)} · ${_methodLabel(sale.method)}'
           '${sale.refundAmount > 0 ? ' · refund ${formatRupiah(sale.refundAmount)}' : ''}',
@@ -129,8 +136,10 @@ class _SaleTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(formatRupiah(sale.total - sale.refundAmount),
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                Text(
+                  formatRupiah(sale.total - sale.refundAmount),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
                 _statusChip(),
               ],
             ),
@@ -153,16 +162,18 @@ class _SaleTile extends StatelessWidget {
       'PARTIALLY_REFUNDED' => ('Refund sebagian', warningColor),
       _ => ('Final', successColor),
     };
-    return Text(label,
-        style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600));
+    return Text(
+      label,
+      style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600),
+    );
   }
 
   static String _methodLabel(String? method) => switch (method) {
-        'CASH' => 'Tunai',
-        'TRANSFER' => 'Transfer',
-        'QRIS' => 'QRIS',
-        _ => '-',
-      };
+    'CASH' => 'Tunai',
+    'TRANSFER' => 'Transfer',
+    'QRIS' => 'QRIS',
+    _ => '-',
+  };
 
   static void _openDetail(BuildContext context, SaleSummary sale) {
     showModalBottomSheet<void>(
@@ -189,14 +200,15 @@ class _SaleDetailSheetState extends ConsumerState<_SaleDetailSheet> {
   @override
   void initState() {
     super.initState();
-    _receipt =
-        ref.read(posRepositoryProvider).saleReceipt(widget.saleId);
+    _receipt = ref.read(posRepositoryProvider).saleReceipt(widget.saleId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
         child: FutureBuilder<Receipt>(
@@ -239,19 +251,28 @@ class _ReceiptBody extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(receipt.receiptNo,
-                  style: theme.textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w700)),
+              child: Text(
+                receipt.receiptNo,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
-            Text(formatWib(receipt.createdAt),
-                style: const TextStyle(fontSize: 12, color: textSecondary)),
+            Text(
+              formatWib(receipt.createdAt),
+              style: const TextStyle(fontSize: 12, color: textSecondary),
+            ),
           ],
         ),
         const SizedBox(height: 4),
-        Text('Total ${formatRupiah(receipt.total - receipt.refundAmount)}'
-            '${receipt.refundAmount > 0 ? ' (sebelumnya ${formatRupiah(receipt.total)})' : ''}',
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.w700, color: brandPrimary)),
+        Text(
+          'Total ${formatRupiah(receipt.total - receipt.refundAmount)}'
+          '${receipt.refundAmount > 0 ? ' (sebelumnya ${formatRupiah(receipt.total)})' : ''}',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: brandPrimary,
+          ),
+        ),
         const Divider(height: 20),
         Flexible(
           child: SingleChildScrollView(
@@ -269,26 +290,36 @@ class _ReceiptBody extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  '${item.qty}× ${item.productName} @${formatRupiah(item.unitPrice)}'),
+                                '${item.qty}× ${item.productName} @${formatRupiah(item.unitPrice)}',
+                              ),
                               if (item.modifiers.isNotEmpty)
                                 Text(
                                   item.modifiers
-                                      .map((m) =>
-                                          '${m['name']} (+${formatRupiah((m['price_delta'] as int?) ?? 0)})')
+                                      .map(
+                                        (m) =>
+                                            '${m['name']} (+${formatRupiah((m['price_delta'] as int?) ?? 0)})',
+                                      )
                                       .join(', '),
                                   style: const TextStyle(
-                                      fontSize: 11, color: textSecondary),
+                                    fontSize: 11,
+                                    color: textSecondary,
+                                  ),
                                 ),
-                              if (item.note != null &&
-                                  item.note!.isNotEmpty)
-                                Text('Catatan: ${item.note}',
-                                    style: const TextStyle(
-                                        fontSize: 11, color: textSecondary)),
+                              if (item.note != null && item.note!.isNotEmpty)
+                                Text(
+                                  'Catatan: ${item.note}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: textSecondary,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
-                        Text(formatRupiah(item.lineTotal),
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text(
+                          formatRupiah(item.lineTotal),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                   ),
@@ -307,8 +338,7 @@ class _ReceiptBody extends StatelessWidget {
                   _row('Kembalian', formatRupiah(receipt.changeAmount!)),
                 if (receipt.refunds.isNotEmpty) ...[
                   const Divider(height: 20),
-                  Text('Riwayat refund',
-                      style: theme.textTheme.titleSmall),
+                  Text('Riwayat refund', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 4),
                   for (final r in receipt.refunds)
                     Padding(
@@ -323,13 +353,15 @@ class _ReceiptBody extends StatelessWidget {
             ),
           ),
         ),
-        if (canRefund) ...[
+        ...[
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.undo_rounded),
-              label: const Text('Proses Refund'),
+              label: Text(
+                canRefund ? 'Proses Refund' : 'Periksa refund tertunda',
+              ),
               onPressed: () => _openRefund(context, receipt),
             ),
           ),
@@ -339,22 +371,24 @@ class _ReceiptBody extends StatelessWidget {
   }
 
   Widget _row(String label, String value) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
-          children: [
-            Expanded(
-                child: Text(label,
-                    style: const TextStyle(
-                        fontSize: 13, color: textSecondary))),
-            Text(value, style: const TextStyle(fontSize: 13)),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: 2),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 13, color: textSecondary),
+          ),
         ),
-      );
+        Text(value, style: const TextStyle(fontSize: 13)),
+      ],
+    ),
+  );
 
-  static Future<void> _openRefund(
-      BuildContext context, Receipt receipt) async {
+  static Future<void> _openRefund(BuildContext context, Receipt receipt) async {
     final result = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => _RefundDialog(receipt: receipt),
     );
     if (result == true && context.mounted) {
@@ -376,10 +410,41 @@ class _RefundDialogState extends ConsumerState<_RefundDialog> {
   final _amount = TextEditingController();
   final _reason = TextEditingController();
   bool _busy = false;
+  bool _ready = false;
+  PendingMutation? _pending;
   String? _error;
 
-  int get _maxRefund =>
-      widget.receipt.total - widget.receipt.refundAmount;
+  int get _maxRefund => widget.receipt.total - widget.receipt.refundAmount;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPending();
+  }
+
+  Future<void> _loadPending() async {
+    try {
+      final pending = await ref
+          .read(posRepositoryProvider)
+          .pendingRefund(widget.receipt.saleId);
+      if (!mounted) return;
+      if (pending != null) {
+        _amount.text = '${pending.params['p_amount']}';
+        _reason.text = pending.params['p_reason'] as String;
+      }
+      setState(() {
+        _pending = pending;
+        _ready = true;
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _ready = false;
+          _error = mapErrorToMessage(error);
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -390,63 +455,87 @@ class _RefundDialogState extends ConsumerState<_RefundDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Refund Transaksi'),
-      content: SizedBox(
-        width: 380,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Struk ${widget.receipt.receiptNo}. Sisa yang boleh '
-              'direfund: ${formatRupiah(_maxRefund)}.',
-              style: const TextStyle(fontSize: 13, color: textSecondary),
+    return PopScope(
+      canPop: !_busy,
+      child: AlertDialog(
+        title: const Text('Refund Transaksi'),
+        content: SizedBox(
+          width: 380,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Struk ${widget.receipt.receiptNo}. Sisa yang boleh '
+                  'direfund: ${formatRupiah(_maxRefund)}.',
+                  style: const TextStyle(fontSize: 13, color: textSecondary),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _amount,
+                  enabled: !_busy && _pending == null && _ready,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Nominal refund (Rp)',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _reason,
+                  enabled: !_busy && _pending == null && _ready,
+                  decoration: const InputDecoration(
+                    labelText: 'Alasan refund (wajib)',
+                  ),
+                ),
+                if (_pending != null) ...[
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Permintaan sebelumnya belum terkonfirmasi. '
+                    'Ulangi permintaan yang sama; jangan membuat refund baru.',
+                  ),
+                ],
+                if (_error != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _error!,
+                    style: const TextStyle(color: errorColor, fontSize: 12),
+                  ),
+                ],
+              ],
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _amount,
-              keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(labelText: 'Nominal refund (Rp)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _reason,
-              decoration: const InputDecoration(
-                  labelText: 'Alasan refund (wajib)'),
-            ),
-            if (_error != null) ...[
-              const SizedBox(height: 8),
-              Text(_error!,
-                  style:
-                      const TextStyle(color: errorColor, fontSize: 12)),
-            ],
-          ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: _busy ? null : () => Navigator.pop(context, false),
+            child: Text(_pending == null ? 'Batal' : 'Tutup'),
+          ),
+          FilledButton(
+            onPressed: _busy || !_ready || (_maxRefund <= 0 && _pending == null)
+                ? null
+                : _submit,
+            child: Text(
+              _pending == null ? 'Simpan Refund' : 'Ulangi refund yang sama',
+            ),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal')),
-        FilledButton(
-          onPressed: _busy ? null : _submit,
-          child: const Text('Simpan Refund'),
-        ),
-      ],
     );
   }
 
   Future<void> _submit() async {
+    if (_busy || !_ready) return;
     final amount = int.tryParse(_amount.text.trim());
     final reason = _reason.text.trim();
     if (amount == null || amount <= 0) {
       setState(() => _error = 'Nominal harus angka > 0.');
       return;
     }
-    if (amount > _maxRefund) {
-      setState(() => _error =
-          'Melebihi sisa refund (${formatRupiah(_maxRefund)}).');
+    if (_pending == null && amount > _maxRefund) {
+      setState(
+        () => _error = 'Melebihi sisa refund (${formatRupiah(_maxRefund)}).',
+      );
       return;
     }
     if (reason.length < 3) {
@@ -462,13 +551,17 @@ class _RefundDialogState extends ConsumerState<_RefundDialog> {
           .read(posRepositoryProvider)
           .refund(widget.receipt.saleId, amount, reason);
       ref.invalidate(dashboardSummaryProvider);
+      ref.invalidate(dashboardReportProvider);
+      ref.invalidate(reportProvider);
+      ref.invalidate(cashStatusProvider);
       ref.invalidate(salesListProvider);
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
+      await _loadPending();
       if (mounted) {
         setState(() {
           _busy = false;
-          _error = mapErrorToMessage(e);
+          if (_ready) _error = mapErrorToMessage(e);
         });
       }
     }
@@ -478,6 +571,6 @@ class _RefundDialogState extends ConsumerState<_RefundDialog> {
 /// Daftar sale untuk riwayat; key = kata kunci pencarian.
 final salesListProvider = FutureProvider.autoDispose
     .family<List<SaleSummary>, String>(
-  (ref, search) =>
-      ref.watch(posRepositoryProvider).fetchSales(search: search),
-);
+      (ref, search) =>
+          ref.watch(posRepositoryProvider).fetchSales(search: search),
+    );

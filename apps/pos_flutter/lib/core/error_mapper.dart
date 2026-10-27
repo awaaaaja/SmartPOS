@@ -7,6 +7,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// Pesan server memakai kode Inggris pendek; jangan tampilkan mentah.
 String _mapBusinessError(String message) {
   final m = message.trim();
+  if (m == 'idempotency_key_conflict') {
+    return 'Kunci permintaan sudah dipakai untuk isian berbeda. '
+        'Jangan membuat operasi baru; periksa riwayat.';
+  }
+  if (m == 'missing_idempotency_key') {
+    return 'Identitas permintaan tidak valid. Perbarui aplikasi sebelum melanjutkan.';
+  }
   if (m.startsWith('insufficient_stock')) {
     final detail = m.split(':').skip(1).join(':').trim();
     final names = detail.isEmpty ? '' : ' ($detail)';
@@ -45,6 +52,10 @@ String _mapBusinessError(String message) {
 /// Petakan exception teknis ke pesan yang bisa dipahami operator.
 /// Pesan mentah server tidak ditampilkan langsung (bisa berbahaya/inggris).
 String mapErrorToMessage(Object error) {
+  if (error is StateError && error.message == 'pending_mutation_conflict') {
+    return 'Masih ada permintaan belum terkonfirmasi. Buka ulang form '
+        'untuk mengulangi isian sebelumnya.';
+  }
   if (error is AuthException) {
     final message = error.message.toLowerCase();
     if (message.contains('invalid login') ||
@@ -83,7 +94,8 @@ String mapErrorToMessage(Object error) {
     return 'Waktu tunggu habis. Periksa koneksi lalu coba lagi.';
   }
   if (error is SocketException || error is HandshakeException) {
-    return 'Tidak ada koneksi internet. Transaksi belum tersimpan.';
+    return 'Tidak ada koneksi internet. Status penyimpanan belum terkonfirmasi; '
+        'periksa riwayat atau ulangi permintaan yang sama.';
   }
   return 'Terjadi kesalahan tak terduga. Coba lagi.';
 }

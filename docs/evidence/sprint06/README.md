@@ -26,12 +26,14 @@ browser HP menggunakan emulasi 390×844, bukan pengujian hardware.
 | `secret-scan.json` | Scan pola source; tidak menggantikan rotasi password yang dahulu ter-commit |
 | `backup-restore.json` | 25 tabel/checksum/total uang dan 23 policy pulih di PostgreSQL lokal |
 | `rpc-latency.json` | Lima request/endpoint, termasuk retry/kegagalan transport |
-| `retry-gap.json` | **Blocker**: partial refund dan koreksi stok identik berlaku dua kali |
+| `retry-gap.json` | **Blocker awal**: partial refund dan koreksi stok identik berlaku dua kali |
+| `retry-fix.json` | **Perbaikan K06-01**: migrasi `0013` terpasang di hosted, uji replay dalam `BEGIN/ROLLBACK`, probe anon, 9 tes SQL, 148 tes Flutter, regresi hosted 212 PASS |
 
-Hasil regresi backend sebelumnya dalam Sprint 06: POS **77**, inventori **57**,
-QR **37**, operasional **41** = **212 PASS**. Tidak ada log lengkap baru yang
-direka setelah restart. Suite tersebut memerlukan `OPERATOR_PASSWORD` environment;
-jangan menjalankannya pada database operasional aktif.
+Regresi backend Sprint 06: POS **77**, inventori **57**, QR **37**, operasional
+**41** = **212 PASS, 0 FAIL** — dijalankan ulang terhadap hosted **setelah**
+migrasi `0013` dengan caller yang sudah mengirim `p_idempotency_key`
+(`retry-fix.json`). Suite memerlukan `OPERATOR_PASSWORD` environment dan
+membuat data uji; jangan dijalankan pada database operasional aktif.
 
 78 layout case = 13 halaman × dua viewport × empty/loading/error (halaman statis
 tetap baseline; Pengaturan memakai profil valid). Bukan bukti seluruh modal,
@@ -43,6 +45,7 @@ Fixture katalog 1.000 item memverifikasi lazy rendering + scroll; waktu debug
 SQL `tree_sitter_sql` belum terpasang dan sebagian JSON evidence tidak menghasilkan
 node. Pembaruan AST bukan pengganti tes SQL atau audit semantik dokumen.
 
-**Gate BLOCKED:** retry mutasi uang/stok, keystore/signature/instalasi, tablet
-target, rotasi password lama, full Supabase Auth/Storage restore, hosting QR
-permanen dan persetujuan operator. Lihat `../../handover.md`.
+**Gate:** retry `pos_refund`/`inv_adjust_stock` **sudah terpasang dan terbukti**
+di hosted (`retry-fix.json`); audit RPC mutasi lain, keystore/signature/instalasi,
+tablet target, rotasi password lama, full Supabase Auth/Storage restore, hosting QR
+permanen dan persetujuan operator **masih terbuka**. Lihat `../../handover.md`.

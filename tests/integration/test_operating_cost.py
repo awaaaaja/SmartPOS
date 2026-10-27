@@ -245,7 +245,8 @@ def main():
     print("\n== S05-07: laporan (refund mengurangi net sales) ==")
     # Refund penuh sale tunai
     status, refund = rpc(token, "pos_refund", {
-        "p_sale_id": sale_id, "p_amount": total, "p_reason": "uji laporan"})
+        "p_sale_id": sale_id, "p_amount": total, "p_reason": "uji laporan",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("refund penuh sukses", status == 200, str(refund)[:200])
 
     status, rep = rpc(token, "pos_reports",

@@ -294,18 +294,21 @@ def main():
     print("\n== Refund ==")
     status, rf = req("/rest/v1/rpc/pos_refund", token, {
         "p_sale_id": r1["sale_id"], "p_amount": 5000,
-        "p_reason": "Pelanggan komplain setengah porsi"})
+        "p_reason": "Pelanggan komplain setengah porsi",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("refund parsial sukses",
           status == 200 and rf["status"] == "PARTIALLY_REFUNDED"
           and rf["refund_amount"] == 5000, str(rf)[:200])
     status, rf = req("/rest/v1/rpc/pos_refund", token, {
         "p_sale_id": r1["sale_id"], "p_amount": expect_total - 5000,
-        "p_reason": "Sisa pembayaran dikembalikan"})
+        "p_reason": "Sisa pembayaran dikembalikan",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("refund penuh -> status REFUNDED",
           status == 200 and rf["status"] == "REFUNDED"
           and rf["refund_amount"] == expect_total, str(rf)[:200])
     status, err = req("/rest/v1/rpc/pos_refund", token, {
-        "p_sale_id": r1["sale_id"], "p_amount": 1, "p_reason": "kelebihan"})
+        "p_sale_id": r1["sale_id"], "p_amount": 1, "p_reason": "kelebihan",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("refund melebihi total ditolak", status != 200, str(err)[:100])
     status, sale_row = req(
         f"/rest/v1/sales?id=eq.{r1['sale_id']}&select=total,refund_amount",
@@ -333,7 +336,8 @@ def main():
     status, rows = req("/rest/v1/sales?select=id")
     check("anon baca sales -> []", status == 200 and rows == [], str(rows))
     status, err = req("/rest/v1/rpc/pos_refund", None, {
-        "p_sale_id": r1["sale_id"], "p_amount": 1, "p_reason": "anon"})
+        "p_sale_id": r1["sale_id"], "p_amount": 1, "p_reason": "anon",
+        "p_idempotency_key": uuid.uuid4().hex})
     check("anon pos_refund ditolak", status in (401, 403), str(err)[:100])
 
     print(f"\n=== HASIL: {passed} PASS, {failed} FAIL "

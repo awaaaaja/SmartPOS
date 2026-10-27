@@ -32,3 +32,9 @@ key.properties
 backups/
 __pycache__/
 *.pyc
+
+# Aset lokal yang diminta pemilik untuk tidak masuk Git
+MeJeng POS Warung Emblem.png
+
+# Catatan kerja agent (substansi sudah ada di docs/)
+.hyperflow/
