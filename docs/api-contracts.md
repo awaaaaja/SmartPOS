@@ -91,3 +91,21 @@ validasi batas sumber). Master bahan/resep tidak diperlakukan sebagai ledger uan
 - `is_operator()` dan `get_public_menu()` adalah SECURITY DEFINER; `is_operator()`
   hanya dieksekusi `authenticated`.
 - Kunci `service_role` tidak pernah dikirim ke Flutter/web.
+- **Guard seragam (migrasi 0015)**: SETIAP RPC yang dipanggil langsung oleh
+  klien memeriksa `is_operator()` di baris pertama dan menolak non-operator
+  dengan `operator_required` (errcode `42501`). Ini menutup celah bahwa fungsi
+  `SECURITY DEFINER` melewati RLS — sebelumnya akun `authenticated` kedua bisa
+  memanggil RPC Sprint 02-05 via PostgREST. Daftar RPC ber-guard:
+  `pos_quote`, `pos_checkout`, `pos_sale_receipt`, `pos_dashboard_summary`,
+  `qr_list_drafts`, `qr_claim_draft`, `qr_cancel_draft`, `qr_complete_draft`,
+  `qr_create_table`, `qr_rotate_token`, `inv_save_ingredient`,
+  `inv_receive_purchase`, `inv_save_recipe`, `inv_hpp`, `cost_allocate`,
+  `cash_shift_status`, `cash_shift_open`, `cash_shift_close`, `pos_reports`
+  (ditambah `pos_refund`, `inv_adjust_stock`, `inv_create_purchase`,
+  `inv_produce_batch`, `exp_save`, `energy_save_estimate` dari 0013/0014).
+- Helper internal `pos_line_total`, `qr_draft_json`, dan `hash_table_token`
+  dicabut grant-nya dari semua role klien; hanya dipanggil dari dalam fungsi
+  `SECURITY DEFINER` lain (termasuk jalur anon `qr_submit_draft`). Badan lama
+  RPC yang dibungkus tersimpan sebagai `*_impl` tanpa grant klien.
+- Jalur publik anon tidak terpengaruh: `get_public_menu` dan `qr_submit_draft`
+  tetap berjalan (dikuji `test_mutation_retry.py`).

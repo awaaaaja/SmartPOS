@@ -400,6 +400,84 @@ class MutationRetryTest(unittest.TestCase):
         self.assertFalse(result["idempotent_replay"])
         self.assertEqual(self.delta(before)["purchases"], 1)
 
+    # ---- Audit 0015: guard is_operator() seragam pada semua RPC klien ----
+
+    CLIENT_RPCS = [
+        "select public.pos_quote('[]'::jsonb)",
+        "select public.pos_checkout('[]'::jsonb,'CASH',0)",
+        "select public.pos_sale_receipt(1)",
+        "select public.pos_dashboard_summary()",
+        "select public.qr_list_drafts()",
+        "select public.qr_claim_draft(1)",
+        "select public.qr_cancel_draft(1)",
+        "select public.qr_complete_draft(1,1)",
+        "select public.qr_create_table('Guard QA')",
+        "select public.qr_rotate_token(1)",
+        "select public.inv_save_ingredient(null,'Guard','g',1,1)",
+        "select public.inv_receive_purchase(1)",
+        "select public.inv_save_recipe(1,1,'[]'::jsonb)",
+        "select public.inv_hpp(1)",
+        "select public.cost_allocate(1,'guard',1)",
+        "select public.cash_shift_status()",
+        "select public.cash_shift_open(0)",
+        "select public.cash_shift_close(0,null)",
+        "select public.pos_reports()",
+    ]
+
+    INTERNAL_HELPERS = [
+        "select public.pos_line_total(1,1,'[]'::jsonb)",
+        "select public.qr_draft_json(1)",
+        "select public.hash_table_token('x')",
+    ]
+
+    def test_non_operator_authenticated_is_rejected_by_every_client_rpc(self):
+        """RPC lama (Sprint 02-05) kini menolak akun non-operator (0015).
+
+        Fungsi SECURITY DEFINER melewati RLS; tanpa guard ini akun
+        authenticated kedua bisa memanggil pos_checkout/dsb via PostgREST.
+        """
+        intruder = ("set role authenticated; set request.jwt.claims = "
+                    "'{\"email\":\"other@example.invalid\"}'; ")
+        for statement in self.CLIENT_RPCS:
+            with self.subTest(statement=statement[:45]):
+                with self.assertRaisesRegex(AssertionError,
+                                            "operator_required"):
+                    self.sql(intruder + statement)
+
+    def test_client_rpcs_remain_closed_to_anon(self):
+        for statement in self.CLIENT_RPCS:
+            with self.subTest(statement=statement[:45]):
+                with self.assertRaisesRegex(AssertionError,
+                                            "permission denied"):
+                    self.sql("set role anon; " + statement)
+
+    def test_internal_helpers_are_closed_even_to_operator(self):
+        """pos_line_total/qr_draft_json/hash_table_token hanya untuk definer."""
+        for statement in self.INTERNAL_HELPERS:
+            with self.subTest(statement=statement[:45]):
+                with self.assertRaisesRegex(AssertionError,
+                                            "permission denied"):
+                    self.sql(statement, operator=True)
+
+    def test_operator_calls_and_public_qr_path_survive_the_guard(self):
+        self.assertTrue(
+            self.sql("select public.pos_dashboard_summary()",
+                     operator=True).startswith("{"))
+        self.assertTrue(
+            self.sql("select public.qr_list_drafts()",
+                     operator=True).startswith("["))
+        # Jalur anon publik (menu + submit draft) tidak terpengaruh 0015.
+        token = "guard-qa-token-01"
+        self.sql(f"""insert into dining_tables(label, qr_token_hash)
+                     values('Guard QA', public.hash_table_token('{token}'))""")
+        self.assertTrue(self.sql(f"select public.get_public_menu('{token}')",
+                                 role="anon").startswith("{"))
+        draft = json.loads(self.sql(
+            f"select public.qr_submit_draft('{token}','guard-client-01',"
+            f"'[{{\"product_id\": {self.product}, \"qty\": 1}}]'::jsonb)",
+            role="anon"))
+        self.assertEqual(draft["item_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
