@@ -58,7 +58,8 @@ npm run dev                  # buka http://localhost:5173/?token=DEV-TOKEN
 
 ```bash
 cd apps/pos_flutter && flutter analyze && flutter test
-cd apps/qr_web && npm run build
+cd apps/qr_web && npm run build && npm test   # build + unit/component (Vitest)
+cd tests/e2e && npm ci && npm test            # e2e browser (Playwright, mock)
 ```
 
 ## Aturan keamanan
