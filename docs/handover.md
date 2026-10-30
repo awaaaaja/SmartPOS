@@ -14,7 +14,7 @@ paket QA dan SOP latihan, bukan persetujuan go-live operator.
 | K06-05 | P0 | Password operator dahulu ter-commit dalam tes. Default itu sudah dihapus, **bukan** riwayat Git. Rotasi password operator dan cabut sesi lama sebelum distribusi/push; rotasi kredensial lain yang pernah dibagikan. Jangan menaruh nilai pengganti dalam source/log. |
 | K06-06 | P0 | `QR_WEB_URL` belum diisi pada build QA. Sediakan hosting HTTPS permanen, build ulang dan cetak/rotate QR setelah URL final. Tunnel lama bukan deployment. |
 | K06-07 | P1 | Latensi jaringan tidak stabil; dashboard mencapai 6,05 dtk (termasuk retry transport). Tidak ada bukti FPS/performa native. Ukur lagi pada tablet dan jaringan operasional sebelum menyatakan lancar. |
-| K06-08 | P1 | Printer/Bluetooth belum diuji; offline tidak tersedia; PSP belum terintegrasi. Pengaturan kini bisa diedit dari UI (RPC guarded `settings_save`, migrasi `0016`) dan CSV Android bisa dibagikan lewat lembar berbagi `share_plus`, tetapi keduanya **belum diverifikasi di tablet** (K06-03) dan migrasi `0016` belum dipasang di hosted. Sampaikan batasan kepada operator. |
+| K06-08 | P1 | Printer/Bluetooth belum diuji; offline tidak tersedia; PSP belum terintegrasi. Pengaturan kini bisa diedit dari UI (RPC guarded `settings_save`, migrasi `0016`) dan CSV Android bisa dibagikan lewat lembar berbagi `share_plus`; `0015`–`0016` sudah terpasang di hosted dan regresi hosted 212 PASS/0 FAIL, tetapi keduanya **belum diverifikasi di tablet** (K06-03). Sampaikan batasan kepada operator. |
 
 Bukti kasus retry: `evidence/sprint06/retry-gap.json`; hanya database lokal
 terisolasi, dibungkus `BEGIN/ROLLBACK`, tidak mengubah uang/stok hosted.
@@ -51,11 +51,19 @@ Jika penyimpanan lokal rusak/hilang atau replay tak dapat diselesaikan, hentikan
 mutasi tersebut dan rekonsiliasi bersama pengelola; jangan clear data/uninstall
 untuk memaksa key baru. Penyimpanan identitas retry bukan outbox offline/backup.
 
+5. **Guard seragam + Pengaturan** — ✅ migrasi
+   `20261028000015_operator_guard.sql` dan `20261028000016_settings_edit.sql`
+   dipasang ke hosted lewat `supabase db push` (30 Oktober 2026, sesudah dump
+   skema/`business_settings`+`audit_events` sebagai jaring pengaman di luar Git).
+   Regresi hosted pascapush **212 PASS, 0 FAIL**; simpan pengaturan dengan nilai
+   identik menghasilkan audit `before`/`after` tanpa mengubah data bisnis.
+   Lembar berbagi CSV dan form Pengaturan tetap menunggu uji tablet (K06-03).
+
 ## 2. Setup Supabase
 
 1. Gunakan proyek staging/produksi yang tepat. Simpan DB URL hanya di environment
    pengelola. Matikan pendaftaran publik; buat satu akun operator melalui Auth.
-2. Terapkan seluruh migrasi berurutan (`0001`…`0014`), jangan mengedit migrasi lama:
+2. Terapkan seluruh migrasi berurutan (`0001`…`0016`), jangan mengedit migrasi lama:
 
    ```bash
    supabase db push --db-url "$SUPABASE_DB_URL"

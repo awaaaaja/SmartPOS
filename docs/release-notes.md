@@ -70,7 +70,8 @@ signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum l
 
 - Halaman Pengaturan memiliki tombol **Edit pengaturan**: nama, alamat, zona
   waktu, pajak (%) dan biaya layanan (%). Persen dikirim sebagai fraksi ke RPC
-  baru `settings_save` (migrasi `20261028000016`, **belum dipasang di hosted**).
+  baru `settings_save` (migrasi `20261028000016`, **terpasang di hosted
+  30 Oktober 2026** bersama `0015`).
 - Guard mengikuti pola repo: `is_operator()` dengan `42501 operator_required`,
   validasi server (nama 2–80, alamat ≤ 200, zona waktu valid di
   `pg_timezone_names`, tarif 0–1), audit `before`/`after`, grant hanya
@@ -80,7 +81,11 @@ signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum l
   berbagi tak tersedia, pesan operator menjelaskan, CSV tetap di temp.
 - Bukti: 16 pemeriksaan migrasi di Postgres embedded, `test_settings_edit.py`
   4/4, `test_mutation_retry.py` 19/19, `flutter analyze` 0 issue,
-  `flutter test` 159/159. **Belum diverifikasi di tablet Android** (K06-03).
+  `flutter test` 159/159. Terpasang di hosted lewat `supabase db push`
+  (`0015`+`0016`); regresi hosted pascapush **212 PASS, 0 FAIL**, ditambah
+  pemeriksaan langsung: guard `0015` (RPC lama 200), `invalid_timezone`
+  ditolak, simpan nilai identik 200 + audit `before`/`after`. **Belum
+  diverifikasi di tablet Android** (K06-03).
 
 ## Artefak lokal
 

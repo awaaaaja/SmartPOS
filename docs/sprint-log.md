@@ -143,11 +143,13 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
   `share_plus` sehingga laporan bisa dikirim ke WhatsApp/email; web tetap unduhan
   browser. Bila lembar berbagi tak tersedia, CSV tetap tersimpan di temp dan
   operator melihat pesan jelas, bukan error mentah.
-- **Bukti lokal:** Postgres embedded 16 pemeriksaan migrasi `0016` lulus;
+- **Bukti:** Postgres embedded 16 pemeriksaan migrasi `0016` lulus;
   `tests/integration/test_settings_edit.py` 4/4 dan `test_mutation_retry.py`
   19/19 lulus; `flutter analyze` 0 issue, `flutter test` 159/159.
-- **Belum dibuktikan:** lembar berbagi di tablet Android sungguhan (K06-03) dan
-  pemasangan migrasi `0016` ke hosted (butuh `supabase db push`).
+  `0015`–`0016` dipasang ke hosted via `supabase db push` (30 Okt 2026, setelah
+  dump skema sebagai jaring pengaman); regresi hosted pascapush **212 PASS,
+  0 FAIL** dan pemeriksaan langsung RPC lama/baru lulus.
+- **Belum dibuktikan:** lembar berbagi di tablet Android sungguhan (K06-03).
 
 ### Paket serah terima / gate tersisa
 
