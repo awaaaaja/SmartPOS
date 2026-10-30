@@ -70,6 +70,13 @@ describe('memuat menu', () => {
     expect(wrapper.text()).toContain('Rp 5.000');
   });
 
+  it('memasang logo merek di header (bukan placeholder)', async () => {
+    const wrapper = await mountReady();
+    const logo = wrapper.find('img.brand-logo');
+    expect(logo.exists()).toBe(true);
+    expect(logo.attributes('src')).toBe('/logo-mark.png');
+  });
+
   it('memetakan invalid_table_token ke pesan QR tidak valid', async () => {
     rpcMock.mockResolvedValueOnce({
       data: null,

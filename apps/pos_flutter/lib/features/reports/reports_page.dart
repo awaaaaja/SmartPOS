@@ -100,7 +100,7 @@ class ReportsPage extends ConsumerWidget {
                   children: [
                     Text('Laporan', style: theme.textTheme.titleLarge),
                     Text(
-                      'Statistik deskriptif dari data tersimpan — bukan '
+                      'Statistik deskriptif dari data tersimpan, bukan '
                       'proyeksi laba bersih.',
                       style: theme.textTheme.bodySmall,
                     ),
@@ -145,7 +145,7 @@ class ReportsPage extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                   children: [
                     Text(
-                      'Periode ${formatWibDate(r.from.toUtc())} – '
+                      'Periode ${formatWibDate(r.from.toUtc())} s.d. '
                       '${formatWibDate(r.to.toUtc())}',
                       style: theme.textTheme.bodySmall,
                     ),
@@ -303,7 +303,7 @@ class ReportsPage extends ConsumerWidget {
                             '• Biaya ESTIMASI berasal dari asumsi/kalkulator; '
                             'hanya AKTUAL yang mewakili tagihan nyata.\n'
                             '• Angka belum termasuk tenaga kerja, susut, dan '
-                            'pajak — ini bukan pernyataan laba bersih.',
+                            'pajak. Ini bukan pernyataan laba bersih.',
                             style: theme.textTheme.bodySmall,
                           ),
                           const SizedBox(height: 8),

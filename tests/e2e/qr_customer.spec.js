@@ -63,6 +63,11 @@ test('alur penuh: buka QR -> pesan -> konfirmasi draf', async ({ page }) => {
 
   await page.goto('/?token=TOKEN-E2E');
 
+  // Logo merek tampil di header dan benar-benar termuat (bukan 404).
+  const logo = page.locator('img.brand-logo');
+  await expect(logo).toBeVisible();
+  expect(await logo.evaluate((el) => el.naturalWidth)).toBeGreaterThan(0);
+
   // Menu tampil dengan nama meja.
   await expect(page.getByRole('button', { name: /Es Campur/ })).toBeVisible();
   await expect(page.getByText('Meja 3 · Pesan dari meja Anda')).toBeVisible();

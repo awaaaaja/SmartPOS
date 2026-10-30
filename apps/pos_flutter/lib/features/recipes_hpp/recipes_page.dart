@@ -349,7 +349,7 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Produksi batch — ${product.name}'),
+        title: Text('Produksi batch: ${product.name}'),
         content: SizedBox(
           width: 380,
           child: SingleChildScrollView(
@@ -707,7 +707,7 @@ class _HppDetail extends ConsumerWidget {
                                     : textSecondary,
                               ),
                               title: Text(
-                                'Versi ${v.version} — yield '
+                                'Versi ${v.version}: yield '
                                 '${formatNumber(v.yieldQty)} porsi',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,

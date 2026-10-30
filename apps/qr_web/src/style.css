@@ -2,11 +2,15 @@
   --brand: #930031;
   --brand-dark: #660023;
   --brand-soft: #fbeaf0;
-  --canvas: #fcf8fa;
+  /* Krem dari emblem logo, dipakai untuk aksen hangat */
+  --cream: #fbebd3;
+  --cream-deep: #f3ddb9;
+  --leaf: #4e6b3c;
+  --canvas: #fdfaf4;
   --surface: #ffffff;
   --text: #21161c;
   --muted: #6e6268;
-  --border: #e9dce2;
+  --border: #eadfd0;
   --error: #b42318;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -22,20 +26,37 @@ body {
 button, input { font: inherit; }
 
 .app-header {
-  background: var(--brand);
+  background: linear-gradient(150deg, var(--brand) 0%, var(--brand-dark) 100%);
   color: #fff;
-  padding: 16px 20px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 3px solid var(--cream);
 }
+
+.brand-logo {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 3px;
+}
+
+.brand-text { min-width: 0; }
 
 .app-header h1 {
   margin: 0;
   font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .app-header p {
-  margin: 4px 0 0;
+  margin: 3px 0 0;
   font-size: 13px;
-  opacity: 0.85;
+  color: var(--cream);
 }
 
 .content {
@@ -51,6 +72,7 @@ button, input { font: inherit; }
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 12px;
+  box-shadow: 0 1px 2px rgba(102, 0, 35, 0.05);
 }
 
 .center { text-align: center; }
@@ -59,12 +81,28 @@ button, input { font: inherit; }
 .error { color: var(--error); font-size: 13px; }
 
 .cat-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--brand);
-  margin: 18px 0 8px;
+  margin: 20px 0 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Garis daun khas warung di samping nama kategori */
+.cat-title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--cream-deep) 0 8px,
+    transparent 8px 14px
+  );
+  border-radius: 2px;
 }
 
 .grid {
@@ -86,11 +124,27 @@ button, input { font: inherit; }
   cursor: pointer;
   font: inherit;
   color: inherit;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
+.product:hover {
+  border-color: var(--brand);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(102, 0, 35, 0.08);
+}
+
+.product:active { transform: translateY(0); }
+
 .p-name { font-weight: 600; font-size: 14px; }
-.p-price { color: var(--brand); font-weight: 700; font-size: 14px; }
-.p-var { font-size: 11px; color: var(--muted); }
+.p-price {
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 14px;
+  background: var(--cream);
+  border-radius: 6px;
+  padding: 1px 7px;
+}
+.p-var { font-size: 11px; color: var(--leaf); font-weight: 600; }
 
 /* Bar keranjang menempel di bawah (mobile-first) */
 .cart-bar {
@@ -99,10 +153,18 @@ button, input { font: inherit; }
   right: 0;
   bottom: 0;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: var(--surface);
-  border-top: 1px solid var(--border);
+  background: var(--cream);
+  border-top: 2px solid var(--brand);
   max-width: 720px;
   margin: 0 auto;
+}
+
+.cart-bar .btn.ghost {
+  background: var(--surface);
+  border: 1px solid var(--brand);
+  border-radius: 12px;
+  color: var(--brand);
+  font-weight: 700;
 }
 
 /* Sheet (keranjang & varian) */
@@ -124,9 +186,21 @@ button, input { font: inherit; }
   overflow-y: auto;
   border-radius: 16px 16px 0 0;
   padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  border-top: 3px solid var(--brand);
 }
 
 .sheet h2 { margin: 0 0 8px; font-size: 17px; }
+
+/* Gagang sheet, tanda khas drawer */
+.sheet h2::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cream-deep);
+  margin: -6px auto 10px;
+}
 
 .cart-list {
   list-style: none;
@@ -164,15 +238,19 @@ button, input { font: inherit; }
   font-weight: 600;
   cursor: pointer;
   color: var(--text);
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .btn.primary {
   background: var(--brand);
   border-color: var(--brand);
   color: #fff;
+  box-shadow: 0 2px 6px rgba(102, 0, 35, 0.18);
 }
 
-.btn.primary:disabled { opacity: 0.5; cursor: default; }
+.btn.primary:hover:not(:disabled) { background: var(--brand-dark); }
+
+.btn.primary:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
 
 .btn.ghost {
   background: transparent;
@@ -199,7 +277,12 @@ button, input { font: inherit; }
 }
 
 /* Konfirmasi */
-.confirm { text-align: center; padding: 28px 16px; }
+.confirm {
+  text-align: center;
+  padding: 28px 16px;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--surface) 55%);
+  border-color: var(--cream-deep);
+}
 .confirm-icon { display: block; margin: 0 auto 8px; }
 .confirm h2 { margin: 0 0 6px; }
 .confirm-ref {
@@ -207,5 +290,9 @@ button, input { font: inherit; }
   color: var(--brand);
   font-size: 18px;
   margin: 6px 0;
+  background: var(--cream);
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
 }
 .confirm-note { font-size: 13px; color: var(--muted); margin: 10px 0 16px; }

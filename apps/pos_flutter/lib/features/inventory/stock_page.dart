@@ -272,7 +272,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         builder: (ctx, setLocal) => PopScope(
           canPop: !busy,
           child: AlertDialog(
-            title: Text('Mutasi stok — ${ingredient.name}'),
+            title: Text('Mutasi stok: ${ingredient.name}'),
             content: SizedBox(
               width: 380,
               child: SingleChildScrollView(
@@ -437,7 +437,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Mutasi — ${ingredient.name}',
+              'Mutasi: ${ingredient.name}',
               style: Theme.of(
                 ctx,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),

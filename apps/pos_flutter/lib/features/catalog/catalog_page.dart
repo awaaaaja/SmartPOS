@@ -279,7 +279,7 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Riwayat harga — ${product.name}',
+              'Riwayat harga: ${product.name}',
               style: Theme.of(
                 ctx,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),

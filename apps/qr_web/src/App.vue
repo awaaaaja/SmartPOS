@@ -198,9 +198,19 @@ onMounted(loadMenu);
 
 <template>
   <header class="app-header">
-    <h1>Waroeng MeJeng Kampoeng</h1>
-    <p v-if="table">{{ table.label }} · Pesan dari meja Anda</p>
-    <p v-else>Menu pelanggan</p>
+    <img
+      class="brand-logo"
+      src="/logo-mark.png"
+      alt=""
+      width="46"
+      height="46"
+      aria-hidden="true"
+    />
+    <div class="brand-text">
+      <h1>Waroeng MeJeng Kampoeng</h1>
+      <p v-if="table">{{ table.label }} · Pesan dari meja Anda</p>
+      <p v-else>Menu pelanggan</p>
+    </div>
   </header>
 
   <main class="content">

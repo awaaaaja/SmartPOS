@@ -157,17 +157,12 @@ class _AppShellState extends ConsumerState<AppShell> {
             titleSpacing: wide ? 16 : 12,
             title: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: brandPrimary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.storefront_rounded,
-                    color: Colors.white,
-                    size: 22,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    'assets/logo-mark.png',
+                    width: 40,
+                    height: 40,
                   ),
                 ),
                 const SizedBox(width: 12),

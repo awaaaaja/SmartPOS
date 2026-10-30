@@ -231,7 +231,7 @@ class TablesQrPage extends ConsumerWidget {
                 const Padding(
                   padding: EdgeInsets.only(bottom: 12),
                   child: Text(
-                    'QR_WEB_URL belum diatur — salin token di bawah dan '
+                    'QR_WEB_URL belum diatur. Salin token di bawah dan '
                     'bagikan manual.',
                     style: TextStyle(fontSize: 12, color: errorColor),
                   ),

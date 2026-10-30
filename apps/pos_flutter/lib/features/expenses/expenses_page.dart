@@ -506,7 +506,8 @@ class _AllocationSheetState extends ConsumerState<AllocationSheet> {
         children: [
           Text('Alokasi Biaya', style: theme.textTheme.titleLarge),
           Text(
-            '${widget.expense.description} — sumber ${formatRupiah(widget.expense.amount)}. '
+            '${widget.expense.description} (sumber '
+            '${formatRupiah(widget.expense.amount)}). '
             'Total alokasi tidak boleh melebihi sumber (dicegah server).',
             style: theme.textTheme.bodySmall,
           ),
