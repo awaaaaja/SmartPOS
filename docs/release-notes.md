@@ -66,6 +66,22 @@ signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum l
 - Klien lama tanpa key akan gagal tertutup setelah migrasi. Distribusi klien baru
   bertanda tangan tetap wajib sebelum operator memakai aplikasi.
 
+## K06-08 — Pengaturan dapat diedit + bagikan CSV (30 Oktober 2026)
+
+- Halaman Pengaturan memiliki tombol **Edit pengaturan**: nama, alamat, zona
+  waktu, pajak (%) dan biaya layanan (%). Persen dikirim sebagai fraksi ke RPC
+  baru `settings_save` (migrasi `20261028000016`, **belum dipasang di hosted**).
+- Guard mengikuti pola repo: `is_operator()` dengan `42501 operator_required`,
+  validasi server (nama 2–80, alamat ≤ 200, zona waktu valid di
+  `pg_timezone_names`, tarif 0–1), audit `before`/`after`, grant hanya
+  `authenticated`. Gagal validasi tidak mengubah data.
+- Ekspor CSV non-web membuka lembar berbagi lewat `share_plus`, sehingga laporan
+  bisa langsung dikirim (WhatsApp/email). Web tetap unduhan browser. Bila lembar
+  berbagi tak tersedia, pesan operator menjelaskan, CSV tetap di temp.
+- Bukti: 16 pemeriksaan migrasi di Postgres embedded, `test_settings_edit.py`
+  4/4, `test_mutation_retry.py` 19/19, `flutter analyze` 0 issue,
+  `flutter test` 159/159. **Belum diverifikasi di tablet Android** (K06-03).
+
 ## Artefak lokal
 
 | Artefak | Hasil |
@@ -89,8 +105,8 @@ estimasi/aktual; alokasi biaya; kas shift; riwayat/refund; laporan/CSV web.
 Transfer/QRIS **diverifikasi manual**, bukan konfirmasi PSP otomatis.
 
 Tidak dibuat: Dapur, Pesanan terpisah, Pegawai, Multi-Cabang, Subscription,
-SaaS, AI/ML. Printer belum dipilih/diuji; offline/outbox tidak dicakup. CSV Android
-masih berkas sementara aplikasi, belum share/download ke folder pengguna.
-Profil/tarif hanya ditampilkan; perubahan melalui pengelola Supabase.
+SaaS, AI/ML. Printer belum dipilih/diuji; offline/outbox tidak dicakup. CSV
+Android kini dibagikan lewat lembar berbagi `share_plus` (belum diuji di device).
+Profil/tarif dapat diedit dari aplikasi lewat RPC guarded dengan audit.
 
 Blocker dan prosedur lanjutan: [serah terima](handover.md).

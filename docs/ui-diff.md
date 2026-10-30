@@ -14,4 +14,4 @@ dicatat di sini (Prompt.md §1).
 | Bottom nav HP | 4 item + tombol aksi | Beranda, Kasir, Stok, Laporan, Lainnya | PRD §4.1 |
 | Header modul HP | Mockup lebar tetap | Header dapat membungkus; kartu laporan setinggi konten | Regresi S06: tujuh modul overflow di 390×844 |
 | POS tablet 1024 | Katalog + keranjang | Breakpoint area konten 720dp setelah sidebar | Dua kolom tetap tampil di tablet landscape |
-| Pengaturan | Form preferensi | Profil/tarif aktual read-only; perubahan oleh pengelola Supabase | Tidak menyamarkan placeholder sebagai fitur selesai; editor/printer belum tersedia |
+| Pengaturan | Form preferensi | Profil/tarif aktual dapat diedit dari UI via RPC guarded + audit (`0016`); printer/offline tetap tidak tersedia | Bukan placeholder; validasi dan audit di server, belum diuji di device |

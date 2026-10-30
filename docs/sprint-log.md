@@ -129,7 +129,28 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
 - Bukti terbaru: `evidence/sprint06/retry-rest-fix.json`; tidak ada Git push atau
   rilis produksi. Klien lama tanpa key gagal tertutup setelah migrasi.
 
+### K06-08 — Pengaturan dapat diedit + bagikan CSV (30 Oktober 2026)
+
+- Halaman Pengaturan tidak lagi read-only. Tombol **Edit pengaturan** membuka
+  form nama, alamat, zona waktu, pajak (%) dan biaya layanan (%). Persen dikirim
+  sebagai fraksi ke RPC baru `settings_save` (migrasi `20261028000016`).
+- RPC dijaga `is_operator()` seperti seluruh RPC lain (`42501 operator_required`),
+  memvalidasi di server: nama 2–80 huruf, alamat ≤ 200, zona waktu harus ada di
+  `pg_timezone_names`, tarif 0–1. Gagal validasi tidak mengubah data.
+- Setiap simpan mencatat `audit_events` (`entity=business_settings`, `before` dan
+  `after`). Hanya `authenticated` yang menerima grant; anon ditolak tanpa grant.
+- Ekspor CSV di Android/iOS/desktop kini membuka **lembar berbagi** lewat
+  `share_plus` sehingga laporan bisa dikirim ke WhatsApp/email; web tetap unduhan
+  browser. Bila lembar berbagi tak tersedia, CSV tetap tersimpan di temp dan
+  operator melihat pesan jelas, bukan error mentah.
+- **Bukti lokal:** Postgres embedded 16 pemeriksaan migrasi `0016` lulus;
+  `tests/integration/test_settings_edit.py` 4/4 dan `test_mutation_retry.py`
+  19/19 lulus; `flutter analyze` 0 issue, `flutter test` 159/159.
+- **Belum dibuktikan:** lembar berbagi di tablet Android sungguhan (K06-03) dan
+  pemasangan migrasi `0016` ke hosted (butuh `supabase db push`).
+
 ### Paket serah terima / gate tersisa
+
 `docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
 `docs/evidence/sprint06/README.md`. K06-01 backend/klien QA selesai. Gate tersisa:
 signing/instalasi dan distribusi klien baru (K06-02), Android target/manual operator

@@ -40,6 +40,24 @@ String _mapBusinessError(String message) {
     return 'Total alokasi melebihi nominal biaya. Kurangi alokasi atau '
         'ubah nominal biaya dulu.';
   }
+  if (m.startsWith('invalid_name')) {
+    return 'Nama usaha wajib diisi 2 sampai 80 huruf.';
+  }
+  if (m.startsWith('invalid_address')) {
+    return 'Alamat maksimal 200 huruf. Kosongkan bila tidak perlu.';
+  }
+  if (m.startsWith('invalid_timezone')) {
+    return 'Zona waktu tidak dikenal. Pakai format seperti Asia/Jakarta.';
+  }
+  if (m.startsWith('invalid_tax_rate')) {
+    return 'Pajak harus antara 0% dan 100%.';
+  }
+  if (m.startsWith('invalid_service_rate')) {
+    return 'Biaya layanan harus antara 0% dan 100%.';
+  }
+  if (m == 'settings_not_found') {
+    return 'Data pengaturan usaha belum ada. Hubungi pengelola database.';
+  }
   if (m.startsWith('shift_already_open')) {
     return 'Sudah ada kas shift terbuka. Tutup dulu sebelum buka baru.';
   }
@@ -52,6 +70,10 @@ String _mapBusinessError(String message) {
 /// Petakan exception teknis ke pesan yang bisa dipahami operator.
 /// Pesan mentah server tidak ditampilkan langsung (bisa berbahaya/inggris).
 String mapErrorToMessage(Object error) {
+  if (error is StateError && error.message == 'csv_share_unavailable') {
+    return 'CSV sudah disimpan sementara, tetapi lembar berbagi tidak '
+        'tersedia di perangkat ini. Coba lagi dari aplikasi lain.';
+  }
   if (error is StateError && error.message == 'pending_mutation_conflict') {
     return 'Masih ada permintaan belum terkonfirmasi. Buka ulang form '
         'untuk mengulangi isian sebelumnya.';
@@ -78,6 +100,9 @@ String mapErrorToMessage(Object error) {
       case '401':
       case '403':
         return 'Sesi tidak berwenang. Masuk ulang sebagai operator.';
+      case '42501':
+        return 'Hanya akun operator yang boleh mengubah data ini. '
+            'Masuk ulang dengan akun operator.';
       case '404':
         return 'Data tidak ditemukan.';
       case '23505':

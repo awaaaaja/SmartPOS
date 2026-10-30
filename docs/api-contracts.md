@@ -40,6 +40,14 @@ Menu aktif untuk satu meja. Token salah/dirotasi → exception `invalid_table_to
 - Semua operasi lewat RLS `operator_all` (hanya email di `business_settings.operator_email`).
 - Perubahan `products.price` otomatis mencatat `product_price_history`
   (trigger `trg_products_price_history`), termasuk pelaku (`auth.uid()`).
+- Pengaturan usaha disimpan lewat
+  `settings_save(text, text, text, numeric, numeric) -> jsonb`
+  (`p_name`, `p_address`, `p_timezone`, `p_tax_rate`, `p_service_rate`; tarif
+  sebagai fraksi 0–1, migrasi `0016`). Guard `is_operator()` →
+  `42501 operator_required`; validasi server (nama 2–80, alamat ≤ 200, zona
+  waktu harus ada di `pg_timezone_names`, tarif 0–1) dan audit
+  `business_settings` dengan `before`/`after`. Gagal validasi tidak berdampak
+  pada data.
 - Quote/checkout/refund/stok: Sprint 02–04, dipindahkan ke fungsi RPC atomik
   dengan idempotency key (belum ada di Sprint 01).
 
