@@ -40,3 +40,21 @@ Keputusan teknis yang diuji/diuji-review; urutan kebenaran mengikuti `Prompt.md`
 - **Keputusan:** `SUPABASE_URL` + `SUPABASE_PUBLISHABLE_KEY` masuk lewat
   `--dart-define`; tanpa keduanya aplikasi menampilkan layar petunjuk setup,
   bukan crash atau mode pura-pura nyambung.
+
+## D-06 (2026-10-30) — Arah ML post-MVP: demand forecasting auto-retrain; MVP hanya agregat deterministik
+
+- **Keputusan:** satu arah ML pasca-MVP = **forecast qty menu per jam/hari
+  dengan training ulang otomatis** (fase 0–3, syarat naik fase berbasis jumlah
+  data, bukan tanggal). Di MVP hanya dibuat **view agregat deterministik**
+  (migrasi `20261030000017_analytics_aggregates.sql`) tanpa model apa pun.
+- **Alasan:** PRD §9 menunjuk arah forecast menu/jam ramai sebagai pertimbangan
+  post-MVP; semua fitur yang dibutuhkan sudah ada di skema (`sales`,
+  `sale_items`, `product_price_history`, `stock_movements`). Anomali kas,
+  market basket, harga dinamis, dan churn ditolak/ditunda (alasan lengkap di
+  `docs/ml-roadmap.md` §1). Volume data saat ini (75 transaksi dari 3 hari
+  aktif, 31 Okt 2026) membuat model apa pun hanya menghafal kebisingan.
+- **Konsekuensi:** tidak ada tabel `forecast_runs`, endpoint `/v1/forecasts`,
+  halaman `AI Insights`, atau library ML di MVP (PRD §9). Kode ML baru boleh
+  masuk setelah amendemen PRD §9 ditulis; prediksi selalu berupa saran yang
+  butuh persetujuan operator (PRD baris 69). Detail loop auto-retrain,
+  champion/challenger, dan guardrail: `docs/ml-roadmap.md`.

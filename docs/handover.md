@@ -59,11 +59,20 @@ untuk memaksa key baru. Penyimpanan identitas retry bukan outbox offline/backup.
    identik menghasilkan audit `before`/`after` tanpa mengubah data bisnis.
    Lembar berbagi CSV dan form Pengaturan tetap menunggu uji tablet (K06-03).
 
+6. **Agregat analitik pasca-MVP (D-06)** — ✅ migrasi
+   `20261030000017_analytics_aggregates.sql` dipasang ke hosted 31 Oktober 2026
+   (dump `-Fc` sebagai jaring pengaman). Lima view agregat deterministik
+   (`v_sale_item_facts`, `v_sales_daily`, `v_sales_hourly`, `v_product_daily`,
+   `v_stock_usage_daily`) dengan `security_invoker=true`; grant hanya
+   `authenticated`, anon menerima 401. **Bukan ML** (PRD §9): tidak ada prediksi
+   atau tabel forecast; rancangan lanjutan di `docs/ml-roadmap.md`. Tidak ada
+   perubahan UI — aman untuk klien yang sudah beredar.
+
 ## 2. Setup Supabase
 
 1. Gunakan proyek staging/produksi yang tepat. Simpan DB URL hanya di environment
    pengelola. Matikan pendaftaran publik; buat satu akun operator melalui Auth.
-2. Terapkan seluruh migrasi berurutan (`0001`…`0016`), jangan mengedit migrasi lama:
+2. Terapkan seluruh migrasi berurutan (`0001`…`0017`), jangan mengedit migrasi lama:
 
    ```bash
    supabase db push --db-url "$SUPABASE_DB_URL"
@@ -134,9 +143,12 @@ keranjang/draft/sesi dan backup aman. Jangan mengirim password lewat argumen bui
 
 ## 4. Migrasi, backup dan rollback
 
-- Perbaikan Sprint 06 menambah migrasi `0013`–`0014`; schema terakhir `0014`.
-  Tidak mengubah baris historis. Klien sebelum perbaikan tidak kompatibel dengan
-  kewajiban key baru; jangan rollback aplikasi ke klien lama tanpa meninjau kontrak.
+- Perbaikan Sprint 06 menambah migrasi `0013`–`0014`; setelah itu `0015`
+  (guard seragam), `0016` (edit pengaturan) dan `0017` (view agregat analitik);
+  schema terakhir `0017`, seluruhnya sudah terpasang di hosted.
+  Tidak mengubah baris historis; `0017` murni view/indeks tambahan. Klien sebelum
+  perbaikan tidak kompatibel dengan kewajiban key baru; jangan rollback aplikasi
+  ke klien lama tanpa meninjau kontrak.
 - Backup sebelum migrasi/rilis. Latihan yang sudah dilakukan dan batasannya:
   [backup-restore.md](backup-restore.md).
 - Rollback aplikasi: gunakan build bertanda tangan sebelumnya yang sudah diuji,

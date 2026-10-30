@@ -87,6 +87,23 @@ signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum l
   ditolak, simpan nilai identik 200 + audit `before`/`after`. **Belum
   diverifikasi di tablet Android** (K06-03).
 
+## D-06 — Persiapan data analitik pasca-MVP (31 Oktober 2026)
+
+- **Keputusan** (`docs/decision-log.md` D-06, rancangan
+  `docs/ml-roadmap.md`): arah ML pasca-MVP = demand forecasting per menu per
+  jam/hari dengan training ulang otomatis. **MVP tetap tanpa ML** (PRD §9);
+  tidak ada tabel prediksi, endpoint forecast, halaman AI, atau library ML.
+- **Yang masuk rilis ini**: migrasi `20261030000017_analytics_aggregates.sql`
+  (**terpasang di hosted 31 Oktober 2026**) — 5 view agregat deterministik
+  (fakta item, harian, per jam, per menu × hari, pergerakan bahan × hari ×
+  sumber) + dua indeks. Hari/jam dihitung dalam WIB, uang dihitung sekali per
+  transaksi, sale `REFUNDED` dikeluarkan dari agregat menu. `security_invoker`
+  aktif sehingga RLS tabel dasar berlaku; grant hanya `authenticated`, anon
+  ditolak. Tidak ada perubahan UI/klien.
+- Bukti: `test_analytics_views.py` 8/8 lulus (Postgres embedded), terpasang ke
+  hosted via `supabase db push` setelah dump `-Fc`, verifikasi REST: anon 401
+  `permission denied`, operator 200 membaca agregat nyata.
+
 ## Artefak lokal
 
 | Artefak | Hasil |

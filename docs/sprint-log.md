@@ -151,6 +151,28 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
   0 FAIL** dan pemeriksaan langsung RPC lama/baru lulus.
 - **Belum dibuktikan:** lembar berbagi di tablet Android sungguhan (K06-03).
 
+### D-06 — Arah ML post-MVP + agregat analitik deterministik (31 Oktober 2026)
+
+- Keputusan arah ML pasca-MVP: **demand forecasting per menu per jam/hari
+  dengan auto-retrain** (fase 0–3; syarat naik fase berbasis jumlah data, bukan
+  tanggal). Ditulis di `docs/ml-roadmap.md` + entri `docs/decision-log.md` D-06.
+  PRD §9 tetap berlaku: MVP **tanpa** model, `AI Insights`, `/v1/forecasts`,
+  `forecast_runs`, atau library ML; amendemen PRD dibutuhkan sebelum kode ML.
+- Yang dikerjakan sekarang hanya **data prep deterministik**: migrasi
+  `20261030000017_analytics_aggregates.sql` membuat 5 view agregat
+  (`v_sale_item_facts`, `v_sales_daily`, `v_sales_hourly`, `v_product_daily`,
+  `v_stock_usage_daily`) + indeks `sales_created_at_idx`, `sale_items_product_idx`.
+  Semua `security_invoker=true` (RLS tetap berlaku), grant hanya
+  `authenticated`, hari/jam WIB via `at time zone 'Asia/Jakarta'` (D-04).
+- **Bukti:** `tests/integration/test_analytics_views.py` 8/8 lulus di Postgres
+  embedded (batas hari WIB, uang per transaksi tanpa penggandaan, `REFUNDED`
+  keluar dari agregat menu, sumber stok terpisah, `security_invoker` aktif,
+  anon ditolak, non-operator 0 baris); `0017` dipasang ke hosted via
+  `supabase db push` (31 Okt 2026, setelah dump `-Fc` sebagai jaring pengaman);
+  verifikasi REST hosted: anon **401** `permission denied for view`, operator
+  login **200** membaca agregat harian/menu nyata.
+- **Belum ada perubahan UI**; view dipakai laporan/riset, bukan prediksi.
+
 ### Paket serah terima / gate tersisa
 
 `docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
