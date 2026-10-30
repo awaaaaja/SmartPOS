@@ -48,7 +48,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: tests/e2e/package-lock.json
+          cache-dependency-path: |
+            tests/e2e/package-lock.json
+            apps/qr_web/package-lock.json
+      # webServer Playwright menjalankan vite dev dari apps/qr_web,
+      # jadi dependensinya wajib terpasang juga.
+      - name: Pasang dependensi web QR
+        working-directory: apps/qr_web
+        run: npm ci
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm test
