@@ -278,6 +278,88 @@ def main():
     status, body = rpc(token, "qr_cancel_draft", {"p_draft_id": 2 ** 62})
     check("cancel id asing ditolak", status >= 400, str(body)[:120])
 
+    # --- Preferensi bayar + identitas pelanggan (migrasi 0018) ---
+    print("\n== Preferensi bayar & identitas (0018) ==")
+    tok_c = "qrtest-token-c-" + uuid.uuid4().hex[:8]
+    table_c = make_table("UJI-QR-C-" + uuid.uuid4().hex[:6], tok_c)
+
+    # PAY_NOW + QRIS + identitas lengkap.
+    key_c1 = "pc1-" + uuid.uuid4().hex
+    status, dp = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": key_c1, "p_items": items,
+        "p_pay_intent": "PAY_NOW", "p_pay_method": "QRIS",
+        "p_customer_name": "  Budi Santoso  ",
+        "p_customer_phone": "+62 812-3456-7890"})
+    check("submit PAY_NOW+QRIS sukses", status == 200, str(dp)[:200])
+    check("pay_intent tercatat", dp and dp.get("pay_intent") == "PAY_NOW")
+    check("pay_method tercatat", dp and dp.get("pay_method") == "QRIS")
+    check("nama di-trim & tersimpan",
+          dp and dp.get("customer_name") == "Budi Santoso",
+          str(dp and dp.get("customer_name")))
+    check("no. WA tersimpan",
+          dp and dp.get("customer_phone") == "+62 812-3456-7890")
+
+    # OPEN_BILL: boleh tanpa method.
+    key_c2 = "pc2-" + uuid.uuid4().hex
+    status, dob = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": key_c2, "p_items": items,
+        "p_pay_intent": "OPEN_BILL"})
+    check("submit OPEN_BILL tanpa method sah", status == 200
+          and dob.get("pay_intent") == "OPEN_BILL"
+          and dob.get("pay_method") is None, str(dob)[:200])
+
+    # Tanpa preferensi (klien lama, 3 argumen) -> semua null.
+    key_c3 = "pc3-" + uuid.uuid4().hex
+    status, dlegacy = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": key_c3, "p_items": items})
+    check("submit 3 argumen (klien lama) tetap sah", status == 200)
+    check("preferensi default null", dlegacy.get("pay_intent") is None
+          and dlegacy.get("pay_method") is None
+          and dlegacy.get("customer_name") is None
+          and dlegacy.get("customer_phone") is None)
+
+    # Method TANPA PAY_NOW -> ditolak.
+    status, body = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": "bad1-" + uuid.uuid4().hex,
+        "p_items": items, "p_pay_method": "QRIS"})
+    check("method tanpa PAY_NOW ditolak", status >= 400
+          and "pay_method_requires_pay_now" in str(body), str(body)[:160])
+
+    # Nilai enum salah -> ditolak.
+    status, body = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": "bad2-" + uuid.uuid4().hex,
+        "p_items": items, "p_pay_intent": "COD"})
+    check("pay_intent salah ditolak", status >= 400
+          and "invalid_pay_intent" in str(body), str(body)[:160])
+    status, body = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": "bad3-" + uuid.uuid4().hex,
+        "p_items": items, "p_pay_intent": "PAY_NOW",
+        "p_pay_method": "BITCOIN"})
+    check("pay_method salah ditolak", status >= 400
+          and "invalid_pay_method" in str(body), str(body)[:160])
+
+    # Nama kepanjangan -> ditolak.
+    status, body = rpc(None, "qr_submit_draft", {
+        "p_table_token": tok_c, "p_client_key": "bad4-" + uuid.uuid4().hex,
+        "p_items": items, "p_customer_name": "x" * 61})
+    check("nama > 60 char ditolak", status >= 400
+          and "invalid_customer_name" in str(body), str(body)[:160])
+
+    # Operator melihat preferensi & identitas di daftar draft.
+    status, allc = rpc(token, "qr_list_drafts", {})
+    rowp = next((x for x in allc if x["draft_id"] == dp["draft_id"]), None)
+    check("draft PAY_NOW tampil di list dengan preferensi",
+          status == 200 and rowp is not None
+          and rowp.get("pay_method") == "QRIS"
+          and rowp.get("customer_name") == "Budi Santoso",
+          str(rowp)[:200])
+
+    # Draft OPEN_BILL bisa diklaim tanpa memaksa pembayaran (Open Bill =
+    # tetap lewat keranjang POS; total final = keranjang saat checkout).
+    status, cl = rpc(token, "qr_claim_draft", {"p_draft_id": dob["draft_id"]})
+    check("draft OPEN_BILL bisa diklaim", status == 200
+          and cl["status"] == "CLAIMED", str(cl)[:160])
+
     print(f"\n{passed} PASS, {failed} FAIL")
     raise SystemExit(1 if failed else 0)
 
