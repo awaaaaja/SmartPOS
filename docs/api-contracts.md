@@ -76,6 +76,26 @@ sehingga klien lama (3 argumen) tetap sah:
 - Quote/checkout/refund/stok: Sprint 02–04, dipindahkan ke fungsi RPC atomik
   dengan idempotency key (belum ada di Sprint 01).
 
+### Katalog: arsip & keluarkan dari arsip (Fase D, tanpa migrasi)
+
+- Arsip: `update products/product_categories set archived_at = now()` lewat
+  RLS `operator_all`; keluarkan dari arsip: `archived_at = null` — **tanpa
+  migrasi baru** (RLS sudah mengizinkan).
+- Klien Flutter punya provider terpisah `catalogProductsProvider` /
+  `catalogCategoriesProvider` (`includeArchived = true`) **hanya untuk
+  halaman katalog** (tab Aktif | Arsip); POS dan menu web tetap memakai
+  `productsProvider` / `categoriesProvider` tanpa arsip (perilaku lama).
+- `qr_list_drafts` (PENDING saja) dipakai panel QR Masuk & badge; **Fase C**
+  akan menambah `qr_mark_preparing` + daftar papan aktif.
+
+### Notifikasi pesanan (Fase B, lokal perangkat — bukan API server)
+
+- `QrInboxWatcher` (shell): polling 10 detik ke `qrDraftsProvider`,
+  deteksi draft **PENDING baru** → banner SnackBar + nada; muat pertama =
+  baseline sunyi. Preferensi (`notif-sound-enabled/tone/volume`) disimpan
+  di SharedPreferences perangkat; pemutar lewat seam `notifSoundPlayer`
+  (uji tanpa audio). Tidak ada endpoint/kolom server.
+
 ### Mutasi yang wajib idempotency key (S06, migrasi `0013`–`0014`)
 
 | RPC | Signature | Params |

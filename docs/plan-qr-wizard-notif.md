@@ -1,6 +1,6 @@
 # Rencana Lengkap: Wizard Web QR + Tab Pesanan + Notifikasi Suara + Arsip
 
-Status: **RENCANA v4 — EKSEKUSI berjalan (Fase 1 & 3 selesai 1 Nov 2026).**
+Status: **RENCANA v4 — EKSEKUSI berjalan (Fase 1 & 3, A, A3, B, D selesai 1 Nov 2026; tersisa Fase C).**
 Tanggal: 31 Oktober 2026.
 Perubahan v4 (atas v3):
 1. **Identitas pelanggan di web**: form Nama + No. WA (**opsional**) ikut
@@ -18,10 +18,11 @@ Perubahan v4 (atas v3):
 |---|---|
 | E. Seed menu (2 kategori, 75 varian) | **SELESAI** — commit `84d6afe`+`7e58a85`, live hosted & H13Pro |
 | Fase 1. Migrasi 0018 ke hosted + test | **SELESAI** (1 Nov 2026) — commit `2c95897`; hosted `test_qr_drafts.py` **51 PASS, 0 FAIL**; versi 0018 tercatat di `schema_migrations`. Dump cadangan `pre-0018-business.dump`+`pre-0018-auth-users.dump` di `/tmp/opencode/smart-pos-backups/` (0700/0600, tidak masuk Git). Catatan: kolom/fungsi 0018 sudah ada di hosted dari penerapan parsial sebelumnya (tanpa catatan versi) — kini badan fungsi diverifikasi identik dengan file migrasi dan riwayat dilengkapi. |
-| A. Wizard web (3 langkah + nama/WA + filter kategori) | **SELESAI** (1 Nov 2026) — vitest 21/21, e2e 6/6, build produksi lulus; foto produk ikut tampil di kartu menu. Menunggu deploy Pages otomatis dari CI. |
-| B. Notifikasi banner + suara | Rencana |
+| A. Wizard web (3 langkah + nama/WA + filter kategori) | **SELESAI** (1 Nov 2026) — vitest 21/21, e2e 6/6, build produksi lulus; foto produk ikut tampil di kartu menu. CI run #11 + Deploy Pages run #2 **success**; tayang di `awaaaaja.github.io/SmartPOS/`. |
+| A3. Kartu pesanan POS (preferensi + identitas) | **SELESAI** (1 Nov 2026) — `QrDraft` baca `pay_intent/pay_method/customer_name/customer_phone`; baris preferensi di kartu `QrInboxSheet`; 4 test baru (`qr_inbox_sheet_test` 8/8). |
+| B. Notifikasi banner + suara | **SELESAI** (1 Nov 2026) — `QrInboxWatcher` di shell (polling 10 dtk dipindah dari PosPage, baseline sunyi, banner + nada); `core/notif_sound.dart` (seam + prefs resilient); seksi Pengaturan (switch/nada/pratinjau/volume); aset Kenney Interface Sounds (CC0, 4 nada) + README lisensi; 5 test baru; suite **177/177**, analyzer 0. |
 | C. Tab Pesanan (v4: bayar & WA dari tab) | Rencana |
-| D. Un-arsip katalog | Rencana |
+| D. Un-arsip katalog | **SELESAI** (1 Nov 2026) — `restoreProduct`/`restoreCategory` (tanpa migrasi), chip filter Aktif \| Arsip, sheet kategori tampilkan arsip + un-arsip; provider `catalogProductsProvider`/`catalogCategoriesProvider` (POS tetap tanpa arsip); 4 test baru; suite **172/172**, analyzer 0. |
 
 ## 0. Fakta codebase (dasar setiap keputusan)
 
