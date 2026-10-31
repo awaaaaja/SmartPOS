@@ -195,6 +195,13 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
   kolom "Nominal diterima" + kembalian hanya untuk CASH; non-cash menampilkan
   caption konfirmasi manual dan mengirim `paid = total` — kontrak
   `pos_checkout` tidak berubah.
+- **QR meja tampil langsung & siap cetak** (1e479b0): token plaintext kini
+  disimpan lokal (`TableTokenStore`, SharedPreferences) — sebelumnya hanya
+  tampil sekali saat buat/rotate. Kartu meja kini menampilkan QR (tap →
+  dialog besar); tombol 'Cetak / Bagikan' menangkap QR jadi PNG 3× lalu
+  membuka lembar berbagi Android (dari sana pilih printer). Meja tanpa token
+  lokal (mis. pindah perangkat) menampilkan pengingat rotasi. Suite penuh
+  **164/164** lulus (5 test baru), analyzer 0.
 - Commit `753d95a`; CI 4 job hijau + deploy Pages sukses pada push yang sama.
 
 ### Paket serah terima / gate tersisa
