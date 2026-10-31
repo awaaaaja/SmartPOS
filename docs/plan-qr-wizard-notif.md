@@ -1,6 +1,6 @@
 # Rencana Lengkap: Wizard Web QR + Tab Pesanan + Notifikasi Suara + Arsip
 
-Status: **RENCANA v4 — menunggu persetujuan eksekusi (E seed sudah).**
+Status: **RENCANA v4 — EKSEKUSI dimulai (Fase 1 selesai 1 Nov 2026).**
 Tanggal: 31 Oktober 2026.
 Perubahan v4 (atas v3):
 1. **Identitas pelanggan di web**: form Nama + No. WA (**opsional**) ikut
@@ -17,7 +17,8 @@ Perubahan v4 (atas v3):
 | Bagian | Status |
 |---|---|
 | E. Seed menu (2 kategori, 75 varian) | **SELESAI** — commit `84d6afe`+`7e58a85`, live hosted & H13Pro |
-| A. Wizard web + migrasi 0018 | Rencana |
+| Fase 1. Migrasi 0018 ke hosted + test | **SELESAI** (1 Nov 2026) — commit `2c95897`; hosted `test_qr_drafts.py` **51 PASS, 0 FAIL**; versi 0018 tercatat di `schema_migrations`. Dump cadangan `pre-0018-business.dump`+`pre-0018-auth-users.dump` di `/tmp/opencode/smart-pos-backups/` (0700/0600, tidak masuk Git). Catatan: kolom/fungsi 0018 sudah ada di hosted dari penerapan parsial sebelumnya (tanpa catatan versi) — kini badan fungsi diverifikasi identik dengan file migrasi dan riwayat dilengkapi. |
+| A. Wizard web (sisa: App.vue 3 langkah + vitest/e2e) | Rencana — migrasi sudah hosted |
 | B. Notifikasi banner + suara | Rencana |
 | C. Tab Pesanan (v4: bayar & WA dari tab) | Rencana |
 | D. Un-arsip katalog | Rencana |
@@ -319,7 +320,7 @@ PRD changelog.
 
 | # | Fase | Keluaran | Verifikasi |
 |---|---|---|---|
-| 1 | Migrasi 0018 (preferensi bayar + identitas) + test integrasi → hosted | kontrak draft v4 | PG 5433 hijau; REST 200 |
+| 1 | Migrasi 0018 (preferensi bayar + identitas) + test integrasi → hosted | kontrak draft v4 | **SELESAI** 1 Nov 2026 — 51 PASS, 0 FAIL |
 | 2 | Migrasi 0019 (lifecycle 2 dimensi) + test integrasi → hosted | PREPARING, complete longgar, papan | PG 5433 hijau |
 | 3 | Wizard web (termasuk form nama/WA) + filter kategori + vitest/e2e | deploy Pages otomatis | CI qr-web + e2e hijau |
 | 4 | Tab Pesanan (aksi + [Bayar] + [Hubungi WA]) + QrClaimService + claimedDraftIdsProvider + banner navigasi | alur Diterima–Diproses–Selesai–Bayar–WA | test Flutter |
