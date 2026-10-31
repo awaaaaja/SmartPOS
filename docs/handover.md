@@ -12,7 +12,7 @@ paket QA dan SOP latihan, bukan persetujuan go-live operator.
 | K06-03 | P0 | Tidak ada Android/tablet/emulator terhubung. Bukti Sprint 06 berasal dari Chrome dan widget test, **bukan** perangkat target. Wajib instalasi, keyboard, rotasi, jaringan putus, transaksi, laporan dan cold-start di tablet. |
 | K06-04 | P0 | Restore bisnis lokal lulus, tetapi GoTrue lengkap (identities/sessions), Storage/foto, login staging cloud dan retensi backup terenkripsi di luar mesin belum dibuktikan. Tidak ada crash-reporting terkelola; observabilitas release belum diinstrumentasi/diuji. |
 | K06-05 | P0 | Password operator dahulu ter-commit dalam tes. Default itu sudah dihapus, **bukan** riwayat Git. Rotasi password operator dan cabut sesi lama sebelum distribusi/push; rotasi kredensial lain yang pernah dibagikan. Jangan menaruh nilai pengganti dalam source/log. |
-| K06-06 | P0 | `QR_WEB_URL` belum diisi pada build QA. Sediakan hosting HTTPS permanen, build ulang dan cetak/rotate QR setelah URL final. Tunnel lama bukan deployment. |
+| K06-06 | P0 → **hosting live, build ulang menunggu** | Web QR kini dipublikasikan otomatis ke **GitHub Pages**: `https://awaaaaja.github.io/SmartPOS/` (workflow `.github/workflows/deploy-qr-web.yml`, trigger push `main` yang menyentuh `apps/qr_web/**`; base path `/SmartPOS/`, kunci dari repo variables `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY`). `QR_WEB_URL` final = URL itu **tanpa** garis miring akhir. Build ulang Flutter dengan `--dart-define=QR_WEB_URL=https://awaaaaja.github.io/SmartPOS`, lalu cetak/rotate QR setelah URL final dipakai. Tunnel lama bukan deployment. |
 | K06-07 | P1 | Latensi jaringan tidak stabil; dashboard mencapai 6,05 dtk (termasuk retry transport). Tidak ada bukti FPS/performa native. Ukur lagi pada tablet dan jaringan operasional sebelum menyatakan lancar. |
 | K06-08 | P1 | Printer/Bluetooth belum diuji; offline tidak tersedia; PSP belum terintegrasi. Pengaturan kini bisa diedit dari UI (RPC guarded `settings_save`, migrasi `0016`) dan CSV Android bisa dibagikan lewat lembar berbagi `share_plus`; `0015`–`0016` sudah terpasang di hosted dan regresi hosted 212 PASS/0 FAIL, tetapi keduanya **belum diverifikasi di tablet** (K06-03). Sampaikan batasan kepada operator. |
 
@@ -89,8 +89,12 @@ untuk memaksa key baru. Penyimpanan identitas retry bukan outbox offline/backup.
    dengan token meja sah; akun non-operator tidak boleh membaca data internal.
    Jalankan ulang probe staging setelah perubahan Auth/migrasi.
 6. Build Vue dari `apps/qr_web/` dengan `VITE_SUPABASE_URL` dan
-   `VITE_SUPABASE_PUBLISHABLE_KEY` sesuai `.env.example`. Deploy `dist/` ke HTTPS,
-   lalu masukkan URL itu sebagai `QR_WEB_URL` ketika membangun Flutter.
+   `VITE_SUPABASE_PUBLISHABLE_KEY` sesuai `.env.example`. Hosting aktif:
+   **GitHub Pages otomatis** lewat `.github/workflows/deploy-qr-web.yml`
+   (`https://awaaaaja.github.io/SmartPOS/`) — pastikan kedua variabel itu ada di
+   *Settings → Secrets and variables → Actions → Variables* repo. Untuk hosting
+   lain, deploy `dist/` ke HTTPS sendiri. Masukkan URL itu (tanpa `/` akhir)
+   sebagai `QR_WEB_URL` ketika membangun Flutter.
 7. Kunci publishable/anon boleh di klien. DB password, service-role/server key,
    token login operator dan keystore tidak boleh masuk Flutter/Vue/Git.
 

@@ -110,7 +110,7 @@ signing, distribusi klien, perangkat target dan pemulihan Supabase penuh belum l
 |---|---|
 | `apps/pos_flutter/build/app/outputs/flutter-apk/app-release.apk` | 58.281.930 byte; **UNSIGNED**, belum dapat dipasang; memuat perbaikan `0013`–`0014` |
 | `apps/pos_flutter/build/web/` | Build release web berhasil (164,4 s), memuat perbaikan `0013`–`0014`; hanya untuk QA |
-| `apps/qr_web/dist/` | Build Vue berhasil; hosting HTTPS permanen belum ada |
+| `apps/qr_web/dist/` | Build Vue berhasil; kini dipublikasikan otomatis ke GitHub Pages: `https://awaaaaja.github.io/SmartPOS/` (workflow `deploy-qr-web.yml`) |
 
 SHA-256 APK (setelah rebuild K06-01):
 `6afbfbb6cf3d36763bdcfd512113304a2f0e0aabb60cd0c9014fc3725d0a7289`.

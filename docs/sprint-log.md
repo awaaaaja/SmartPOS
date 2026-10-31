@@ -173,13 +173,40 @@ untuk timeout setelah server commit. Bukti awal `retry-gap.json`.
   login **200** membaca agregat harian/menu nyata.
 - **Belum ada perubahan UI**; view dipakai laporan/riset, bukan prediksi.
 
+### Lanjutan 31 Oktober 2026 — hosting QR live, optimasi tablet, pembayaran non-tunai
+
+- **Hosting web QR (K06-06) selesai**: GitHub Pages diaktifkan
+  (`build_type=workflow`) dan workflow `.github/workflows/deploy-qr-web.yml`
+  menerbitkan `apps/qr_web/` otomatis pada push `main` yang menyentuh paket itu
+  (build `vite --base=/SmartPOS/`, kunci dari repo variables
+  `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` — bukan source).
+  Live: `https://awaaaaja.github.io/SmartPOS/` (index & aset 200, bundle
+  memuat URL Supabase + RPC pelanggan, tanpa secret server).
+  `QR_WEB_URL` final untuk build Flutter:
+  `https://awaaaaja.github.io/SmartPOS` (tanpa `/` akhir).
+- **Optimasi performa tablet H13Pro** (210dpi, konten ~686px logis):
+  `cacheWidth` foto POS 480/thumbnail 160, badge QR punya provider sendiri
+  (polling 10 dtk tak rebuild halaman), debounce pencarian 250ms,
+  produk+kategori di-cache sesi (mutasi katalog tetap invalidate eksplisit),
+  dashboard grid adaptif 3/2/1 kolom (ambang 1000/560 — ambang lama 700 tak
+  pernah tercapai sehingga kartu menumpuk melebar), slot detail resep
+  scrollable (overflow 126/299px hilang). Analyzer 0, 159/159 tes lulus.
+- **Pembayaran QRIS/Transfer tanpa kolom nominal** (permintaan operator):
+  kolom "Nominal diterima" + kembalian hanya untuk CASH; non-cash menampilkan
+  caption konfirmasi manual dan mengirim `paid = total` — kontrak
+  `pos_checkout` tidak berubah.
+- Commit `753d95a`; CI 4 job hijau + deploy Pages sukses pada push yang sama.
+
 ### Paket serah terima / gate tersisa
 
 `docs/release-notes.md`, `docs/handover.md`, `docs/backup-restore.md`,
 `docs/evidence/sprint06/README.md`. K06-01 backend/klien QA selesai. Gate tersisa:
 signing/instalasi dan distribusi klien baru (K06-02), Android target/manual operator
-(K06-03), rotasi password lama (K06-05), pemulihan Supabase lengkap (K06-04)
-dan hosting QR permanen (K06-06). Tidak ada push/release produksi. S01-08 tetap
+(K06-03), rotasi password lama (K06-05), pemulihan Supabase lengkap (K06-04).
+Hosting QR permanen (K06-06) **selesai** — GitHub Pages
+`https://awaaaaja.github.io/SmartPOS/`; build Flutter dengan
+`--dart-define=QR_WEB_URL=https://awaaaaja.github.io/SmartPOS` dan cetak/rotate
+QR tetap wajib sebelum distribusi. Tidak ada push/release produksi. S01-08 tetap
 menunggu remote GitHub, bukan diklaim hijau.
 `graphify update .` selesai; warning parser SQL belum terpasang dan JSON evidence
 tanpa node dicatat, tidak disamakan dengan kegagalan tes aplikasi.
