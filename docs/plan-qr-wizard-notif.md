@@ -1,6 +1,6 @@
 # Rencana Lengkap: Wizard Web QR + Tab Pesanan + Notifikasi Suara + Arsip
 
-Status: **RENCANA v4 — EKSEKUSI dimulai (Fase 1 selesai 1 Nov 2026).**
+Status: **RENCANA v4 — EKSEKUSI berjalan (Fase 1 & 3 selesai 1 Nov 2026).**
 Tanggal: 31 Oktober 2026.
 Perubahan v4 (atas v3):
 1. **Identitas pelanggan di web**: form Nama + No. WA (**opsional**) ikut
@@ -18,7 +18,7 @@ Perubahan v4 (atas v3):
 |---|---|
 | E. Seed menu (2 kategori, 75 varian) | **SELESAI** — commit `84d6afe`+`7e58a85`, live hosted & H13Pro |
 | Fase 1. Migrasi 0018 ke hosted + test | **SELESAI** (1 Nov 2026) — commit `2c95897`; hosted `test_qr_drafts.py` **51 PASS, 0 FAIL**; versi 0018 tercatat di `schema_migrations`. Dump cadangan `pre-0018-business.dump`+`pre-0018-auth-users.dump` di `/tmp/opencode/smart-pos-backups/` (0700/0600, tidak masuk Git). Catatan: kolom/fungsi 0018 sudah ada di hosted dari penerapan parsial sebelumnya (tanpa catatan versi) — kini badan fungsi diverifikasi identik dengan file migrasi dan riwayat dilengkapi. |
-| A. Wizard web (sisa: App.vue 3 langkah + vitest/e2e) | Rencana — migrasi sudah hosted |
+| A. Wizard web (3 langkah + nama/WA + filter kategori) | **SELESAI** (1 Nov 2026) — vitest 21/21, e2e 6/6, build produksi lulus; foto produk ikut tampil di kartu menu. Menunggu deploy Pages otomatis dari CI. |
 | B. Notifikasi banner + suara | Rencana |
 | C. Tab Pesanan (v4: bayar & WA dari tab) | Rencana |
 | D. Un-arsip katalog | Rencana |
@@ -26,21 +26,27 @@ Perubahan v4 (atas v3):
 ## 0. Fakta codebase (dasar setiap keputusan)
 
 ### Web (`apps/qr_web/`)
-- `src/App.vue` (366 baris) satu halaman: tanpa langkah, filter kategori,
-  metode bayar, maupun identitas pelanggan. Submit
-  `qr_submit_draft(token, client_key, items)`; idempoten via
-  `localStorage qr_client_key`.
-- Test: vitest `test/app.test.js` + Playwright `tests/e2e/qr_customer.spec.js`
-  — teks kunci (`Kirim pesanan ke kasir`, `Referensi Q00099`,
-  `Pesanan belum dibayar`, `Pesan lagi`, `QR tidak valid`) wajib
-  dipertahankan atau disesuaikan sinkron.
+- `src/App.vue` satu halaman **wizard 3 langkah** (Fase 3 selesai): langkah 1
+  niat bayar (Bayar sekarang DEFAULT / Open Bill) + identitas opsional
+  (Nama ≤ 60 char; No. WA 8–20 digit, karakter `0-9 + - spasi`); langkah 2
+  pilih menu dengan chip kategori sticky (Semua | Makanan | Minuman) + foto
+  produk; langkah 3 ringkasan + kartu metode (CASH/QRIS/Transfer) untuk
+  PAY_NOW atau "Bayar nanti di kasir" untuk OPEN_BILL. Submit
+  `qr_submit_draft(token, client_key, items, intent, method, name, phone)`;
+  idempoten via `localStorage qr_client_key`; "Pesan lagi" mengosongkan
+  identitas (privasi) & kembali ke langkah 1. Tanpa router (ramah Pages).
+- Test: vitest `test/app.test.js` (21) + Playwright `tests/e2e/qr_customer.spec.js`
+  (6) — teks kunci (`Kirim pesanan ke kasir`, `Referensi Q00099`,
+  `Pesanan belum dibayar`, `Pesan lagi`, `QR tidak valid`) dipertahankan.
 
 ### Server (Supabase)
 - Siklus kini: `PENDING → CLAIMED → COMPLETED/CANCELLED`; PENDING kadaluarsa
   → `EXPIRED` (lazy 2 jam). CHECK belum punya `PREPARING`.
-- `qr_list_drafts()` hanya `PENDING`; `qr_draft_json` tanpa preferensi bayar
-  & identitas; `qr_submit_draft` masih 3 param; `qr_complete_draft`
-  mewajibkan `status='CLAIMED'` + `p_sale_id` (selesai = bayar).
+- `qr_list_drafts()` hanya `PENDING`; `qr_complete_draft` mewajibkan
+  `status='CLAIMED'` + `p_sale_id` (selesai = bayar).
+- `qr_submit_draft` **sudah 7 param** (0018 terpasang di hosted 1 Nov 2026:
+  `pay_intent`, `pay_method`, `customer_name`, `customer_phone`); lencana
+  bayar diturunkan dari `sale_id`.
 - `pos_checkout` idempoten (idempotency key) & menghitung total **di
   server** dari garis keranjang → sumber kebenaran uang.
 - RLS `operator_all` → un-arsip (`archived_at = null`) **tanpa migrasi**.
@@ -339,7 +345,7 @@ foto asli. Web QR (`App.vue`) belum menampilkan `photo_url` (ikut Fase 3).
 |---|---|---|---|
 | 1 | Migrasi 0018 (preferensi bayar + identitas) + test integrasi → hosted | kontrak draft v4 | **SELESAI** 1 Nov 2026 — 51 PASS, 0 FAIL |
 | 2 | Migrasi 0019 (lifecycle 2 dimensi) + test integrasi → hosted | PREPARING, complete longgar, papan | PG 5433 hijau |
-| 3 | Wizard web (termasuk form nama/WA) + filter kategori + vitest/e2e | deploy Pages otomatis | CI qr-web + e2e hijau |
+| 3 | Wizard web (termasuk form nama/WA) + filter kategori + vitest/e2e | deploy Pages otomatis | **SELESAI** 1 Nov 2026 — vitest 21/21, e2e 6/6, build lulus |
 | 4 | Tab Pesanan (aksi + [Bayar] + [Hubungi WA]) + QrClaimService + claimedDraftIdsProvider + banner navigasi | alur Diterima–Diproses–Selesai–Bayar–WA | test Flutter |
 | 5 | Sound CC0 + audioplayers + seksi pengaturan | suara & preferensi | test Flutter |
 | 6 | Un-arsip produk & kategori + tampilan Arsip | arsip pulih | test Flutter |

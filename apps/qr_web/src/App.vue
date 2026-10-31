@@ -8,6 +8,24 @@ const table = ref(null);
 const status = ref('idle'); // idle | loading | ready | invalid | error
 const errorMessage = ref('');
 
+// --- Wizard 3 langkah (tanpa router; ramah GitHub Pages base /SmartPOS/)
+// 1 MULAI (niat bayar + identitas opsional) · 2 PILIH MENU · 3 PEMBAYARAN
+const step = ref(1);
+
+// --- Niat bayar & identitas pelanggan (opsional; dikirim saat submit saja)
+const PAY_NOW = 'PAY_NOW';
+const OPEN_BILL = 'OPEN_BILL';
+const payIntent = ref(PAY_NOW); // DEFAULT: bayar sekarang (ke kasir)
+const payMethod = ref(null);    // CASH | QRIS | TRANSFER (hanya PAY_NOW)
+const METHODS = [
+  { id: 'CASH', name: 'Tunai', hint: 'Bayar tunai di kasir' },
+  { id: 'QRIS', name: 'QRIS', hint: 'Scan kode QRIS di kasir' },
+  { id: 'TRANSFER', name: 'Transfer', hint: 'Transfer bank / e-wallet' },
+];
+const customerName = ref('');
+const customerPhone = ref('');
+const selectedCategory = ref('all'); // 'all' | id kategori
+
 // --- Keranjang: [{productId, name, basePrice, qty, note, modifierIds, modifiers}]
 const cart = ref([]);
 const cartOpen = ref(false);
@@ -21,7 +39,8 @@ const sheetSelected = ref([]);
 // --- Submit draft
 const submitting = ref(false);
 const submitError = ref('');
-// State halaman sukses: { refCode, tableLabel, subtotal, itemCount }
+// State halaman sukses: { refCode, tableLabel, subtotal, itemCount,
+//                         payIntent, payMethod, customerName }
 const confirmation = ref(null);
 
 // Idempotensi: satu key dipakai ulang selama retry submit yang sama.
@@ -49,6 +68,46 @@ const cartSubtotal = computed(() =>
 function rupiah(n) {
   return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
+
+// --- Validasi identitas (ringan, jujur): kosong selalu boleh.
+const nameError = computed(() =>
+  customerName.value.trim().length > 60 ? 'Nama maksimal 60 karakter.' : ''
+);
+const phoneError = computed(() => {
+  const raw = customerPhone.value.trim();
+  if (!raw) return '';
+  if (!/^[0-9+\- ]+$/.test(raw)) {
+    return 'No. WA hanya boleh angka, +, - dan spasi.';
+  }
+  const digits = raw.replace(/\D/g, '').length;
+  if (digits < 8 || digits > 20) return 'No. WA harus 8–20 digit.';
+  return '';
+});
+const identityValid = computed(() => !nameError.value && !phoneError.value);
+
+// --- Navigasi langkah
+function goMenu() {
+  if (!identityValid.value) return;
+  step.value = 2;
+}
+function goPay() {
+  if (cart.value.length === 0 || !identityValid.value) return;
+  cartOpen.value = false;
+  step.value = 3;
+}
+function goBack() {
+  step.value = step.value === 3 ? 2 : 1;
+}
+
+function toggleMethod(id) {
+  payMethod.value = payMethod.value === id ? null : id;
+}
+
+const visibleCategories = computed(() =>
+  selectedCategory.value === 'all'
+    ? categories.value
+    : categories.value.filter((c) => c.id === selectedCategory.value)
+);
 
 function openSheet(p) {
   sheetProduct.value = p;
@@ -112,8 +171,15 @@ function changeQty(i, d) {
   if (line.qty <= 0) cart.value.splice(i, 1);
 }
 
+function lineTotal(l) {
+  const delta = l.modifiers.reduce((s, m) => s + m.price_delta, 0);
+  return (l.basePrice + delta) * l.qty;
+}
+
 async function submitDraft() {
-  if (submitting.value || cart.value.length === 0) return;
+  if (submitting.value || cart.value.length === 0 || !identityValid.value) {
+    return;
+  }
   submitting.value = true;
   submitError.value = '';
   try {
@@ -127,6 +193,12 @@ async function submitDraft() {
       p_table_token: token.value.trim(),
       p_client_key: clientKey,
       p_items: items,
+      p_pay_intent: payIntent.value,
+      // Metode hanya bermakna saat bayar sekarang (validasi server 0018).
+      p_pay_method: payIntent.value === PAY_NOW ? payMethod.value : null,
+      // Nama/No. WA hanya meta penagihan; tidak disimpan di localStorage.
+      p_customer_name: customerName.value.trim() || null,
+      p_customer_phone: customerPhone.value.trim() || null,
     });
     if (error) throw error;
     confirmation.value = {
@@ -134,6 +206,9 @@ async function submitDraft() {
       tableLabel: data.table_label,
       subtotal: data.subtotal,
       itemCount: data.item_count,
+      payIntent: payIntent.value,
+      payMethod: payIntent.value === PAY_NOW ? payMethod.value : null,
+      customerName: customerName.value.trim(),
     };
     cart.value = [];
     cartOpen.value = false;
@@ -158,7 +233,15 @@ async function submitDraft() {
 }
 
 function orderAgain() {
+  // Privasi: identitas & pilihan kosong kembali — tidak menempel di
+  // perangkat berikutnya. Client key sudah dirotasi saat submit sukses.
   confirmation.value = null;
+  step.value = 1;
+  payIntent.value = PAY_NOW;
+  payMethod.value = null;
+  customerName.value = '';
+  customerPhone.value = '';
+  selectedCategory.value = 'all';
 }
 
 async function loadMenu() {
@@ -214,6 +297,14 @@ onMounted(loadMenu);
   </header>
 
   <main class="content">
+    <!-- Indikator langkah (hanya saat memesan) -->
+    <nav v-if="status === 'ready' && !confirmation" class="steps"
+         aria-label="Langkah pesanan">
+      <span class="step" :class="{ on: step === 1 }">1 Mulai</span>
+      <span class="step" :class="{ on: step === 2 }">2 Pilih menu</span>
+      <span class="step" :class="{ on: step === 3 }">3 Pembayaran</span>
+    </nav>
+
     <!-- Halaman konfirmasi referensi (draft terkirim; BUKAN pembayaran) -->
     <div v-if="confirmation" class="card confirm">
       <svg class="confirm-icon" viewBox="0 0 24 24" width="44" height="44"
@@ -227,6 +318,12 @@ onMounted(loadMenu);
         {{ confirmation.itemCount }} item ·
         {{ rupiah(confirmation.subtotal) }} · meja
         {{ confirmation.tableLabel }}
+      </p>
+      <p class="confirm-meta">
+        {{ confirmation.payIntent === 'PAY_NOW' ? 'Bayar sekarang' : 'Open Bill' }}<template
+          v-if="confirmation.payMethod"> · {{ confirmation.payMethod }}</template>
+        <template v-if="confirmation.customerName"> · atas nama
+          {{ confirmation.customerName }}</template>
       </p>
       <p class="confirm-note">
         Tunjukkan referensi ini ke kasir untuk konfirmasi dan pembayaran.
@@ -251,34 +348,218 @@ onMounted(loadMenu);
     </div>
 
     <template v-else>
-      <section v-for="c in categories" :key="c.id" class="cat">
-        <h2 class="cat-title">{{ c.name }}</h2>
-        <div class="grid">
+      <!-- Langkah 1: niat bayar + identitas opsional -->
+      <section v-if="step === 1">
+        <h2 class="cat-title">Bagaimana Anda ingin bayar?</h2>
+        <div class="intent-grid">
           <button
-            v-for="p in c.products"
-            :key="p.id"
-            class="card product"
-            @click="openSheet(p)"
+            class="intent"
+            :class="{ active: payIntent === 'PAY_NOW' }"
+            :aria-pressed="payIntent === 'PAY_NOW'"
+            @click="payIntent = 'PAY_NOW'"
           >
-            <span class="p-name">{{ p.name }}</span>
-            <span class="p-price">{{ rupiah(p.price) }}</span>
-            <span v-if="(p.modifiers || []).length" class="p-var">
-              Ada pilihan
+            <strong>Bayar sekarang (ke kasir)</strong>
+            <span class="muted small">
+              Pesanan dikirim ke kasir; siapkan pembayaran.
+            </span>
+          </button>
+          <button
+            class="intent"
+            :class="{ active: payIntent === 'OPEN_BILL' }"
+            :aria-pressed="payIntent === 'OPEN_BILL'"
+            @click="payIntent = 'OPEN_BILL'"
+          >
+            <strong>Open Bill</strong>
+            <span class="muted small">
+              Pesan dulu, bayar nanti di kasir.
             </span>
           </button>
         </div>
+
+        <div class="card">
+          <h3 class="pay-h">Identitas (opsional)</h3>
+          <p class="muted small">
+            Untuk kasir menghubungi Anda bila perlu; tidak disimpan di
+            perangkat ini.
+          </p>
+          <input
+            v-model="customerName"
+            class="input"
+            :class="{ bad: nameError }"
+            placeholder="Nama (opsional)"
+            maxlength="120"
+          />
+          <p v-if="nameError" class="error small">{{ nameError }}</p>
+          <input
+            v-model="customerPhone"
+            class="input"
+            :class="{ bad: phoneError }"
+            placeholder="No. WA (opsional)"
+            inputmode="tel"
+            maxlength="40"
+          />
+          <p v-if="phoneError" class="error small">{{ phoneError }}</p>
+          <button
+            class="btn primary wide"
+            :disabled="!identityValid"
+            @click="goMenu"
+          >
+            Lanjut pilih menu
+          </button>
+        </div>
       </section>
-      <p v-if="categories.length === 0" class="muted center">
-        Menu belum tersedia.
-      </p>
+
+      <!-- Langkah 2: pilih menu -->
+      <section v-else-if="step === 2">
+        <div v-if="categories.length" class="chips" role="tablist"
+             aria-label="Kategori menu">
+          <button
+            class="chip"
+            :class="{ active: selectedCategory === 'all' }"
+            @click="selectedCategory = 'all'"
+          >
+            Semua
+          </button>
+          <button
+            v-for="c in categories"
+            :key="c.id"
+            class="chip"
+            :class="{ active: selectedCategory === c.id }"
+            @click="selectedCategory = c.id"
+          >
+            {{ c.name }}
+          </button>
+        </div>
+
+        <section v-for="c in visibleCategories" :key="c.id" class="cat">
+          <h2 class="cat-title">{{ c.name }}</h2>
+          <div class="grid">
+            <button
+              v-for="p in c.products"
+              :key="p.id"
+              class="card product"
+              @click="openSheet(p)"
+            >
+              <img
+                v-if="p.photo_url"
+                class="p-photo"
+                :src="p.photo_url"
+                :alt="p.name"
+                loading="lazy"
+                width="150"
+                height="100"
+              />
+              <span class="p-name">{{ p.name }}</span>
+              <span class="p-price">{{ rupiah(p.price) }}</span>
+              <span v-if="(p.modifiers || []).length" class="p-var">
+                Ada pilihan
+              </span>
+            </button>
+          </div>
+        </section>
+        <p v-if="visibleCategories.length === 0" class="muted center">
+          Menu belum tersedia.
+        </p>
+        <button class="btn ghost" @click="goBack">Kembali</button>
+      </section>
+
+      <!-- Langkah 3: pembayaran & kirim -->
+      <section v-else>
+        <h2 class="cat-title">Pembayaran</h2>
+
+        <div class="card">
+          <h3 class="pay-h">Ringkasan pesanan</h3>
+          <ul class="cart-list">
+            <li v-for="(l, i) in cart" :key="i" class="cart-line">
+              <div class="line-main">
+                <span class="p-name">
+                  {{ l.name }}<span class="muted"> ×{{ l.qty }}</span>
+                </span>
+                <span class="muted" v-if="l.modifiers.length">
+                  {{ l.modifiers.map((m) => m.name).join(', ') }}
+                </span>
+                <span class="muted" v-if="l.note">Catatan: {{ l.note }}</span>
+              </div>
+              <div class="line-side">
+                <span>{{ rupiah(lineTotal(l)) }}</span>
+              </div>
+            </li>
+          </ul>
+          <p v-if="cart.length === 0" class="muted center">
+            Keranjang kosong.
+          </p>
+          <p class="summary-line">
+            <strong>{{ cartCount }} item · {{ rupiah(cartSubtotal) }}</strong>
+          </p>
+        </div>
+
+        <div v-if="payIntent === 'PAY_NOW'" class="card">
+          <h3 class="pay-h">Metode pembayaran (opsional)</h3>
+          <div class="method-grid">
+            <button
+              v-for="m in METHODS"
+              :key="m.id"
+              class="intent method"
+              :class="{ active: payMethod === m.id }"
+              :aria-pressed="payMethod === m.id"
+              @click="toggleMethod(m.id)"
+            >
+              <strong>{{ m.name }}</strong>
+              <span class="muted small">{{ m.hint }}</span>
+            </button>
+          </div>
+        </div>
+        <div v-else class="card center">
+          <p class="pay-h">Bayar nanti di kasir</p>
+          <p class="muted small">
+            Kasir menyimpan pesanan Anda; bayar saat selesai menyantap.
+          </p>
+        </div>
+
+        <div v-if="customerName.trim() || customerPhone.trim()" class="card">
+          <h3 class="pay-h">Pesanan Anda</h3>
+          <p v-if="customerName.trim()">
+            Pesanan atas nama {{ customerName.trim() }}
+          </p>
+          <p v-if="customerPhone.trim()" class="muted small">
+            No. WA {{ customerPhone.trim() }} — untuk dihubungi kasir.
+          </p>
+        </div>
+
+        <p v-if="submitError" class="error">{{ submitError }}</p>
+        <button
+          class="btn primary wide"
+          :disabled="submitting || cart.length === 0 || !identityValid"
+          @click="submitDraft"
+        >
+          {{ submitting ? 'Mengirim…' : 'Kirim pesanan ke kasir' }}
+        </button>
+        <p class="muted small">
+          Pesanan dikirim sebagai draf; kasir akan memanggil Anda untuk
+          konfirmasi dan pembayaran.
+        </p>
+        <button class="btn ghost" @click="goBack">Kembali ke menu</button>
+      </section>
     </template>
   </main>
 
-  <!-- Bar keranjang -->
-  <footer v-if="status === 'ready' && !confirmation" class="cart-bar">
-    <button class="btn ghost" @click="cartOpen = true">
-      Keranjang ({{ cartCount }}) · {{ rupiah(cartSubtotal) }}
-    </button>
+  <!-- Bar keranjang (langkah pilih menu) -->
+  <footer
+    v-if="status === 'ready' && !confirmation && step === 2"
+    class="cart-bar"
+  >
+    <div class="bar-row">
+      <button class="btn ghost" @click="cartOpen = true">
+        Keranjang ({{ cartCount }}) · {{ rupiah(cartSubtotal) }}
+      </button>
+      <button
+        class="btn primary bar-next"
+        :disabled="cart.length === 0"
+        @click="goPay"
+      >
+        Lanjut
+      </button>
+    </div>
   </footer>
 
   <!-- Sheet keranjang -->
@@ -298,7 +579,7 @@ onMounted(loadMenu);
             <span class="muted" v-if="l.note">Catatan: {{ l.note }}</span>
           </div>
           <div class="line-side">
-            <span>{{ rupiah((l.basePrice + l.modifiers.reduce((s, m) => s + m.price_delta, 0)) * l.qty) }}</span>
+            <span>{{ rupiah(lineTotal(l)) }}</span>
             <span class="qty">
               <button class="btn tiny" @click="changeQty(i, -1)">−</button>
               {{ l.qty }}
@@ -310,14 +591,13 @@ onMounted(loadMenu);
       <p v-if="submitError" class="error">{{ submitError }}</p>
       <button
         class="btn primary wide"
-        :disabled="submitting || cart.length === 0"
-        @click="submitDraft"
+        :disabled="cart.length === 0"
+        @click="goPay"
       >
-        {{ submitting ? 'Mengirim…' : 'Kirim pesanan ke kasir' }}
+        Lanjut
       </button>
       <p class="muted small">
-        Pesanan dikirim sebagai draf; kasir akan memanggil Anda untuk
-        konfirmasi dan pembayaran.
+        Lanjut ke pembayaran; Anda masih bisa menambah menu sebelum kirim.
       </p>
       <button class="btn ghost wide" @click="cartOpen = false">Tutup</button>
     </div>

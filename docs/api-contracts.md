@@ -31,7 +31,32 @@ Menu aktif untuk satu meja. Token salah/dirotasi → exception `invalid_table_to
 
 - `price` = integer Rupiah (harga aktif saat dibaca; checkout dihitung ulang di server).
 - Produk non-aktif/terarsip dan kategori kosong tidak ikut.
+- `photo_url` = URL publik bucket `product-photos` (bila ada; `null` tanpa foto).
 - Endpoint QR draft (`POST public/qr-drafts`) dibangun Sprint 03.
+
+### `rpc qr_submit_draft(...) -> jsonb` (migrasi `0018`, kontrak v4)
+
+Draft pesanan QR pelanggan. **7 param** — 3 lama + 4 baru `DEFAULT NULL`
+sehingga klien lama (3 argumen) tetap sah:
+
+| Param | Tipe | Catatan |
+|---|---|---|
+| `p_table_token` | `text` | token plaintext dari QR (di-hash server) |
+| `p_client_key` | `text` | idempotensi; 8–128 char |
+| `p_items` | `jsonb` | 1–30 item; harga **selalu** snapshot server |
+| `p_pay_intent` | `text` | `PAY_NOW` \| `OPEN_BILL` (null = tanpa preferensi) |
+| `p_pay_method` | `text` | `CASH` \| `QRIS` \| `TRANSFER`; **wajib null kecuali `PAY_NOW`** (error `pay_method_requires_pay_now`) |
+| `p_customer_name` | `text` | opsional, di-TRIM, ≤ 60 char |
+| `p_customer_phone` | `text` | opsional, di-TRIM, ≤ 24 char |
+
+- Nilai enum salah → `invalid_pay_intent` / `invalid_pay_method`; nama/phone
+  kepanjangan → `invalid_customer_name` / `invalid_customer_phone`.
+- String kosong di-TRIM jadi `null`. Identitas **hanya meta penagihan** di
+  kartu pesanan kasir; tidak dipakai untuk hal lain (PRD §10 privasi).
+- `qr_draft_json` (dipakai respons submit & `qr_list_drafts`) menyertakan
+  `pay_intent`, `pay_method`, `customer_name`, `customer_phone`.
+- Preferensi/identitas **tidak mengubah perhitungan uang**; total final tetap
+  dari keranjang saat `pos_checkout`.
 
 ## Operator (sesi login, via authenticated + RLS)
 

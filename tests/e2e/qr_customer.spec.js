@@ -22,6 +22,13 @@ const MENU = {
         },
       ],
     },
+    {
+      id: 2,
+      name: 'Makanan',
+      products: [
+        { id: 20, name: 'Nasi Goreng', price: 15000, modifiers: [] },
+      ],
+    },
   ],
 };
 
@@ -43,13 +50,16 @@ function mockRpc(page, handlers) {
   });
 }
 
-test('alur penuh: buka QR -> pesan -> konfirmasi draf', async ({ page }) => {
+test('alur penuh: buka QR -> langkah 1 -> pesan -> konfirmasi draf',
+     async ({ page }) => {
+  let submitted = null;
   await mockRpc(page, {
     get_public_menu: async () => MENU,
     qr_submit_draft: async (params) => {
       // Server menghitung ulang; ini jawaban mock yang konsisten.
       expect(params.p_client_key).toBeTruthy();
       expect(params.p_table_token).toBe('TOKEN-E2E');
+      submitted = params;
       return {
         draft_id: 1,
         ref_code: 'Q00099',
@@ -68,9 +78,24 @@ test('alur penuh: buka QR -> pesan -> konfirmasi draf', async ({ page }) => {
   await expect(logo).toBeVisible();
   expect(await logo.evaluate((el) => el.naturalWidth)).toBeGreaterThan(0);
 
-  // Menu tampil dengan nama meja.
-  await expect(page.getByRole('button', { name: /Es Campur/ })).toBeVisible();
+  // Langkah 1: dua niat bayar (DEFAULT: Bayar sekarang) + nama meja.
   await expect(page.getByText('Meja 3 · Pesan dari meja Anda')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Bayar sekarang \(ke kasir\)/ }))
+    .toBeVisible();
+  await expect(page.getByRole('button', { name: /^Open Bill/ })).toBeVisible();
+
+  // Identitas opsional: nama valid, No. WA valid.
+  await page.getByPlaceholder('Nama (opsional)').fill('Budi');
+  await page.getByPlaceholder('No. WA (opsional)').fill('0812-3456-7890');
+  await page.getByRole('button', { name: 'Lanjut pilih menu' }).click();
+
+  // Langkah 2: menu tampil; chip kategori memfilter.
+  await expect(page.getByRole('button', { name: /Es Campur/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Nasi Goreng/ }))
+    .toBeVisible();
+  await page.getByRole('button', { name: 'Makanan', exact: true }).click();
+  await expect(page.getByRole('button', { name: /Es Campur/ })).toBeHidden();
+  await page.getByRole('button', { name: 'Semua', exact: true }).click();
 
   // Pesan Es Campur dengan varian wajib, lalu Es Teh.
   await page.getByRole('button', { name: /Es Campur/ }).click();
@@ -79,11 +104,17 @@ test('alur penuh: buka QR -> pesan -> konfirmasi draf', async ({ page }) => {
   await page.getByRole('button', { name: /Tutup/ }).click();
   await page.getByRole('button', { name: /Es Teh/ }).click();
   await page.getByRole('button', { name: /^Tambah ·/ }).click();
+  await page.getByRole('button', { name: /Tutup/ }).click();
 
-  // Keranjang: 2 item, Rp 17.000 (sheet terbuka otomatis setelah Tambah).
+  // Keranjang: 2 item, Rp 17.000.
   await expect(page.getByRole('button', { name: /Keranjang \(2\)/ }))
     .toContainText('Rp 17.000');
+  await page.getByRole('button', { name: 'Lanjut', exact: true }).click();
 
+  // Langkah 3: ringkasan + kartu metode (PAY_NOW) + identitas diringkas.
+  await expect(page.getByText('Ringkasan pesanan')).toBeVisible();
+  await expect(page.getByText('Pesanan atas nama Budi')).toBeVisible();
+  await page.getByRole('button', { name: /QRIS/ }).click();
   await page.getByRole('button', { name: 'Kirim pesanan ke kasir' }).click();
 
   // Halaman konfirmasi: referensi ada, tapi JUJUR belum dibayar.
@@ -91,10 +122,71 @@ test('alur penuh: buka QR -> pesan -> konfirmasi draf', async ({ page }) => {
     .toBeVisible();
   await expect(page.getByText('Referensi Q00099')).toBeVisible();
   await expect(page.getByText('Pesanan belum dibayar')).toBeVisible();
+  // Baris preferensi & identitas tampil jujur di konfirmasi.
+  await expect(page.getByText('Bayar sekarang · QRIS · atas nama Budi'))
+    .toBeVisible();
 
-  // Pesan lagi -> kembali ke menu, key baru untuk draft berikutnya.
+  // Payload membawa preferensi & identitas (kontrak migrasi 0018).
+  expect(submitted.p_pay_intent).toBe('PAY_NOW');
+  expect(submitted.p_pay_method).toBe('QRIS');
+  expect(submitted.p_customer_name).toBe('Budi');
+  expect(submitted.p_customer_phone).toBe('0812-3456-7890');
+
+  // Pesan lagi -> kembali ke langkah 1, key baru & identitas KOSONG kembali.
   await page.getByRole('button', { name: 'Pesan lagi' }).click();
-  await expect(page.getByRole('button', { name: /Es Teh/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Bayar sekarang \(ke kasir\)/ }))
+    .toBeVisible();
+  await expect(page.getByPlaceholder('Nama (opsional)')).toHaveValue('');
+  await expect(page.getByPlaceholder('No. WA (opsional)')).toHaveValue('');
+});
+
+test('Open Bill: tanpa kartu metode, "Bayar nanti di kasir" di konfirmasi',
+     async ({ page }) => {
+  let submitted = null;
+  await mockRpc(page, {
+    get_public_menu: async () => MENU,
+    qr_submit_draft: async (params) => {
+      submitted = params;
+      return {
+        draft_id: 2, ref_code: 'Q00100', table_label: 'Meja 3',
+        subtotal: 5000, item_count: 1, idempotent_replay: false,
+      };
+    },
+  });
+
+  await page.goto('/?token=TOKEN-E2E');
+  await page.getByRole('button', { name: /^Open Bill/ }).click();
+  await page.getByRole('button', { name: 'Lanjut pilih menu' }).click();
+  await page.getByRole('button', { name: /Es Teh/ }).click();
+  await page.getByRole('button', { name: /^Tambah ·/ }).click();
+  // addToCart membuka sheet keranjang otomatis -> Lanjut dari dalam sheet.
+  await page.locator('.sheet').getByRole('button', { name: 'Lanjut' }).click();
+
+  // Tidak ada pilihan metode; justru penjelasan bayar nanti.
+  await expect(page.getByText('Bayar nanti di kasir')).toBeVisible();
+  await expect(page.getByText('Metode pembayaran (opsional)')).toBeHidden();
+  await page.getByRole('button', { name: 'Kirim pesanan ke kasir' }).click();
+
+  await expect(page.getByText('Referensi Q00100')).toBeVisible();
+  await expect(page.getByText('Open Bill', { exact: true })).toBeVisible();
+  expect(submitted.p_pay_intent).toBe('OPEN_BILL');
+  expect(submitted.p_pay_method).toBeNull();
+});
+
+test('No. WA salah format -> Lanjut terkunci, tampil pesan jujur',
+     async ({ page }) => {
+  await mockRpc(page, { get_public_menu: async () => MENU });
+  await page.goto('/?token=TOKEN-E2E');
+  const lanjut = page.getByRole('button', { name: 'Lanjut pilih menu' });
+  await expect(lanjut).toBeEnabled(); // kosong = selalu boleh
+  await page.getByPlaceholder('No. WA (opsional)').fill('0812abc');
+  await expect(page.getByText('No. WA hanya boleh angka')).toBeVisible();
+  await expect(lanjut).toBeDisabled();
+  await page.getByPlaceholder('No. WA (opsional)').fill('0812345');
+  await expect(page.getByText('No. WA harus 8–20 digit.')).toBeVisible();
+  await expect(lanjut).toBeDisabled();
+  await page.getByPlaceholder('No. WA (opsional)').fill('081234567890');
+  await expect(lanjut).toBeEnabled();
 });
 
 test('token tidak ada di tautan -> halaman QR tidak valid (jujur)',
@@ -129,13 +221,15 @@ test('submit gagal (rate limit) -> pesan manusiawi, keranjang utuh',
   });
 
   await page.goto('/?token=TOKEN-E2E');
+  await page.getByRole('button', { name: 'Lanjut pilih menu' }).click();
   await page.getByRole('button', { name: /Es Teh/ }).click();
   await page.getByRole('button', { name: /^Tambah ·/ }).click();
-  // addToCart membuka sheet keranjang secara otomatis.
+  // addToCart membuka sheet keranjang otomatis -> Lanjut dari dalam sheet.
+  await page.locator('.sheet').getByRole('button', { name: 'Lanjut' }).click();
   await page.getByRole('button', { name: 'Kirim pesanan ke kasir' }).click();
 
   await expect(page.getByText('Terlalu sering mengirim pesanan')).toBeVisible();
-  // Keranjang tidak dikosongkan saat gagal.
+  // Keranjang tidak dikosongkan saat gagal; bisa langsung coba lagi.
   await expect(page.getByRole('button', { name: 'Kirim pesanan ke kasir' }))
     .toBeEnabled();
   expect(submitCalls).toBe(1);
