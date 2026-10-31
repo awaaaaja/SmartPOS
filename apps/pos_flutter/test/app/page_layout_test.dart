@@ -98,6 +98,12 @@ void main() {
                 ),
                 productsProvider.overrideWith((ref) => _response(state, [])),
                 categoriesProvider.overrideWith((ref) => _response(state, [])),
+                catalogProductsProvider.overrideWith(
+                  (ref) => _response(state, []),
+                ),
+                catalogCategoriesProvider.overrideWith(
+                  (ref) => _response(state, []),
+                ),
                 qrDraftsProvider.overrideWith((ref) => _response(state, [])),
                 tablesListProvider.overrideWith((ref) => _response(state, [])),
                 tableTokensProvider.overrideWith((ref) async => {}),

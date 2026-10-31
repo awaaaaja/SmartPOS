@@ -13,13 +13,27 @@ import 'catalog_repository.dart';
 const _chipStyle = TextStyle(fontSize: 12);
 
 /// S02-01/02/03: CRUD kategori, menu, foto, varian/topping, status
-/// tersedia/habis, arsip, dan riwayat harga (dicatat trigger harga).
-class CatalogPage extends ConsumerWidget {
+/// tersedia/habis, arsip (dengan un-arsip), dan riwayat harga.
+class CatalogPage extends ConsumerStatefulWidget {
   const CatalogPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final products = ref.watch(productsProvider);
+  ConsumerState<CatalogPage> createState() => _CatalogPageState();
+}
+
+class _CatalogPageState extends ConsumerState<CatalogPage> {
+  /// false = tab Aktif (produk tanpa arsip), true = tab Arsip.
+  bool _showArchived = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final products = ref.watch(catalogProductsProvider);
+    final filtered = products.maybeWhen(
+      data: (items) => AsyncData(
+        items.where((p) => p.isArchived == _showArchived).toList(),
+      ),
+      orElse: () => products,
+    );
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -40,6 +54,20 @@ class CatalogPage extends ConsumerWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: false, label: Text('Aktif')),
+                    ButtonSegment(value: true, label: Text('Arsip')),
+                  ],
+                  selected: {_showArchived},
+                  showSelectedIcon: false,
+                  style: const ButtonStyle(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onSelectionChanged: (v) =>
+                      setState(() => _showArchived = v.first),
+                ),
                 OutlinedButton.icon(
                   onPressed: () => _manageCategories(context, ref),
                   icon: const Icon(Icons.category_rounded, size: 18),
@@ -54,14 +82,16 @@ class CatalogPage extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: products.when(
+            child: filtered.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => _ErrorRetry(
                 message: mapErrorToMessage(e),
-                onRetry: () => ref.invalidate(productsProvider),
+                onRetry: () => ref.invalidate(catalogProductsProvider),
               ),
               data: (items) => items.isEmpty
-                  ? const _EmptyCatalog()
+                  ? (_showArchived
+                        ? const _EmptyArchive()
+                        : const _EmptyCatalog())
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                       itemCount: items.length,
@@ -87,6 +117,7 @@ class CatalogPage extends ConsumerWidget {
       ),
     );
     ref.invalidate(categoriesProvider);
+    ref.invalidate(catalogCategoriesProvider);
   }
 
   static Future<void> _editProduct(
@@ -101,8 +132,16 @@ class CatalogPage extends ConsumerWidget {
     );
     if (saved == true) {
       ref.invalidate(productsProvider);
+      ref.invalidate(catalogProductsProvider);
       ref.invalidate(categoriesProvider);
+      ref.invalidate(catalogCategoriesProvider);
     }
+  }
+
+  /// Segarkan semua turunan katalog setelah mutasi arsip/restore.
+  static void invalidateCatalog(WidgetRef ref) {
+    ref.invalidate(productsProvider);
+    ref.invalidate(catalogProductsProvider);
   }
 }
 
@@ -180,13 +219,24 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
             IconButton(
               tooltip: 'Ubah',
               icon: const Icon(Icons.edit_rounded),
-              onPressed: () => CatalogPage._editProduct(context, ref, product),
+              onPressed: () => _CatalogPageState._editProduct(
+                context,
+                ref,
+                product,
+              ),
             ),
-            IconButton(
-              tooltip: 'Arsipkan',
-              icon: const Icon(Icons.archive_rounded),
-              onPressed: _confirmArchive,
-            ),
+            if (product.isArchived)
+              IconButton(
+                tooltip: 'Keluarkan dari arsip',
+                icon: const Icon(Icons.unarchive_rounded),
+                onPressed: _restore,
+              )
+            else
+              IconButton(
+                tooltip: 'Arsipkan',
+                icon: const Icon(Icons.archive_rounded),
+                onPressed: _confirmArchive,
+              ),
           ],
         ),
       ),
@@ -223,7 +273,7 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
       await ref
           .read(catalogRepositoryProvider)
           .setProductActive(product.id, !product.isActive);
-      ref.invalidate(productsProvider);
+      _CatalogPageState.invalidateCatalog(ref);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -257,7 +307,20 @@ class _ProductTileState extends ConsumerState<_ProductTile> {
     if (ok != true || !mounted) return;
     try {
       await ref.read(catalogRepositoryProvider).archiveProduct(product.id);
-      ref.invalidate(productsProvider);
+      _CatalogPageState.invalidateCatalog(ref);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+      }
+    }
+  }
+
+  Future<void> _restore() async {
+    try {
+      await ref.read(catalogRepositoryProvider).restoreProduct(product.id);
+      _CatalogPageState.invalidateCatalog(ref);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -357,6 +420,32 @@ class _EmptyCatalog extends StatelessWidget {
   }
 }
 
+class _EmptyArchive extends StatelessWidget {
+  const _EmptyArchive();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.archive_rounded, size: 48, color: brandSoft),
+          SizedBox(height: 12),
+          Text(
+            'Arsip kosong.',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Menu yang diarsipkan bisa dipulihkan dari sini.',
+            style: TextStyle(color: textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ErrorRetry extends StatelessWidget {
   const _ErrorRetry({required this.message, required this.onRetry});
 
@@ -438,7 +527,7 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final cats = ref.watch(categoriesProvider);
+    final cats = ref.watch(catalogCategoriesProvider);
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -480,31 +569,51 @@ class _CategorySheetState extends ConsumerState<_CategorySheet> {
             for (final c in items)
               ListTile(
                 dense: true,
-                leading: const Icon(Icons.label_rounded, color: brandPrimary),
-                title: Text(c.name),
+                leading: Icon(
+                  Icons.label_rounded,
+                  color: c.isArchived ? textSecondary : brandPrimary,
+                ),
+                title: Text(
+                  c.name,
+                  style: c.isArchived
+                      ? const TextStyle(color: textSecondary)
+                      : null,
+                ),
                 trailing: IconButton(
-                  tooltip: 'Arsipkan',
-                  icon: const Icon(Icons.archive_rounded),
-                  onPressed: () async {
-                    try {
-                      await ref
-                          .read(catalogRepositoryProvider)
-                          .archiveCategory(c.id);
-                      ref.invalidate(categoriesProvider);
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(mapErrorToMessage(e))),
-                        );
-                      }
-                    }
-                  },
+                  tooltip: c.isArchived
+                      ? 'Keluarkan dari arsip'
+                      : 'Arsipkan',
+                  icon: Icon(
+                    c.isArchived
+                        ? Icons.unarchive_rounded
+                        : Icons.archive_rounded,
+                  ),
+                  onPressed: () => _toggleArchive(c),
                 ),
               ),
           ],
         ),
       ],
     );
+  }
+
+  Future<void> _toggleArchive(ProductCategory c) async {
+    try {
+      final repo = ref.read(catalogRepositoryProvider);
+      if (c.isArchived) {
+        await repo.restoreCategory(c.id);
+      } else {
+        await repo.archiveCategory(c.id);
+      }
+      ref.invalidate(categoriesProvider);
+      ref.invalidate(catalogCategoriesProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+      }
+    }
   }
 
   Future<void> _addCategory() async {

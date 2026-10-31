@@ -17,7 +17,7 @@ void main() {
     final watch = Stopwatch()..start();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [productsProvider.overrideWith((ref) async => products)],
+        overrides: [catalogProductsProvider.overrideWith((ref) async => products)],
         child: MaterialApp(theme: buildAppTheme(), home: const CatalogPage()),
       ),
     );

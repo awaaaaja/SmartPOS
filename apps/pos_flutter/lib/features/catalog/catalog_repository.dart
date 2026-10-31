@@ -45,6 +45,11 @@ class CatalogRepository {
       .update({'archived_at': DateTime.now().toUtc().toIso8601String()})
       .eq('id', id);
 
+  /// Keluarkan kategori dari arsip (RLS operator_all sudah mengizinkan
+  /// update archived_at = null — tanpa migrasi).
+  Future<void> restoreCategory(int id) =>
+      _client.from('product_categories').update({'archived_at': null}).eq('id', id);
+
   Future<List<Product>> fetchProducts({bool includeArchived = false}) async {
     var query = _client.from('products').select(_productSelect);
     if (!includeArchived) query = query.isFilter('archived_at', null);
@@ -91,6 +96,10 @@ class CatalogRepository {
       .from('products')
       .update({'archived_at': DateTime.now().toUtc().toIso8601String()})
       .eq('id', id);
+
+  /// Keluarkan produk dari arsip (archived_at = null).
+  Future<void> restoreProduct(int id) =>
+      _client.from('products').update({'archived_at': null}).eq('id', id);
 
   Future<List<PriceHistoryEntry>> fetchPriceHistory(int productId) async {
     final rows = await _client
@@ -181,6 +190,19 @@ final productsProvider = FutureProvider<List<Product>>(
 
 final categoriesProvider = FutureProvider<List<ProductCategory>>(
   (ref) => ref.watch(catalogRepositoryProvider).fetchCategories(),
+);
+
+/// Produk & kategori termasuk yang diarsipkan — hanya untuk halaman katalog
+/// (tab Arsip); POS dan menu web tetap memakai provider tanpa arsip.
+final catalogProductsProvider = FutureProvider<List<Product>>(
+  (ref) =>
+      ref.watch(catalogRepositoryProvider).fetchProducts(includeArchived: true),
+);
+
+final catalogCategoriesProvider = FutureProvider<List<ProductCategory>>(
+  (ref) => ref
+      .watch(catalogRepositoryProvider)
+      .fetchCategories(includeArchived: true),
 );
 
 final modifiersProvider = FutureProvider.autoDispose<List<Modifier>>(
