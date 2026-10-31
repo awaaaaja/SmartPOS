@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:share_plus/share_plus.dart';
 
 /// Jalur lembar berbagi; dipisah supaya bisa dipancang di unit test
-/// (share sheet asli hanya bisa diverifikasi di device).
-@visibleForTesting
-Future<ShareResult> Function(ShareParams params) shareSheetHandler =
-    (params) => SharePlus.instance.share(params);
+/// (share sheet asli hanya bisa diverifikasi di device); dipakai juga oleh
+/// png_share_stub untuk berbagi QR meja.
+Future<ShareResult> Function(ShareParams params) shareSheetHandler = (params) =>
+    SharePlus.instance.share(params);
 
 /// Fallback non-web (Android/iOS/desktop): tulis CSV ke berkas sementara lalu
 /// buka lembar berbagi (share sheet) sehingga laporan bisa langsung dikirim ke

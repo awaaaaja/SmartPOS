@@ -1,33 +1,47 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
+import '../../core/png_share.dart';
 import 'tables_repository.dart';
 
 /// Base URL web QR pelanggan (HTTPS), diisi saat build:
 ///   flutter build ... --dart-define=QR_WEB_URL=https://meja.contoh.id
 const qrWebBaseUrl = String.fromEnvironment('QR_WEB_URL');
 
+/// Nilai default = `qrWebBaseUrl` (dart-define saat build); di-override pada
+/// unit test agar tautan QR dapat diverifikasi tanpa environment build.
+final qrWebBaseUrlProvider = Provider<String>((_) => qrWebBaseUrl);
+
+/// Susun tautan QR meja; null bila base kosong atau bukan HTTPS.
+String? buildQrUrl(String base, String token) {
+  final trimmed = base.trim();
+  if (trimmed.isEmpty || !trimmed.startsWith('https://')) return null;
+  final withoutSlash = trimmed.endsWith('/')
+      ? trimmed.substring(0, trimmed.length - 1)
+      : trimmed;
+  return '$withoutSlash/?token=$token';
+}
+
 /// S03-01: Meja & QR. Daftar meja, buat/rotasi token (plaintext hanya
 /// dikembalikan sekali oleh server), tampilkan QR menu pelanggan.
 class TablesQrPage extends ConsumerWidget {
   const TablesQrPage({super.key});
 
-  String? qrUrlFor(String token) {
-    final base = qrWebBaseUrl.trim();
-    if (base.isEmpty || !base.startsWith('https://')) return null;
-    final trimmed = base.endsWith('/')
-        ? base.substring(0, base.length - 1)
-        : base;
-    return '$trimmed/?token=$token';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tables = ref.watch(tablesListProvider);
+    final base = ref.watch(qrWebBaseUrlProvider);
+    // Token tersimpan lokal per meja → QR tampil langsung di kartu dan bisa
+    // dicetak ulang; meja tanpa token (mis. pindah perangkat) minta rotasi.
+    final tokens =
+        ref.watch(tableTokensProvider).value ?? const <int, String>{};
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -56,7 +70,7 @@ class TablesQrPage extends ConsumerWidget {
               ],
             ),
           ),
-          if (qrWebBaseUrl.trim().isEmpty)
+          if (base.trim().isEmpty)
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
               child: Text(
@@ -94,12 +108,20 @@ class TablesQrPage extends ConsumerWidget {
                       padding: const EdgeInsets.all(20),
                       itemCount: rows.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (context, i) => _TableCard(
-                        table: rows[i],
-                        qrUrlFor: qrUrlFor,
-                        onRotate: () => _rotate(context, ref, rows[i]),
-                        onToggle: (v) => _toggle(ref, rows[i], v),
-                      ),
+                      itemBuilder: (context, i) {
+                        final table = rows[i];
+                        final token = tokens[table.id];
+                        final url = token == null
+                            ? null
+                            : buildQrUrl(base, token);
+                        return _TableCard(
+                          table: table,
+                          url: url,
+                          onOpenQr: () => _showQrDialog(context, table, url!),
+                          onRotate: () => _rotate(context, ref, table),
+                          onToggle: (v) => _toggle(ref, table, v),
+                        );
+                      },
                     ),
             ),
           ),
@@ -135,12 +157,20 @@ class TablesQrPage extends ConsumerWidget {
     );
     if (token == null || token.isEmpty || !context.mounted) return;
     try {
-      final plaintext = await ref
+      final (tableId, plaintext) = await ref
           .read(tablesRepositoryProvider)
           .createTable(token);
+      // Simpan lokal: server hanya mengembalikan plaintext sekali ini.
+      await ref.read(tableTokenStoreProvider).save(tableId, plaintext);
+      ref.invalidate(tableTokensProvider);
       ref.invalidate(tablesListProvider);
       if (context.mounted) {
-        await _showTokenDialog(context, 'Meja dibuat', plaintext);
+        await _showTokenDialog(
+          context,
+          'Meja dibuat',
+          plaintext,
+          ref.read(qrWebBaseUrlProvider),
+        );
       }
     } catch (e) {
       if (context.mounted) {
@@ -181,9 +211,17 @@ class TablesQrPage extends ConsumerWidget {
       final plaintext = await ref
           .read(tablesRepositoryProvider)
           .rotateToken(table.id);
+      // Versi baru menimpa token lama di penyimpanan lokal.
+      await ref.read(tableTokenStoreProvider).save(table.id, plaintext);
+      ref.invalidate(tableTokensProvider);
       ref.invalidate(tablesListProvider);
       if (context.mounted) {
-        await _showTokenDialog(context, 'Token baru ${table.label}', plaintext);
+        await _showTokenDialog(
+          context,
+          'Token baru ${table.label}',
+          plaintext,
+          ref.read(qrWebBaseUrlProvider),
+        );
       }
     } catch (e) {
       if (context.mounted) {
@@ -213,8 +251,9 @@ class TablesQrPage extends ConsumerWidget {
     BuildContext context,
     String title,
     String token,
+    String base,
   ) async {
-    final url = qrUrlFor(token);
+    final url = buildQrUrl(base, token);
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -273,18 +312,122 @@ class TablesQrPage extends ConsumerWidget {
       ),
     );
   }
+
+  /// QR besar siap cetak: tampil di kartu meja, dibuka untuk dilihat/dicetak.
+  /// 'Cetak / Bagikan' menangkap QR menjadi PNG lalu membuka lembar berbagi
+  /// Android — dari sana operator memilih printer yang terhubung.
+  Future<void> _showQrDialog(
+    BuildContext context,
+    DiningTableEntry table,
+    String url,
+  ) async {
+    final boundaryKey = GlobalKey();
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('QR ${table.label}'),
+        content: SizedBox(
+          width: 340,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RepaintBoundary(
+                key: boundaryKey,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  child: QrImageView(data: url, size: 240),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SelectableText(
+                url,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: textSecondary),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: url));
+              if (ctx.mounted) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Tautan disalin.')),
+                );
+              }
+            },
+            icon: const Icon(Icons.copy_rounded, size: 18),
+            label: const Text('Salin tautan'),
+          ),
+          FilledButton.icon(
+            onPressed: () => _shareQrPng(ctx, boundaryKey, table),
+            icon: const Icon(Icons.print_rounded, size: 18),
+            label: const Text('Cetak / Bagikan'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Selesai'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _shareQrPng(
+    BuildContext ctx,
+    GlobalKey boundaryKey,
+    DiningTableEntry table,
+  ) async {
+    final bytes = await qrPngCapture(boundaryKey);
+    if (bytes == null) {
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('QR gagal ditangkap.')));
+      }
+      return;
+    }
+    final label = table.label.replaceAll(RegExp(r'[^\w-]+'), '-');
+    final ok = await sharePngFile('qr-$label.png', bytes);
+    if (ctx.mounted && !ok) {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        const SnackBar(content: Text('Lembar berbagi tidak tersedia.')),
+      );
+    }
+  }
+}
+
+/// Tangkapan QR → PNG (3× densitas → tajam untuk cetak). Terpisah agar bisa
+/// dipancang di unit test; capture asli membutuhkan rasterisasi nyata —
+/// diverifikasi di device, bukan di widget test yang fake-async.
+Future<Uint8List?> Function(GlobalKey key) qrPngCapture = _captureQrPng;
+
+Future<Uint8List?> _captureQrPng(GlobalKey key) async {
+  final boundary =
+      key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+  if (boundary == null) return null;
+  final image = await boundary.toImage(pixelRatio: 3);
+  final data = await image.toByteData(format: ui.ImageByteFormat.png);
+  image.dispose();
+  return data?.buffer.asUint8List();
 }
 
 class _TableCard extends StatelessWidget {
   const _TableCard({
     required this.table,
-    required this.qrUrlFor,
+    required this.url,
+    required this.onOpenQr,
     required this.onRotate,
     required this.onToggle,
   });
 
   final DiningTableEntry table;
-  final String? Function(String token) qrUrlFor;
+
+  /// QR siap tampilkan/cetak; null bila token belum tersedia di perangkat ini.
+  final String? url;
+  final VoidCallback onOpenQr;
   final VoidCallback onRotate;
   final ValueChanged<bool> onToggle;
 
@@ -313,6 +456,30 @@ class _TableCard extends StatelessWidget {
                 ],
               ),
             ),
+            if (url != null)
+              // QR tampil langsung di kartu — tap untuk lihat besar & cetak.
+              Tooltip(
+                message: 'Ketuk untuk lihat besar dan cetak',
+                child: InkWell(
+                  key: ValueKey('table-qr-${table.id}'),
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: onOpenQr,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: QrImageView(data: url!, size: 76),
+                  ),
+                ),
+              )
+            else
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  'QR belum ada\ndi perangkat ini',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: textSecondary),
+                ),
+              ),
+            const SizedBox(width: 8),
             Switch(
               value: table.isEnabled,
               onChanged: onToggle,

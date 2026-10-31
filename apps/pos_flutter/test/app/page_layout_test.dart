@@ -84,7 +84,9 @@ void main() {
           await tester.pumpWidget(
             ProviderScope(
               overrides: [
-                operatingRepositoryProvider.overrideWithValue(_Operating(state)),
+                operatingRepositoryProvider.overrideWithValue(
+                  _Operating(state),
+                ),
                 businessSettingsProvider.overrideWith(
                   (ref) => _response(state, {
                     'name': 'Waroeng MeJeng Kampoeng',
@@ -98,6 +100,7 @@ void main() {
                 categoriesProvider.overrideWith((ref) => _response(state, [])),
                 qrDraftsProvider.overrideWith((ref) => _response(state, [])),
                 tablesListProvider.overrideWith((ref) => _response(state, [])),
+                tableTokensProvider.overrideWith((ref) async => {}),
                 ingredientsProvider.overrideWith((ref) => _response(state, [])),
                 purchasesProvider.overrideWith((ref) => _response(state, [])),
                 recipeProductsProvider.overrideWith(
