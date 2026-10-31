@@ -27,24 +27,10 @@ class PosPage extends ConsumerStatefulWidget {
 class _PosPageState extends ConsumerState<PosPage> {
   String _search = '';
   String _categoryFilter = 'Semua';
-  Timer? _pollTimer;
   Timer? _searchDebounce;
 
   @override
-  void initState() {
-    super.initState();
-    // Polling ringan draft QR; panel terbuka atau tidak, badge tetap segar.
-    // Provider hanya di-watch oleh _QrBadge sehingga tiap tick tidak
-    // membangun ulang seluruh halaman POS (jank di tablet lemah).
-    _pollTimer = Timer.periodic(
-      const Duration(seconds: 10),
-      (_) => ref.invalidate(qrDraftsProvider),
-    );
-  }
-
-  @override
   void dispose() {
-    _pollTimer?.cancel();
     _searchDebounce?.cancel();
     super.dispose();
   }
@@ -413,9 +399,9 @@ class _PosPageState extends ConsumerState<PosPage> {
 // Katalog
 // ---------------------------------------------------------------------------
 
-/// Badge jumlah draft QR — memegang provider-nya SENDIRI supaya polling
-/// `qrDraftsProvider` tiap 10 detik hanya membangun ulang badge ini,
-/// bukan seluruh halaman POS (penyebab jank saat idle di tablet).
+/// Badge jumlah draft QR — memegang provider-nya SENDIRI supaya refresh
+/// `qrDraftsProvider` (polling `QrInboxWatcher` di shell) hanya membangun
+/// ulang badge ini, bukan seluruh halaman POS (jank di tablet lemah).
 class _QrBadge extends ConsumerWidget {
   const _QrBadge();
 

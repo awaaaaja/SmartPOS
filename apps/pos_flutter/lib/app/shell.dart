@@ -17,6 +17,7 @@ import '../features/sales_history/history_page.dart';
 import '../features/settings/settings_page.dart';
 import '../features/tables_qr/qr_page.dart';
 import 'destinations.dart';
+import 'qr_inbox_watcher.dart';
 import 'theme.dart';
 
 /// Gate sesi: belum masuk = LoginPage, sudah masuk = shell aplikasi.
@@ -205,6 +206,9 @@ class _AppShellState extends ConsumerState<AppShell> {
           ),
           body: Row(
             children: [
+              // Pemantau draft QR (polling 10 dtk + banner/pesanan baru);
+              // tanpa tampilan, hidup selama shell hidup.
+              const QrInboxWatcher(),
               if (wide)
                 SizedBox(
                   width: _sidebarWidth,

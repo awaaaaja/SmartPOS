@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pos_flutter/app/theme.dart';
+import 'package:pos_flutter/core/notif_sound.dart';
 import 'package:pos_flutter/features/settings/settings_page.dart';
 import 'package:pos_flutter/features/settings/settings_repository.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Test halaman Pengaturan (K06-08) tanpa jaringan:
@@ -153,5 +156,34 @@ void main() {
     );
     expect(find.text('Edit pengaturan usaha'), findsOneWidget);
     expect(fake.fetchCount, 1);
+  });
+
+  testWidgets('notifikasi: seksi suara tampil & Pratinjau memutar nada aktif',
+      (tester) async {
+    SharedPreferencesAsyncPlatform.instance =
+        InMemorySharedPreferencesAsync.withData({
+          'notif-sound-tone': 'confirmation_002',
+        });
+    // Seksi notifikasi berada di bawah lipatan: perbesar layar uji dulu.
+    tester.view.physicalSize = const Size(800, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final calls = <(String tone, double volume)>[];
+    final original = notifSoundPlayer;
+    notifSoundPlayer = (tone, volume) async => calls.add((tone, volume));
+    addTearDown(() => notifSoundPlayer = original);
+
+    await _openPage(tester);
+
+    expect(find.text('Notifikasi pesanan'), findsOneWidget);
+    expect(find.text('Suara pesanan QR masuk'), findsOneWidget);
+    // Pilihan tersimpan: Konfirmasi 2 terpilih (centang bulat terisi).
+    expect(find.text('Konfirmasi 2'), findsOneWidget);
+
+    await tester.tap(find.text('Pratinjau'));
+    await tester.pumpAndSettle();
+
+    expect(calls, hasLength(1));
+    expect(calls.single.$1, 'confirmation_002');
   });
 }

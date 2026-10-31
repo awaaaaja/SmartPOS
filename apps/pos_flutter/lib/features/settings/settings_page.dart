@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme.dart';
 import '../../core/error_mapper.dart';
+import '../../core/notif_sound.dart';
 import 'settings_repository.dart';
 
 final businessSettingsProvider =
@@ -89,6 +91,8 @@ class SettingsPage extends ConsumerWidget {
                 'tercatat di riwayat audit. Preferensi printer dan mode '
                 'offline belum tersedia.',
               ),
+              const SizedBox(height: 24),
+              const _NotifSoundSection(),
             ],
           ),
         );
@@ -281,6 +285,150 @@ class _SettingsEditDialogState extends ConsumerState<_SettingsEditDialog> {
                 )
               : const Icon(Icons.save_rounded),
           label: const Text('Simpan'),
+        ),
+      ],
+    );
+  }
+}
+
+/// Seksi "Notifikasi pesanan" (Fase B): preferensi lokal perangkat —
+/// switch suara, pilihan nada + pratinjau, dan volume. Tersimpan di
+/// SharedPreferences, tanpa perubahan server.
+class _NotifSoundSection extends ConsumerStatefulWidget {
+  const _NotifSoundSection();
+
+  @override
+  ConsumerState<_NotifSoundSection> createState() =>
+      _NotifSoundSectionState();
+}
+
+class _NotifSoundSectionState extends ConsumerState<_NotifSoundSection> {
+  final _prefs = NotifSoundPrefs();
+  bool _enabled = true;
+  String _tone = 'confirmation_001';
+  double _volume = 0.8;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final enabled = await _prefs.enabled;
+      final tone = await _prefs.tone;
+      final volume = await _prefs.volume;
+      if (!mounted) return;
+      setState(() {
+        _enabled = enabled;
+        _tone = kNotifTones.containsKey(tone) ? tone : kNotifTones.keys.first;
+        _volume = volume.clamp(0.0, 1.0);
+        _loaded = true;
+      });
+    } catch (_) {
+      // Preferensi lokal gagal dibaca (mis. platform tanpa SharedPreferences)
+      // -> tampilkan default; perubahan tetap dicoba disimpan.
+      if (!mounted) return;
+      setState(() => _loaded = true);
+    }
+  }
+
+  Future<void> _preview() => notifSoundPlayer(_tone, _volume);
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Notifikasi pesanan',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 4),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Suara pesanan QR masuk'),
+          subtitle: const Text(
+            'Bunyi setiap kali pesanan baru terkirim dari QR meja.',
+          ),
+          value: _enabled,
+          onChanged: (v) async {
+            setState(() => _enabled = v);
+            await _prefs.setEnabled(v);
+          },
+        ),
+        if (_enabled) ...[
+          const SizedBox(height: 4),
+          for (final entry in kNotifTones.entries)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+              title: Text(entry.value),
+              trailing: _tone == entry.key
+                  ? const Icon(Icons.check_circle_rounded, color: brandPrimary)
+                  : const Icon(Icons.circle_outlined, color: textSecondary),
+              onTap: () async {
+                if (_tone == entry.key) return;
+                setState(() => _tone = entry.key);
+                await _prefs.setTone(entry.key);
+              },
+            ),
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: _preview,
+                icon: const Icon(Icons.volume_up_rounded, size: 18),
+                label: const Text('Pratinjau'),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(Icons.volume_down_rounded, size: 18),
+                    Expanded(
+                      child: Slider(
+                        value: _volume,
+                        onChanged: (v) => setState(() => _volume = v),
+                        onChangeEnd: (v) => _prefs.setVolume(v),
+                      ),
+                    ),
+                    const Icon(Icons.volume_up_rounded, size: 18),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 44,
+                child: Text(
+                  '${(_volume * 100).round()}%',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 8),
+        Text(
+          'Nada: Kenney "Interface Sounds" (CC0) — lihat '
+          'assets/sounds/README.md.',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: textSecondary),
         ),
       ],
     );
