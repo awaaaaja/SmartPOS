@@ -58,6 +58,10 @@ class QrDraft {
     required this.itemCount,
     required this.createdAt,
     required this.items,
+    this.payIntent,
+    this.payMethod,
+    this.customerName,
+    this.customerPhone,
   });
 
   final int draftId;
@@ -70,6 +74,15 @@ class QrDraft {
   final DateTime? createdAt;
   final List<QrDraftItem> items;
 
+  /// Preferensi bayar dari wizard web (migrasi 0018); null = draft lama.
+  /// [payIntent]: PAY_NOW | OPEN_BILL; [payMethod]: CASH | QRIS | TRANSFER.
+  final String? payIntent;
+  final String? payMethod;
+
+  /// Identitas opsional pelanggan untuk penagihan & [Hubungi WA].
+  final String? customerName;
+  final String? customerPhone;
+
   static QrDraft fromJson(Map<String, dynamic> j) => QrDraft(
     draftId: (j['draft_id'] as num).toInt(),
     refCode: j['ref_code'] as String? ?? '',
@@ -81,6 +94,10 @@ class QrDraft {
     createdAt: j['created_at'] == null
         ? null
         : DateTime.tryParse(j['created_at'] as String),
+    payIntent: j['pay_intent'] as String?,
+    payMethod: j['pay_method'] as String?,
+    customerName: j['customer_name'] as String?,
+    customerPhone: j['customer_phone'] as String?,
     items: (j['items'] as List? ?? [])
         .map((i) => QrDraftItem.fromJson(Map<String, dynamic>.from(i as Map)))
         .toList(),

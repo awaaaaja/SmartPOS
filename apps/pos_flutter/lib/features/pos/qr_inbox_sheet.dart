@@ -6,6 +6,24 @@ import '../../core/error_mapper.dart';
 import '../../core/formatters.dart';
 import '../tables_qr/tables_repository.dart';
 
+/// Label preferensi bayar dari wizard web untuk ditampilkan di kartu draft.
+/// Null bila pelanggan tidak memilih (draft lama / skip langkah bayar).
+String? _preferenceLabel(QrDraft d) {
+  final intent = switch (d.payIntent) {
+    'PAY_NOW' => 'Bayar sekarang',
+    'OPEN_BILL' => 'Buka bill',
+    _ => null,
+  };
+  final method = switch (d.payMethod) {
+    'CASH' => 'Tunai',
+    'QRIS' => 'QRIS',
+    'TRANSFER' => 'Transfer',
+    _ => null,
+  };
+  if (intent == null) return method;
+  return method == null ? intent : '$intent · $method';
+}
+
 /// S03: Panel "QR Masuk" di dalam layar POS — daftar draft PENDING dari
 /// pelanggan + ambil-ke-keranjang / batalkan. Draft BUKAN sale.
 class QrInboxSheet extends ConsumerWidget {
@@ -97,6 +115,22 @@ class QrInboxSheet extends ConsumerWidget {
                                           color: brandPrimary)),
                                 ],
                               ),
+                              if (_preferenceLabel(d) != null ||
+                                  d.customerName != null) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  [
+                                    if (_preferenceLabel(d) != null)
+                                      _preferenceLabel(d)!,
+                                    if (d.customerName?.isNotEmpty == true)
+                                      d.customerName!,
+                                    if (d.customerPhone?.isNotEmpty == true)
+                                      'WA ${d.customerPhone}',
+                                  ].join(' · '),
+                                  style: const TextStyle(
+                                      fontSize: 12, color: textSecondary),
+                                ),
+                              ],
                               const SizedBox(height: 4),
                               for (final it in d.items)
                                 Padding(
