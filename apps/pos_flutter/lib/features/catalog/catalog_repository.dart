@@ -18,12 +18,16 @@ class CatalogRepository {
       'product_modifiers(min_select,max_select,'
       'modifier:modifiers(id,name,price_delta,is_active))';
 
-  Future<List<ProductCategory>> fetchCategories({bool includeArchived = false}) async {
+  Future<List<ProductCategory>> fetchCategories({
+    bool includeArchived = false,
+  }) async {
     var query = _client.from('product_categories').select();
     if (!includeArchived) query = query.isFilter('archived_at', null);
     final rows = await query.order('sort_order').order('name');
     return (rows as List)
-        .map((e) => ProductCategory.fromJson(Map<String, dynamic>.from(e as Map)))
+        .map(
+          (e) => ProductCategory.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
         .toList();
   }
 
@@ -36,10 +40,10 @@ class CatalogRepository {
     return ProductCategory.fromJson(row);
   }
 
-  Future<void> archiveCategory(int id) =>
-      _client.from('product_categories').update({
-        'archived_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', id);
+  Future<void> archiveCategory(int id) => _client
+      .from('product_categories')
+      .update({'archived_at': DateTime.now().toUtc().toIso8601String()})
+      .eq('id', id);
 
   Future<List<Product>> fetchProducts({bool includeArchived = false}) async {
     var query = _client.from('products').select(_productSelect);
@@ -67,25 +71,26 @@ class CatalogRepository {
     };
     final row = id == null
         ? await _client
-            .from('products')
-            .insert(payload)
-            .select(_productSelect)
-            .single()
+              .from('products')
+              .insert(payload)
+              .select(_productSelect)
+              .single()
         : await _client
-            .from('products')
-            .update(payload)
-            .eq('id', id)
-            .select(_productSelect)
-            .single();
+              .from('products')
+              .update(payload)
+              .eq('id', id)
+              .select(_productSelect)
+              .single();
     return Product.fromJson(row);
   }
 
   Future<void> setProductActive(int id, bool active) =>
       _client.from('products').update({'is_active': active}).eq('id', id);
 
-  Future<void> archiveProduct(int id) => _client.from('products').update({
-        'archived_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', id);
+  Future<void> archiveProduct(int id) => _client
+      .from('products')
+      .update({'archived_at': DateTime.now().toUtc().toIso8601String()})
+      .eq('id', id);
 
   Future<List<PriceHistoryEntry>> fetchPriceHistory(int productId) async {
     final rows = await _client
@@ -95,8 +100,10 @@ class CatalogRepository {
         .order('effective_at', ascending: false)
         .limit(20);
     return (rows as List)
-        .map((e) =>
-            PriceHistoryEntry.fromJson(Map<String, dynamic>.from(e as Map)))
+        .map(
+          (e) =>
+              PriceHistoryEntry.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
         .toList();
   }
 
@@ -148,9 +155,10 @@ class CatalogRepository {
       'webp' => 'image/webp',
       _ => 'image/jpeg',
     };
-    final path =
-        'menu-${DateTime.now().millisecondsSinceEpoch}.$ext';
-    await _client.storage.from('product-photos').upload(
+    final path = 'menu-${DateTime.now().millisecondsSinceEpoch}.$ext';
+    await _client.storage
+        .from('product-photos')
+        .upload(
           path,
           file,
           fileOptions: FileOptions(contentType: contentType, upsert: false),
@@ -164,11 +172,14 @@ final catalogRepositoryProvider = Provider<CatalogRepository>(
 );
 
 /// Daftar produk aktif untuk POS dan katalog.
-final productsProvider = FutureProvider.autoDispose<List<Product>>(
+// Produk & kategori di-cache selama sesi (tanpa autoDispose): semua mutasi
+// katalog memanggil ref.invalidate di catalog_page, sehingga pindah halaman
+// tidak lagi refetch + spinner — navigasi POS/katalog terasa jauh lebih ringan.
+final productsProvider = FutureProvider<List<Product>>(
   (ref) => ref.watch(catalogRepositoryProvider).fetchProducts(),
 );
 
-final categoriesProvider = FutureProvider.autoDispose<List<ProductCategory>>(
+final categoriesProvider = FutureProvider<List<ProductCategory>>(
   (ref) => ref.watch(catalogRepositoryProvider).fetchCategories(),
 );
 

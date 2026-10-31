@@ -57,7 +57,38 @@ class DashboardPage extends ConsumerWidget {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
-                final twoCol = constraints.maxWidth >= 700;
+                final cols = constraints.maxWidth >= 1000
+                    ? 3
+                    : constraints.maxWidth >= 560
+                    ? 2
+                    : 1;
+                // Grid per baris (bukan semua kartu dalam satu Row): di tablet
+                // landscape ini lebar konten hanya ~686 px logis (210 dpi) —
+                // ambang lama 700 tidak pernah tercapai sehingga kartu menumpuk
+                // setinggi layar dan terasa melebar/timpang.
+                Widget grid(List<Widget> items) => Column(
+                  children: [
+                    for (var start = 0; start < items.length; start += cols)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: start + cols < items.length ? 12 : 0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var i = start; i < start + cols; i++) ...[
+                              if (i > start) const SizedBox(width: 12),
+                              Expanded(
+                                child: i < items.length
+                                    ? items[i]
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                  ],
+                );
                 final cards = [
                   _StatCard(
                     title: 'Omzet hari ini',
@@ -120,48 +151,12 @@ class DashboardPage extends ConsumerWidget {
                   ],
                   orElse: () => const <Widget>[],
                 );
-                final primaryRow = twoCol
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (var i = 0; i < cards.length; i++) ...[
-                            if (i > 0) const SizedBox(width: 12),
-                            Expanded(child: cards[i]),
-                          ],
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          for (final c in cards) ...[
-                            c,
-                            const SizedBox(height: 12),
-                          ],
-                        ],
-                      );
                 return Column(
                   children: [
-                    primaryRow,
+                    grid(cards),
                     if (detailCards.isNotEmpty) ...[
                       const SizedBox(height: 12),
-                      if (twoCol)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (var i = 0; i < detailCards.length; i++) ...[
-                              if (i > 0) const SizedBox(width: 12),
-                              Expanded(child: detailCards[i]),
-                            ],
-                          ],
-                        )
-                      else
-                        Column(
-                          children: [
-                            for (final c in detailCards) ...[
-                              c,
-                              const SizedBox(height: 12),
-                            ],
-                          ],
-                        ),
+                      grid(detailCards),
                     ],
                   ],
                 );

@@ -1,0 +1,60 @@
+name: Deploy web QR (GitHub Pages)
+
+# Web menu pelanggan (apps/qr_web) dipublikasikan ke GitHub Pages.
+# URL publik: https://awaaaaja.github.io/SmartPOS/ — dipakai aplikasi POS
+# lewat --dart-define=QR_WEB_URL (tautan QR meja: <URL>/?token=<token>).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/qr_web/**'
+      - '.github/workflows/deploy-qr-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Jangan batalkan deploy yang sedang berjalan; deploy tumpang tindih
+# akan digabung antriannya.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/qr_web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/qr_web/package-lock.json
+      - run: npm ci
+      - run: npm test
+      # Base path GitHub Pages = nama repo; tanpa ini aset 404 di
+      # awaaaaja.github.io/SmartPOS/. Kredensial hanya kunci publishable,
+      # diambil dari variables repo (bukan dari source).
+      - name: Build produksi
+        run: npm run build -- --base=/SmartPOS/
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/qr_web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

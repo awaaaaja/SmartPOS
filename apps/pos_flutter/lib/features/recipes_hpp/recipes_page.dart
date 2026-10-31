@@ -465,17 +465,21 @@ class _HppDetail extends ConsumerWidget {
     return hpp.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(mapErrorToMessage(e), textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => ref.invalidate(hppProvider(product.id)),
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Coba lagi'),
-            ),
-          ],
+        // Scrollable: slot detail bisa menyempit (keyboard/rotasi) — jangan
+        // biarkan Column meledak (overflow 126px di tablet landscape).
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(mapErrorToMessage(e), textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () => ref.invalidate(hppProvider(product.id)),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Coba lagi'),
+              ),
+            ],
+          ),
         ),
       ),
       data: (data) {
@@ -483,38 +487,43 @@ class _HppDetail extends ConsumerWidget {
           // Status jujur: tanpa resep aktif tidak ada klaim stok (S04-07).
           return Center(
             child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.menu_book_outlined,
-                      size: 48,
-                      color: Colors.grey.shade500,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 340),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(28),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.menu_book_outlined,
+                          size: 48,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'resep belum ada',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Menu ini dijual tanpa perhitungan stok bahan. '
+                          'Stok bahan TIDAK dipotong otomatis dan HPP belum '
+                          'dapat dihitung sampai resep aktif dibuat.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: textSecondary),
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: onEdit,
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Buat resep pertama'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'resep belum ada',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Menu ini dijual tanpa perhitungan stok bahan. '
-                      'Stok bahan TIDAK dipotong otomatis dan HPP belum '
-                      'dapat dihitung sampai resep aktif dibuat.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: textSecondary),
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton.icon(
-                      onPressed: onEdit,
-                      icon: const Icon(Icons.add_rounded),
-                      label: const Text('Buat resep pertama'),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

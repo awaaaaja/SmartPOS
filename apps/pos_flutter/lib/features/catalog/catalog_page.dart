@@ -410,6 +410,8 @@ class _PhotoThumb extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: 52,
                 height: 52,
+                // Thumbnail 52 dp; foto asli tidak perlu didecode ukuran penuh.
+                cacheWidth: 160,
                 errorBuilder: (_, _, _) => fallback,
               ),
       ),

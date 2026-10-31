@@ -28,11 +28,14 @@ class _PosPageState extends ConsumerState<PosPage> {
   String _search = '';
   String _categoryFilter = 'Semua';
   Timer? _pollTimer;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
     super.initState();
     // Polling ringan draft QR; panel terbuka atau tidak, badge tetap segar.
+    // Provider hanya di-watch oleh _QrBadge sehingga tiap tick tidak
+    // membangun ulang seluruh halaman POS (jank di tablet lemah).
     _pollTimer = Timer.periodic(
       const Duration(seconds: 10),
       (_) => ref.invalidate(qrDraftsProvider),
@@ -42,6 +45,7 @@ class _PosPageState extends ConsumerState<PosPage> {
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _searchDebounce?.cancel();
     super.dispose();
   }
 
@@ -50,7 +54,6 @@ class _PosPageState extends ConsumerState<PosPage> {
     final products = ref.watch(productsProvider);
     final categories = ref.watch(categoriesProvider);
     final cart = ref.watch(cartControllerProvider);
-    final drafts = ref.watch(qrDraftsProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -85,8 +88,17 @@ class _PosPageState extends ConsumerState<PosPage> {
                 categoryNames: categoryNames,
                 categoryFilter: _categoryFilter,
                 search: _search,
-                qrBadge: drafts.value?.length ?? 0,
-                onSearch: (v) => setState(() => _search = v),
+                // Pencarian di-debounce 250 ms: satu setState per jeda ketikan,
+                // bukan per huruf (grid & gambar tidak dibangun ulang tiap input).
+                onSearch: (v) {
+                  _searchDebounce?.cancel();
+                  _searchDebounce = Timer(
+                    const Duration(milliseconds: 250),
+                    () {
+                      if (mounted) setState(() => _search = v);
+                    },
+                  );
+                },
                 onCategory: (v) => setState(() => _categoryFilter = v),
                 onPick: (p) => _pickProduct(p),
                 onOpenQr: () => _openQrInbox(),
@@ -401,13 +413,29 @@ class _PosPageState extends ConsumerState<PosPage> {
 // Katalog
 // ---------------------------------------------------------------------------
 
+/// Badge jumlah draft QR — memegang provider-nya SENDIRI supaya polling
+/// `qrDraftsProvider` tiap 10 detik hanya membangun ulang badge ini,
+/// bukan seluruh halaman POS (penyebab jank saat idle di tablet).
+class _QrBadge extends ConsumerWidget {
+  const _QrBadge();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(qrDraftsProvider).value?.length ?? 0;
+    return Badge(
+      isLabelVisible: count > 0,
+      label: Text('$count'),
+      child: const Icon(Icons.qr_code_2_rounded, size: 20),
+    );
+  }
+}
+
 class _CatalogPane extends StatelessWidget {
   const _CatalogPane({
     required this.products,
     required this.categoryNames,
     required this.categoryFilter,
     required this.search,
-    required this.qrBadge,
     required this.onSearch,
     required this.onCategory,
     required this.onPick,
@@ -418,7 +446,6 @@ class _CatalogPane extends StatelessWidget {
   final List<String> categoryNames;
   final String categoryFilter;
   final String search;
-  final int qrBadge;
   final ValueChanged<String> onSearch;
   final ValueChanged<String> onCategory;
   final ValueChanged<Product> onPick;
@@ -444,11 +471,7 @@ class _CatalogPane extends StatelessWidget {
             const SizedBox(width: 10),
             FilledButton.tonalIcon(
               onPressed: onOpenQr,
-              icon: Badge(
-                isLabelVisible: qrBadge > 0,
-                label: Text('$qrBadge'),
-                child: const Icon(Icons.qr_code_2_rounded, size: 20),
-              ),
+              icon: const _QrBadge(),
               label: const Text('QR Masuk'),
             ),
           ],
@@ -529,6 +552,11 @@ class _ProductCard extends StatelessWidget {
                           product.photoUrl!,
                           fit: BoxFit.cover,
                           width: double.infinity,
+                          // Decode dibatasi ukuran tampilan kartu (~480 px
+                          // fisik): foto menu asli bisa ratusan kali lebih
+                          // besar; tanpa batas ini memori & waktu decode
+                          // membengkak di tablet.
+                          cacheWidth: 480,
                           errorBuilder: (_, _, _) => fallback,
                         ),
                 ),
@@ -1050,7 +1078,10 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
               }
               final quote = snap.data!;
               final total = quote.total;
-              final paid = int.tryParse(_paid.text.trim());
+              // QRIS/Transfer tidak menerima tunai: nominal selalu sama
+              // dengan total, jadi kolom nominal & kembalian hanya untuk CASH.
+              final isCash = _method == 'CASH';
+              final paid = isCash ? int.tryParse(_paid.text.trim()) : total;
               final change = paid == null ? 0 : max(0, paid - total);
 
               return Column(
@@ -1106,25 +1137,34 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
                     ],
                     onChanged: (v) => setState(() => _method = v ?? 'CASH'),
                   ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _paid,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Nominal diterima (Rp)',
+                  if (isCash) ...[
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _paid,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Nominal diterima (Rp)',
+                      ),
+                      onChanged: (_) => setState(() {}),
                     ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Kembalian: ${formatRupiah(change)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: paid != null && paid < total
-                          ? errorColor
-                          : successColor,
+                    const SizedBox(height: 8),
+                    Text(
+                      'Kembalian: ${formatRupiah(change)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: paid != null && paid < total
+                            ? errorColor
+                            : successColor,
+                      ),
                     ),
-                  ),
+                  ] else ...[
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Nominal mengikuti total tagihan. Konfirmasi '
+                      'pembayaran setelah dana masuk (verifikasi manual).',
+                      style: TextStyle(fontSize: 12, color: textSecondary),
+                    ),
+                  ],
                   if (_error != null) ...[
                     const SizedBox(height: 8),
                     Text(
@@ -1182,7 +1222,8 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
       _error = null;
     });
     try {
-      final paid = int.parse(_paid.text.trim());
+      // Non-cash: tidak ada kolom nominal — kirim total (sudah pasti sesuai).
+      final paid = _method == 'CASH' ? int.parse(_paid.text.trim()) : total;
       final receipt = await ref
           .read(posRepositoryProvider)
           .checkout(
