@@ -43,5 +43,8 @@ __pycache__/
 # Aset lokal yang diminta pemilik untuk tidak masuk Git
 MeJeng POS Warung Emblem.png
 
+# Foto menu lokal — sudah diunggah ke bucket product-photos; cukup di mesin ini
+menu/
+
 # Catatan kerja agent (substansi sudah ada di docs/)
 .hyperflow/

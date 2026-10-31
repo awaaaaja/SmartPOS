@@ -316,6 +316,23 @@ PRD changelog.
   "Besar +Rp5.000" (Mie Nasi Goreng & Nasi Goreng); varian panas diberi
   imbuhan "Panas". Live di hosted; terverifikasi di H13Pro.
 
+### Foto menu (1 Nov 2026) — 9 foto live
+
+Sumber `menu/*.webp` (lokal, TIDAK masuk Git — cukup unggah sekali; salinan
+di bucket Storage hosted). Diunggah via sesi operator (bukan service role)
+ke bucket `product-photos`, `photo_url` diisi untuk 9 produk: Ayam Bakar,
+Ayam Geprek + Nasi, Ayam Kremes + Nasi, Mie Goreng, Mie Nasi Goreng,
+Mie Rebus, Mie Tarempa, Nasi Goreng, Seblak Komplit. Terverifikasi lewat
+`get_public_menu` anon (90 produk aktif, 9 dengan foto).
+
+Dua foto **dilewati karena lisensi** (Prompt.md mewajibkan foto legal):
+`nasi_telur_dadar.webp` (watermark iStock) dan
+`pngtree-indonesian-seblak-…webp` (lisensi PNGTree) — Nasi Telur Dadar &
+Seblak Biasa masih tanpa foto; ganti dengan foto asli usaha.
+Catatan kualitas: 5 foto punya latar pola catur bekas transparansi PNG dan
+3 foto berresolusi kecil (±320px) — cukup untuk thumbnail, ganti bila ada
+foto asli. Web QR (`App.vue`) belum menampilkan `photo_url` (ikut Fase 3).
+
 ## Fase eksekusi (sisa)
 
 | # | Fase | Keluaran | Verifikasi |
