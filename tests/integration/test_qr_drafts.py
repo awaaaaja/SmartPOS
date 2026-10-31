@@ -193,6 +193,8 @@ def main():
     status, body = rpc(None, "qr_complete_draft",
                        {"p_draft_id": d1["draft_id"], "p_sale_id": 1})
     check("anon qr_complete_draft ditolak", status >= 400, str(body)[:120])
+    status, body = rpc(None, "qr_mark_preparing", {"p_draft_id": d1["draft_id"]})
+    check("anon qr_mark_preparing ditolak", status >= 400, str(body)[:120])
     status, body = rpc(None, "pos_checkout", {
         "p_items": items, "p_method": "CASH", "p_paid": 999999,
         "p_idempotency_key": "anon-" + uuid.uuid4().hex})
@@ -219,8 +221,12 @@ def main():
           and "draft_not_claimable" in str(body), str(body)[:160])
 
     status, drafts2 = rpc(token, "qr_list_drafts", {})
-    check("draft ter-claim hilang dari daftar PENDING",
-          not any(x["draft_id"] == d1["draft_id"] for x in drafts2))
+    # 0019: daftar = papan aktif — draft CLAIMED tetap tampil (status baru),
+    # hanya yang sudah CANCELLED/EXPIRED/COMPLETED-bayar yang hilang.
+    check("draft ter-claim tetap di papan (status CLAIMED)",
+          any(x["draft_id"] == d1["draft_id"]
+              and x["status"] == "CLAIMED" for x in drafts2),
+          str(drafts2)[:200])
 
     # --- Checkout draft memakai mesin Sprint 02 -> sale final sekali ---
     print("\n== Checkout draft (mesin POS Sprint 02) ==")
@@ -359,6 +365,102 @@ def main():
     status, cl = rpc(token, "qr_claim_draft", {"p_draft_id": dob["draft_id"]})
     check("draft OPEN_BILL bisa diklaim", status == 200
           and cl["status"] == "CLAIMED", str(cl)[:160])
+
+    # --- Siklus hidup pesanan & papan aktif (migrasi 0019) ---
+    print("\n== Siklus hidup pesanan & papan aktif (0019) ==")
+    tok_d = "qrtest-token-d-" + uuid.uuid4().hex[:8]
+    table_d = make_table("UJI-QR-D-" + uuid.uuid4().hex[:6], tok_d)
+
+    def submit_d(key):
+        return rpc(None, "qr_submit_draft", {
+            "p_table_token": tok_d, "p_client_key": key, "p_items": items})
+
+    # a) PENDING tidak boleh langsung PREPARING (harus lewat Diterima).
+    status, dseed = submit_d("lc0-" + uuid.uuid4().hex)
+    check("submit draft siklus", status == 200, str(dseed)[:160])
+    status, body = rpc(token, "qr_mark_preparing",
+                       {"p_draft_id": dseed["draft_id"]})
+    check("mark_preparing dari PENDING ditolak", status >= 400
+          and "draft_not_claimed" in str(body), str(body)[:160])
+
+    # b) PENDING -> CLAIMED -> PREPARING -> COMPLETED (tanpa sale = Open Bill).
+    status, cl0 = rpc(token, "qr_claim_draft", {"p_draft_id": dseed["draft_id"]})
+    check("claim draft siklus", status == 200
+          and cl0["status"] == "CLAIMED", str(cl0)[:160])
+    status, prep = rpc(token, "qr_mark_preparing",
+                       {"p_draft_id": dseed["draft_id"]})
+    check("CLAIMED -> PREPARING", status == 200
+          and prep["status"] == "PREPARING", str(prep)[:160])
+    status, body = rpc(token, "qr_mark_preparing",
+                       {"p_draft_id": dseed["draft_id"]})
+    check("mark_preparing ulang ditolak (sudah PREPARING)",
+          status >= 400 and "draft_not_claimed" in str(body), str(body)[:160])
+    status, comp0 = rpc(token, "qr_complete_draft",
+                        {"p_draft_id": dseed["draft_id"]})
+    check("PREPARING -> COMPLETED tanpa sale", status == 200
+          and comp0["status"] == "COMPLETED" and comp0["sale_id"] is None,
+          str(comp0)[:200])
+
+    # c) Idempoten + pelunasan mengaitkan sale ke COMPLETED-sale-null.
+    status, comp0r = rpc(token, "qr_complete_draft",
+                         {"p_draft_id": dseed["draft_id"]})
+    check("complete ulang (tanpa sale) idempoten", status == 200
+          and comp0r["sale_id"] is None, str(comp0r)[:160])
+    idem_d = "qr-draft-d-" + uuid.uuid4().hex
+    status, sale_d = rpc(token, "pos_checkout", {
+        "p_items": co_items, "p_method": "CASH",
+        "p_paid": expected_total, "p_dining_type": "DINE_IN",
+        "p_table_id": table_d, "p_idempotency_key": idem_d})
+    check("checkout draft siklus", status == 200, str(sale_d)[:200])
+    status, paid = rpc(token, "qr_complete_draft", {
+        "p_draft_id": dseed["draft_id"], "p_sale_id": sale_d["sale_id"]})
+    check("pelunasan mengaitkan sale", status == 200
+          and paid["sale_id"] == sale_d["sale_id"], str(paid)[:200])
+    status, paidr = rpc(token, "qr_complete_draft", {
+        "p_draft_id": dseed["draft_id"], "p_sale_id": sale_d["sale_id"]})
+    check("pelunasan ulang idempoten", status == 200
+          and paidr["sale_id"] == sale_d["sale_id"], str(paidr)[:200])
+    status, body = rpc(token, "qr_complete_draft", {
+        "p_draft_id": dseed["draft_id"], "p_sale_id": sale_d["sale_id"] + 1})
+    check("kaitkan sale berbeda ditolak", status >= 400
+          and "draft_not_completable" in str(body), str(body)[:160])
+
+    # d) Papan aktif: CLAIMED/PREPARING/COMPLETED-bayar-nanti tampil;
+    #    COMPLETED-sudah-bayar tidak.
+    status, dpre = submit_d("lc1-" + uuid.uuid4().hex)   # -> PREPARING
+    status, dpay = submit_d("lc2-" + uuid.uuid4().hex)   # -> COMPLETED null
+    status, dpend = submit_d("lc3-" + uuid.uuid4().hex)  # tetap PENDING
+    rpc(token, "qr_claim_draft", {"p_draft_id": dpre["draft_id"]})
+    rpc(token, "qr_mark_preparing", {"p_draft_id": dpre["draft_id"]})
+    rpc(token, "qr_claim_draft", {"p_draft_id": dpay["draft_id"]})
+    rpc(token, "qr_complete_draft", {"p_draft_id": dpay["draft_id"]})
+
+    status, board = rpc(token, "qr_list_drafts", {})
+    by_id = {x["draft_id"]: x for x in board}
+    check("papan: PREPARING tampil",
+          by_id.get(dpre["draft_id"], {}).get("status") == "PREPARING",
+          str(board)[:200])
+    check("papan: PENDING tampil",
+          by_id.get(dpend["draft_id"], {}).get("status") == "PENDING")
+    check("papan: COMPLETED belum bayar tampil",
+          by_id.get(dpay["draft_id"], {}).get("status") == "COMPLETED"
+          and by_id.get(dpay["draft_id"], {}).get("sale_id") is None)
+    check("papan: COMPLETED sudah bayar tidak tampil",
+          dseed["draft_id"] not in by_id)
+
+    # e) Cancel dari PREPARING; kartu hilang dari papan.
+    status, cx = rpc(token, "qr_cancel_draft", {"p_draft_id": dpre["draft_id"]})
+    check("cancel dari PREPARING", status == 200
+          and cx["status"] == "CANCELLED", str(cx)[:160])
+    status, board2 = rpc(token, "qr_list_drafts", {})
+    check("draft ter-cancel hilang dari papan",
+          not any(x["draft_id"] == dpre["draft_id"] for x in board2))
+
+    # f) Tanpa sale_id argumen (klien baru) = p_opsional default null.
+    status, body = rpc(token, "qr_complete_draft",
+                       {"p_draft_id": dpend["draft_id"]})
+    check("complete tanpa sale_id pada PENDING ditolak", status >= 400
+          and "draft_not_completable" in str(body), str(body)[:160])
 
     print(f"\n{passed} PASS, {failed} FAIL")
     raise SystemExit(1 if failed else 0)

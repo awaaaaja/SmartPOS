@@ -58,6 +58,7 @@ class QrDraft {
     required this.itemCount,
     required this.createdAt,
     required this.items,
+    this.saleId,
     this.payIntent,
     this.payMethod,
     this.customerName,
@@ -73,6 +74,9 @@ class QrDraft {
   final int itemCount;
   final DateTime? createdAt;
   final List<QrDraftItem> items;
+
+  /// Terisi setelah pembayaran (lencana SUDAH BAYAR); null = belum bayar.
+  final int? saleId;
 
   /// Preferensi bayar dari wizard web (migrasi 0018); null = draft lama.
   /// [payIntent]: PAY_NOW | OPEN_BILL; [payMethod]: CASH | QRIS | TRANSFER.
@@ -94,6 +98,7 @@ class QrDraft {
     createdAt: j['created_at'] == null
         ? null
         : DateTime.tryParse(j['created_at'] as String),
+    saleId: (j['sale_id'] as num?)?.toInt(),
     payIntent: j['pay_intent'] as String?,
     payMethod: j['pay_method'] as String?,
     customerName: j['customer_name'] as String?,
@@ -129,7 +134,14 @@ class QrDraftRepository {
     await _client.rpc('qr_cancel_draft', params: {'p_draft_id': draftId});
   }
 
-  Future<void> complete(int draftId, int saleId) async {
+  /// CLAIMED -> PREPARING (migrasi 0019); gagal bila bukan CLAIMED.
+  Future<void> markPreparing(int draftId) async {
+    await _client.rpc('qr_mark_preparing', params: {'p_draft_id': draftId});
+  }
+
+  /// Tandai selesai. [saleId] null = "Selesai, belum bayar" (Open Bill);
+  /// terisi = menyelesaikan / mengaitkan pelunasan (migrasi 0019).
+  Future<void> complete(int draftId, int? saleId) async {
     await _client.rpc(
       'qr_complete_draft',
       params: {'p_draft_id': draftId, 'p_sale_id': saleId},
@@ -141,7 +153,9 @@ final qrDraftRepositoryProvider = Provider<QrDraftRepository>(
   (ref) => QrDraftRepository(ref.watch(supabaseClientProvider)),
 );
 
-/// Draft PENDING; di-refresh manual dari panel QR Masuk (polling ringan).
+/// Daftar draft (migrasi 0019): PAPAN AKTIF — PENDING, CLAIMED, PREPARING,
+/// dan COMPLETED yang belum dibayar (sale_id null); di-refresh polling
+/// `QrInboxWatcher` + manual dari tab Pesanan.
 final qrDraftsProvider = FutureProvider.autoDispose<List<QrDraft>>(
   (ref) => ref.watch(qrDraftRepositoryProvider).listPending(),
 );

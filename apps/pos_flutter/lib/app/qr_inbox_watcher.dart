@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/notif_sound.dart';
 import '../features/tables_qr/tables_repository.dart';
+import 'destinations.dart';
 
 /// Pemantau draft QR dari shell (§B1): polling 10 detik satu-satunya di
 /// seluruh aplikasi (pindah dari PosPage) + deteksi pesanan PENDING baru
@@ -87,6 +88,13 @@ class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher> {
             'Pesanan baru dari ${draft.tableLabel} · ${draft.refCode}',
           ),
           duration: const Duration(seconds: 6),
+          // Banner → pindah tab Pesanan (destinasi global, §C3).
+          action: SnackBarAction(
+            label: 'Lihat',
+            onPressed: () => ref
+                .read(selectedDestinationProvider.notifier)
+                .select(AppDestination.orders),
+          ),
         ),
       );
   }

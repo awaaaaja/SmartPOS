@@ -15,6 +15,7 @@ import 'package:pos_flutter/features/expenses/expenses_page.dart';
 import 'package:pos_flutter/features/inventory/inventory_repository.dart';
 import 'package:pos_flutter/features/inventory/stock_page.dart';
 import 'package:pos_flutter/features/operating_cost/operating_repository.dart';
+import 'package:pos_flutter/features/orders/orders_inbox_page.dart';
 import 'package:pos_flutter/features/pos/pos_page.dart';
 import 'package:pos_flutter/features/pos/pos_repository.dart';
 import 'package:pos_flutter/features/purchases/purchases_page.dart';
@@ -46,6 +47,7 @@ void main() {
   const pages = <String, Widget>{
     'dashboard': DashboardPage(),
     'pos': PosPage(),
+    'orders': OrdersPage(),
     'tables': TablesQrPage(),
     'catalog': CatalogPage(),
     'inventory': InventoryPage(),

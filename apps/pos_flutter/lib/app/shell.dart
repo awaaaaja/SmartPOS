@@ -9,6 +9,7 @@ import '../features/dashboard/dashboard_page.dart';
 import '../features/energy/energy_page.dart';
 import '../features/expenses/expenses_page.dart';
 import '../features/inventory/stock_page.dart';
+import '../features/orders/orders_inbox_page.dart';
 import '../features/pos/pos_page.dart';
 import '../features/purchases/purchases_page.dart';
 import '../features/recipes_hpp/recipes_page.dart';
@@ -16,6 +17,7 @@ import '../features/reports/reports_page.dart';
 import '../features/sales_history/history_page.dart';
 import '../features/settings/settings_page.dart';
 import '../features/tables_qr/qr_page.dart';
+import '../features/tables_qr/tables_repository.dart';
 import 'destinations.dart';
 import 'qr_inbox_watcher.dart';
 import 'theme.dart';
@@ -29,9 +31,8 @@ class AuthGate extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     return authState.when(
       loading: () => const _SplashScreen(),
-      error: (e, _) => _SessionErrorScreen(
-        onRetry: () => ref.invalidate(authStateProvider),
-      ),
+      error: (e, _) =>
+          _SessionErrorScreen(onRetry: () => ref.invalidate(authStateProvider)),
       data: (state) =>
           state.session == null ? const LoginPage() : const AppShell(),
     );
@@ -43,9 +44,7 @@ class _SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -85,10 +84,15 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
-  AppDestination _current = AppDestination.dashboard;
-
   static const double _sidebarWidth = 248;
   static const double _wideBreakpoint = 840;
+
+  /// Destinasi terpilih GLOBAL (bukan state privat) supaya banner notifikasi
+  /// & tombol [Bayar] bisa memindah tab dari mana pun (§C3).
+  AppDestination get _current => ref.watch(selectedDestinationProvider);
+
+  void _select(AppDestination destination) =>
+      ref.read(selectedDestinationProvider.notifier).select(destination);
 
   Widget _pageFor(AppDestination destination) {
     switch (destination) {
@@ -96,6 +100,8 @@ class _AppShellState extends ConsumerState<AppShell> {
         return const DashboardPage();
       case AppDestination.pos:
         return const PosPage();
+      case AppDestination.orders:
+        return const OrdersPage();
       case AppDestination.tablesQr:
         return const TablesQrPage();
       case AppDestination.catalog:
@@ -142,7 +148,7 @@ class _AppShellState extends ConsumerState<AppShell> {
         ),
       ),
     );
-    if (selected != null) setState(() => _current = selected);
+    if (selected != null) _select(selected);
   }
 
   @override
@@ -175,18 +181,16 @@ class _AppShellState extends ConsumerState<AppShell> {
                       Text(
                         'Waroeng MeJeng Kampoeng',
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       Text(
                         email,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: textSecondary),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: textSecondary),
                       ),
                     ],
                   ),
@@ -212,10 +216,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               if (wide)
                 SizedBox(
                   width: _sidebarWidth,
-                  child: _Sidebar(
-                    current: _current,
-                    onSelected: (d) => setState(() => _current = d),
-                  ),
+                  child: _Sidebar(current: _current, onSelected: _select),
                 ),
               if (wide) const VerticalDivider(width: 1),
               Expanded(child: _pageFor(_current)),
@@ -232,13 +233,15 @@ class _AppShellState extends ConsumerState<AppShell> {
                     if (index >= mobileNavDestinations.length) {
                       _openOthers();
                     } else {
-                      setState(() => _current = mobileNavDestinations[index]);
+                      _select(mobileNavDestinations[index]);
                     }
                   },
                   destinations: [
                     for (final d in mobileNavDestinations)
                       NavigationDestination(
-                        icon: Icon(d.icon),
+                        icon: d == AppDestination.orders
+                            ? _PendingOrdersBadge(child: Icon(d.icon))
+                            : Icon(d.icon),
                         label: d.mobileLabel ?? d.label,
                       ),
                     const NavigationDestination(
@@ -270,10 +273,10 @@ class _Sidebar extends StatelessWidget {
             child: Text(
               group.toUpperCase(),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: textSecondary,
-                    letterSpacing: 0.8,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: textSecondary,
+                letterSpacing: 0.8,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           for (final d in AppDestination.byGroup(group))
@@ -301,6 +304,11 @@ class _SidebarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final icon = Icon(
+      destination.icon,
+      size: 21,
+      color: selected ? brandPrimary : textSecondary,
+    );
     return Material(
       color: selected ? brandSoft : Colors.transparent,
       borderRadius: BorderRadius.circular(12),
@@ -311,11 +319,9 @@ class _SidebarTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           child: Row(
             children: [
-              Icon(
-                destination.icon,
-                size: 21,
-                color: selected ? brandPrimary : textSecondary,
-              ),
+              destination == AppDestination.orders
+                  ? _PendingOrdersBadge(child: icon)
+                  : icon,
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -330,6 +336,32 @@ class _SidebarTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Lencana jumlah pesanan BARU (PENDING) pada ikon tab Pesanan (rail &
+/// NavigationBar) — "pesanan baru ≠ antrean aktif" (§C3). Memegang
+/// providernya SENDIRI supaya refresh 10 detik hanya membangun ulang
+/// lencana ini, bukan seluruh shell.
+class _PendingOrdersBadge extends ConsumerWidget {
+  const _PendingOrdersBadge({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count =
+        ref
+            .watch(qrDraftsProvider)
+            .value
+            ?.where((d) => d.status == 'PENDING')
+            .length ??
+        0;
+    return Badge(
+      isLabelVisible: count > 0,
+      label: Text('$count'),
+      child: child,
     );
   }
 }
