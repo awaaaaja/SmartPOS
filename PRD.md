@@ -328,3 +328,10 @@ Rilis hanya dinyatakan siap jika alur kasir manual dan QR masuk di layar POS lul
 5. **Mempertahankan** pengelolaan menu, harga, QR meja, stok, HPP, listrik, LPG, biaya, dan laporan. ML dicatat hanya sebagai kemungkinan post-MVP.
 6. **Memindahkan** fokus sprint ke coding aplikasi, integrasi, pengujian dan deliverable, bukan observasi sebagai sprint tersendiri.
 7. **Meniadakan AI/ML dari MVP** dan memutakhirkan identitas visual menjadi `#930031`; dashboard hanya berisi laporan aktual.
+
+---
+
+## Catatan perubahan 1 November 2026 (Sprint 07 — rencana `docs/plan-qr-wizard-notif.md` v4)
+
+- **§2.2/UAT-02 (penyelarasan, bukan perubahan scope):** panel **QR Masuk** di layar POS berevolusi menjadi tab **Pesanan** (destinasi navigasi keenam). Ini **bukan pengembalian "halaman Pesanan" v1.1** — satu operator, tanpa Dapur/Kitchen Display/role/antrean tahap masak tetap berlaku; alur klaim → konflik harga → keranjang → checkout **tidak berubah**, hanya rumah UI pindah dari bottom-sheet POS ke destinasi sendiri supaya papan aktif (Baru masuk · Diterima · Diproses · Selesai — belum bayar) muat satu layar dan bisa diakses tanpa membuka POS.
+- Baru di tab Pesanan: **[Bayar]** (ambil ke keranjang POS + pindah tab), **[Hubungi WA]** (wa.me prabayar penagihan; nomor dari identitas opsional pelanggan), lencana SUDAH/BELUM BAYAR, dan status `PREPARING` di server (migrasi `0019`). Uang tetap dihitung ulang server saat checkout; identitas nama/WA hanya meta penagihan (PRD §10 privasi).

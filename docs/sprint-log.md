@@ -3,7 +3,7 @@
 ## Sprint 07 — Wizard Web QR, Notifikasi & Katalog (plan v4)
 Tanggal: 1 November 2026
 Target: `docs/plan-qr-wizard-notif.md` (Fase 1–3, §A3, Fase B, Fase C, Fase D)
-Status: **BERJALAN** — Fase 1/3, A, A3, B, D selesai; Fase C menyusul.
+Status: **SELESAI** — Fase 1/3, A, A3, B, C, D selesai 1 Nov 2026.
 
 ### Selesai
 | Bagian | Bukti |
@@ -13,17 +13,12 @@ Status: **BERJALAN** — Fase 1/3, A, A3, B, D selesai; Fase C menyusul.
 | A3 — kartu pesanan POS | `QrDraft` baca preferensi/identitas 0018; baris preferensi di `QrInboxSheet`; `qr_inbox_sheet_test` 8/8. |
 | B — banner + suara | `QrInboxWatcher` (polling 10 dtk pindah dari PosPage, baseline sunyi), `core/notif_sound.dart`, seksi Pengaturan (switch/nada/pratinjau/volume), 4 nada Kenney CC0 + README lisensi; 5 test baru. |
 | D — un-arsip katalog | `restoreProduct`/`restoreCategory` (tanpa migrasi), chip Aktif \| Arsip, sheet kategori tampilkan arsip; provider katalog terpisah; 4 test baru. |
+| C — tab Pesanan | Migrasi `0019` live hosted (backup skema pre-0019; tercatat di `schema_migrations`); test integrasi **70 PASS, 0 FAIL**; `OrdersPage` 4 seksi + aksi per status, `QrClaimService`, `AppDestination.orders` + badge PENDING, `[Hubungi WA]` (`core/wa_link.dart`), `QrInboxSheet` lama dihapus; test baru: `orders_inbox_page_test` 14 + `claimed_drafts_provider_test` 3 + shell 3. |
 
 - Gate setiap fase: `flutter analyze` 0 issue + suite penuh lulus
-  (164 → **177/177** setelah A3+B+D), perubahan migrasi + test integrasi
-  dalam satu commit.
-
-### Sisa pekerjaan
-- **Fase C — tab Pesanan**: migrasi `0019` (`PREPARING`, `qr_mark_preparing`,
-  `qr_list_drafts` papan aktif) + test integrasi, halaman `OrdersPage`,
-  `QrClaimService`, badge PENDING, `[Bayar]`/`[Hubungi WA]`, lepas
-  `QrInboxSheet`/`_QrBadge` lama, sesuaikan test shell/page_layout.
-- Push per-fase + pantau CI & Deploy Pages.
+  (164 → **195/195** setelah A3+B+D+C), perubahan migrasi + test integrasi
+  dalam satu commit (`b119dc0` untuk Fase C).
+- Sisa: push + pantau CI & Deploy Pages untuk commit Fase C & docs ini.
 
 ## Sprint 06 — Polishing, QA, keamanan dan kandidat build
 Tanggal: 27 Oktober 2026

@@ -88,6 +88,35 @@ sehingga klien lama (3 argumen) tetap sah:
 - `qr_list_drafts` (PENDING saja) dipakai panel QR Masuk & badge; **Fase C**
   akan menambah `qr_mark_preparing` + daftar papan aktif.
 
+### Siklus hidup pesanan QR (Fase C, migrasi `0019`)
+
+- Status draft kini `PENDING | CLAIMED | PREPARING | EXPIRED | CANCELLED |
+  COMPLETED` (PREPARING baru).
+- **`qr_list_drafts()` = papan aktif**: `PENDING`, `CLAIMED`, `PREPARING`,
+  dan `COMPLETED` yang **`sale_id IS NULL`** (Selesai — belum bayar), urut
+  `created_at`; lazy EXPIRED tetap untuk PENDING lewat `expires_at`.
+  `qr_draft_json` menyertakan `status` + `sale_id` (untuk lencana
+  SUDAH/BELUM BAYAR di klien).
+- **`qr_mark_preparing(p_draft_id) -> jsonb`** (operator): atomik
+  `CLAIMED → PREPARING` + audit `PREPARE`; gagal → `draft_not_claimed`.
+- **`qr_complete_draft(p_draft_id, p_sale_id bigint DEFAULT null) -> jsonb`**
+  (signature lama tetap sah):
+  - `CLAIMED|PREPARING` → `COMPLETED`, `sale_id = p_sale_id` (boleh null =
+    "Selesai, belum bayar");
+  - `COMPLETED` + sale null + `p_sale_id` terisi → **kaitkan pelunasan**
+    (Open Bill dibayar lewat keranjang POS);
+  - `COMPLETED` + sale sama → idempoten; selain itu →
+    `draft_not_completable`.
+- **`qr_cancel_draft`**: `PENDING | CLAIMED | PREPARING`.
+- **Uang tidak berubah**: total final tetap dari keranjang saat
+  `pos_checkout`; draft hanya status + bukti jejak.
+- Klien (Flutter): tab **Pesanan** (`OrdersPage`) — 4 seksi, aksi per
+  status; **[Bayar]** = ambil ke keranjang POS (bila perlu) + pindah tab;
+  **[Hubungi WA]** = `wa.me` prabayar (`core/wa_link.dart`); nomor tidak
+  valid → tombol nonaktif dengan tooltip jujur. Checkout POS melunasi semua
+  draft terklaim perangkat (`QrClaimService.completeClaimed`, invarian
+  C1.2).
+
 ### Notifikasi pesanan (Fase B, lokal perangkat — bukan API server)
 
 - `QrInboxWatcher` (shell): polling 10 detik ke `qrDraftsProvider`,
