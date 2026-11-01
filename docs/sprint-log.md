@@ -1,5 +1,33 @@
 # Sprint Log
 
+## Batch — Perbaikan bug pesanan, banner notifikasi & fitur hapus meja
+Tanggal: 1 November 2026
+Target: laporan langsung pengguna (bug "Terima pesanan", tampilan notifikasi, kelola meja)
+Status: **SELESAI (kode + test)** — verifikasi perangkat menyusul.
+
+### Yang dibangun & diperbaiki
+| Bagian | Bukti |
+|---|---|
+| Bug "data yang tidak valid" saat Terima pesanan | Akar masalah ganda: (1) error server `draft_not_claimable`/`draft_not_claimed`/`draft_not_completable`/`draft_not_cancelable` tidak dipetakan → jatuh ke fallback generik; (2) tombol aksi tidak dikunci selama RPC (tap ganda mengirim 2× claim). Perbaikan: 7 mapping baru di `error_mapper.dart` + `orderActionBusyProvider` (kunci tombol selama aksi berjalan) di `orders_inbox_page.dart`. |
+| Banner notifikasi pesanan baru | Restyle dari SnackBar polos → banner floating brand (`qr_inbox_watcher.dart`): ikon struk, judul "Pesanan baru dari {meja}", sub-baris "{ref} · {n} item", sudut membulat 14, aksi **LIHAT** → tab Pesanan. |
+| Fitur hapus meja (Meja & QR) | Migrasi `0021_table_delete.sql` — `qr_delete_table`: guard `is_operator`; blokir bila masih ada pesanan **aktif** (`table_has_active_orders`: PENDING/CLAIMED/PREPARING/COMPLETED-belum-bayar); draft terminal ikut terhapus; **riwayat penjualan TIDAK dihapus** — hanya tautan `sales.table_id` dilepas; audit DELETE + hitungan. Klien: `deleteTable()` + `TableTokenStore.remove()`, tombol tempat sampah di kartu meja + dialog konfirmasi yang menjelaskan jujur bahwa uang tetap aman. Tambah meja sudah ada ("Meja baru"). |
+| Test | `test_qr_tables.py` **6/6 lulus lokal** (alur create-rotate-delete, blokir pesanan aktif, sales utuh, guard operator, `table_not_found`); regresi 5 suite DB = **44 test OK**; Flutter **205/205** + `flutter analyze` 0 issue (test baru: 7 case error mapper, 3 test hapus meja dengan fake repository; ekspektasi teks banner diperbarui di 2 file). |
+| CI | Step `test_qr_tables.py` di job `migrations` (`ci.yml`). |
+
+### Keputusan desain
+- Hapus meja = melepas tautan, bukan menghapus uang: baris `sales`/`sale_items`/
+  `payments`/`refunds` tidak tersentuh (invarian jujur uang); yang terhapus hanya
+  tiket pesanan (draft terminal) yang memang sudah bubar.
+- Pesanan aktif memblokir penghapusan — menghapus meja berisi antrean akan
+  membuang pesanan yang belum dibayar.
+- Keputusan pembersihan data hosted (disetujui pengguna): hapus **semua** 53 meja
+  (termasuk `[DEMO]`/`Meja QR 1` — keduanya bersih) + **5 penjualan uji** Rp10.000.
+
+### Sisa pekerjaan
+- Terapkan migrasi 0021 ke hosted + smoke REST, lalu pembersihan data uji.
+- Push commit (migrasi `1138192` + batch Flutter ini) & pantau CI.
+- Build APK + install ke H13Pro untuk verifikasi pengguna dua perbaikan + fitur meja.
+
 ## Fase R1 — Rekomendasi non-ML (peringatan HPP + kalibrasi energi)
 Tanggal: 1 November 2026
 Target: `docs/plan-ml-rekomendasi.md`; RFC: `docs/rfc-rekomendasi-hpp-energi.md`

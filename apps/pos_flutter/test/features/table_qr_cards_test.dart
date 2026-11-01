@@ -7,15 +7,44 @@ import 'package:pos_flutter/core/png_share.dart';
 import 'package:pos_flutter/features/tables_qr/qr_page.dart';
 import 'package:pos_flutter/features/tables_qr/tables_repository.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../helpers/memory_preferences.dart';
 
 DiningTableEntry _table({int id = 7, String label = 'Meja 1'}) =>
     DiningTableEntry(id: id, label: label, isEnabled: true, tokenVersion: 2);
 
+/// Fake repository hapus meja: mencatat panggilan & hasil tanpa menyentuh
+/// jaringan (migrasi 0021 diuji terpisah oleh test integrasi Python).
+class _FakeTablesRepository extends TablesRepository {
+  _FakeTablesRepository()
+    : super(
+        SupabaseClient(
+          'https://tables-test.invalid',
+          'sb_publishable_test',
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+        ),
+      );
+
+  final deleteCalls = <int>[];
+  ({int draftsRemoved, int salesDetached})? lastResult;
+
+  @override
+  Future<({int draftsRemoved, int salesDetached})> deleteTable(
+    int tableId,
+  ) async {
+    deleteCalls.add(tableId);
+    final result = (draftsRemoved: 2, salesDetached: 1);
+    lastResult = result;
+    return result;
+  }
+}
+
 Future<void> _pump(
   WidgetTester tester, {
   required Map<int, String> tokens,
+  TablesRepository? repository,
+  TableTokenStore? tokenStore,
 }) async {
   tester.view.physicalSize = const Size(1024, 768);
   tester.view.devicePixelRatio = 1;
@@ -26,6 +55,10 @@ Future<void> _pump(
         tablesListProvider.overrideWith((ref) async => [_table()]),
         tableTokensProvider.overrideWith((ref) async => tokens),
         qrWebBaseUrlProvider.overrideWithValue('https://menu.uji.test'),
+        if (repository != null)
+          tablesRepositoryProvider.overrideWithValue(repository),
+        if (tokenStore != null)
+          tableTokenStoreProvider.overrideWithValue(tokenStore),
       ],
       child: MaterialApp(theme: buildAppTheme(), home: const TablesQrPage()),
     ),
@@ -94,6 +127,59 @@ void main() {
       expect(seenPng!.$1, 'qr-Meja-1.png');
       expect(seenPng!.$2, isNotEmpty); // header PNG
       expect(seenPng!.$2.first, 0x89);
+    });
+  });
+
+  group('hapus meja', () {
+    testWidgets('tombol tempat sampah tampil di kartu meja', (tester) async {
+      await _pump(tester, tokens: {7: 'token-satu'});
+      expect(find.byKey(const ValueKey('table-delete-7')), findsOneWidget);
+    });
+
+    testWidgets('Batal menutup dialog tanpa menghapus apa pun', (tester) async {
+      final repo = _FakeTablesRepository();
+      await _pump(tester, tokens: {7: 'token-satu'}, repository: repo);
+
+      await tester.tap(find.byKey(const ValueKey('table-delete-7')));
+      await tester.pumpAndSettle();
+      expect(find.text('Hapus Meja 1?'), findsOneWidget);
+
+      await tester.tap(find.text('Batal'));
+      await tester.pumpAndSettle();
+      expect(find.text('Hapus Meja 1?'), findsNothing);
+      expect(repo.deleteCalls, isEmpty);
+    });
+
+    testWidgets('konfirmasi menghapus meja, membuang token lokal, '
+        'lalu menampilkan hasil server', (tester) async {
+      final repo = _FakeTablesRepository();
+      final prefs = MemoryPreferences()
+        ..values['table-qr-tokens'] = '{"7":"token-satu"}';
+      final store = TableTokenStore(prefs);
+      await _pump(
+        tester,
+        tokens: {7: 'token-satu'},
+        repository: repo,
+        tokenStore: store,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('table-delete-7')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Hapus meja'));
+      await tester.pumpAndSettle();
+
+      expect(repo.deleteCalls, [7]);
+      // Token lokal ikut dibuang — QR lama tidak meninggalkan sisa.
+      expect(await store.readAll(), isEmpty);
+      // Hasil server jujur: draft ikut terhapus, penjualan tetap tersimpan.
+      expect(
+        find.textContaining('2 draft ikut terhapus'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('1 penjualan tetap tersimpan'),
+        findsOneWidget,
+      );
     });
   });
 

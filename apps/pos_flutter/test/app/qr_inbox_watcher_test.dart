@@ -83,10 +83,8 @@ void main() {
 
     expect(recorder.calls, hasLength(1));
     expect(recorder.calls.single.$1, 'confirmation_001');
-    expect(
-      find.text('Pesanan baru dari Meja 3 · Q00042'),
-      findsOneWidget,
-    );
+    expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
+    expect(find.text('Q00042 · 2 item'), findsOneWidget);
   });
 
   testWidgets('muat pertama dengan draft lama = baseline sunyi', (
@@ -118,10 +116,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(recorder.calls, isEmpty);
-    expect(
-      find.text('Pesanan baru dari Meja 3 · Q00042'),
-      findsOneWidget,
-    );
+    expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
+    expect(find.text('Q00042 · 2 item'), findsOneWidget);
   });
 
   test('NotifSoundPrefs: default aktif & preferensi tersimpan lokal', () async {

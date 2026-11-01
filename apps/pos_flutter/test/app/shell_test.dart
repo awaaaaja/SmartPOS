@@ -192,8 +192,9 @@ void main() {
     await tester.pump(const Duration(seconds: 11));
     await tester.pumpAndSettle();
 
-    expect(find.text('Pesanan baru dari Meja 3 · Q00042'), findsOneWidget);
-    await tester.tap(find.text('Lihat'));
+    expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
+    expect(find.text('Q00042 · 1 item'), findsOneWidget);
+    await tester.tap(find.text('LIHAT'));
     await tester.pumpAndSettle();
 
     // Tab Pesanan tampil (papan aktif memuat draft yang sama).

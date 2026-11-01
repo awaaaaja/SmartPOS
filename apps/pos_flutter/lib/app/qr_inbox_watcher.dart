@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/notif_sound.dart';
 import '../features/tables_qr/tables_repository.dart';
 import 'destinations.dart';
+import 'theme.dart';
 
 /// Pemantau draft QR dari shell (§B1): polling 10 detik satu-satunya di
 /// seluruh aplikasi (pindah dari PosPage) + deteksi pesanan PENDING baru
@@ -84,13 +85,62 @@ class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(
-            'Pesanan baru dari ${draft.tableLabel} · ${draft.refCode}',
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: brandPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
           ),
+          margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           duration: const Duration(seconds: 6),
+          content: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: const BoxDecoration(
+                  color: Colors.white24,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pesanan baru dari ${draft.tableLabel}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${draft.refCode} · ${draft.itemCount} item',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           // Banner → pindah tab Pesanan (destinasi global, §C3).
           action: SnackBarAction(
-            label: 'Lihat',
+            label: 'LIHAT',
+            textColor: Colors.white,
             onPressed: () => ref
                 .read(selectedDestinationProvider.notifier)
                 .select(AppDestination.orders),

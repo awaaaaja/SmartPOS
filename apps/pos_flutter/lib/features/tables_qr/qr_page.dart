@@ -120,6 +120,7 @@ class TablesQrPage extends ConsumerWidget {
                           onOpenQr: () => _showQrDialog(context, table, url!),
                           onRotate: () => _rotate(context, ref, table),
                           onToggle: (v) => _toggle(ref, table, v),
+                          onDelete: () => _delete(context, ref, table),
                         );
                       },
                     ),
@@ -243,6 +244,71 @@ class TablesQrPage extends ConsumerWidget {
     } catch (e) {
       // pesan singkat; daftar tetap segar lewat invalidate
       debugPrint('setEnabled gagal: $e');
+    }
+  }
+
+  /// Hapus meja (migrasi 0021): konfirmasi tegas → server memblokir bila
+  /// masih ada pesanan aktif; draft terminal ikut terhapus, riwayat
+  /// penjualan tetap (hanya tautan meja dilepas). Token lokal dibuang.
+  Future<void> _delete(
+    BuildContext context,
+    WidgetRef ref,
+    DiningTableEntry table,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Hapus ${table.label}?'),
+        content: const Text(
+          'QR meja ini langsung tidak berlaku. Draft pesanan yang sudah '
+          'selesai/kedaluwarsa ikut terhapus.\n\n'
+          'Riwayat penjualan TIDAK dihapus — uang dan struk tetap aman, '
+          'hanya tautan meja yang dilepas.\n\n'
+          'Meja dengan pesanan masih aktif tidak bisa dihapus '
+          '(selesaikan dulu di tab Pesanan).',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: errorColor,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Hapus meja'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    try {
+      final result = await ref
+          .read(tablesRepositoryProvider)
+          .deleteTable(table.id);
+      // Buang token lokal + segarkan daftar & token.
+      await ref.read(tableTokenStoreProvider).remove(table.id);
+      ref.invalidate(tableTokensProvider);
+      ref.invalidate(tablesListProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Meja ${table.label} dihapus — ${result.draftsRemoved} draft '
+              'ikut terhapus, ${result.salesDetached} penjualan tetap '
+              'tersimpan tanpa tautan meja.',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
+      }
     }
   }
 
@@ -421,6 +487,7 @@ class _TableCard extends StatelessWidget {
     required this.onOpenQr,
     required this.onRotate,
     required this.onToggle,
+    required this.onDelete,
   });
 
   final DiningTableEntry table;
@@ -430,6 +497,7 @@ class _TableCard extends StatelessWidget {
   final VoidCallback onOpenQr;
   final VoidCallback onRotate;
   final ValueChanged<bool> onToggle;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -489,6 +557,13 @@ class _TableCard extends StatelessWidget {
               tooltip: 'Rotasi token (QR lama mati)',
               icon: const Icon(Icons.refresh_rounded),
               onPressed: onRotate,
+            ),
+            IconButton(
+              key: ValueKey('table-delete-${table.id}'),
+              tooltip: 'Hapus meja',
+              icon: const Icon(Icons.delete_outline_rounded),
+              color: errorColor,
+              onPressed: onDelete,
             ),
           ],
         ),

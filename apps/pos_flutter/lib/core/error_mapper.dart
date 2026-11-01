@@ -64,6 +64,34 @@ String _mapBusinessError(String message) {
   if (m.startsWith('no_open_shift')) {
     return 'Tidak ada kas shift terbuka. Buka shift dulu.';
   }
+  // --- Jalur pesanan QR (tab Pesanan) — jangan jatuh ke fallback generik. ---
+  if (m.startsWith('draft_not_claimable')) {
+    return 'Status pesanan sudah berubah (sudah diambil, dibatalkan, atau '
+        'kedaluwarsa). Daftar diperbarui otomatis; periksa status terbaru.';
+  }
+  if (m.startsWith('draft_not_claimed')) {
+    return 'Pesanan belum diterima. Tekan "Diterima" dulu sebelum '
+        'melanjutkan.';
+  }
+  if (m.startsWith('draft_not_completable')) {
+    return 'Pesanan belum bisa ditandai selesai atau dibayar pada status '
+        'ini. Periksa status terbaru di papan pesanan.';
+  }
+  if (m.startsWith('draft_not_cancelable')) {
+    return 'Pesanan tidak bisa dibatalkan pada status ini (mungkin sudah '
+        'selesai atau terlambat). Periksa status terbaru.';
+  }
+  // --- Meja & QR (tambah/hapus meja) ---
+  if (m.startsWith('invalid_label')) {
+    return 'Label meja wajib 1 sampai 40 huruf.';
+  }
+  if (m.startsWith('table_not_found')) {
+    return 'Meja tidak ditemukan. Muat ulang daftar meja lalu coba lagi.';
+  }
+  if (m.startsWith('table_has_active_orders')) {
+    return 'Masih ada pesanan aktif di meja ini. Selesaikan atau batalkan '
+        'semua pesanan di tab Pesanan dulu, baru hapus mejanya.';
+  }
   return 'Data tidak valid. Periksa isian lalu coba lagi.';
 }
 

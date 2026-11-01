@@ -19,6 +19,66 @@ void main() {
       expect(message, contains('koneksi internet'));
     });
 
+    // Jalur pesanan QR: kode draft_not_* harus dipetakan sendiri (bukan
+    // jatuh ke fallback "Data tidak valid" generik).
+    test('draft_not_claimable (status berubah / tap ganda)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'draft_not_claimable: already claimed',
+        code: 'P0001',
+      ));
+      expect(message, contains('sudah berubah'));
+      expect(message, isNot(contains('Data tidak valid')));
+    });
+
+    test('draft_not_claimed (belum diterima)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'draft_not_claimed',
+        code: 'P0001',
+      ));
+      expect(message, contains('belum diterima'));
+    });
+
+    test('draft_not_completable', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'draft_not_completable',
+        code: 'P0001',
+      ));
+      expect(message, contains('belum bisa ditandai selesai'));
+    });
+
+    test('draft_not_cancelable', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'draft_not_cancelable',
+        code: 'P0001',
+      ));
+      expect(message, contains('tidak bisa dibatalkan'));
+    });
+
+    // Meja & QR: tambah/hapus meja.
+    test('invalid_label (label meja tidak valid)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'invalid_label',
+        code: 'P0001',
+      ));
+      expect(message, contains('Label meja'));
+    });
+
+    test('table_not_found', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'table_not_found',
+        code: 'P0001',
+      ));
+      expect(message, contains('Meja tidak ditemukan'));
+    });
+
+    test('table_has_active_orders (hapus meja diblokir)', () {
+      final message = mapErrorToMessage(const PostgrestException(
+        message: 'table_has_active_orders',
+        code: 'P0001',
+      ));
+      expect(message, contains('pesanan aktif'));
+    });
+
     test('timeout', () {
       final message =
           mapErrorToMessage(TimeoutException('slow', const Duration(seconds: 1)));

@@ -227,6 +227,24 @@ class TablesRepository {
     );
     return Map<String, dynamic>.from(result as Map)['token'] as String;
   }
+
+  /// Hapus meja (migrasi 0021). Pesanan aktif memblokir di server
+  /// (`table_has_active_orders`); riwayat penjualan TIDAK dihapus —
+  /// hanya tautan meja dilepas. Mengembalikan jumlah draft terminal yang
+  /// ikut terhapus & penjualan yang terlepas.
+  Future<({int draftsRemoved, int salesDetached})> deleteTable(
+    int tableId,
+  ) async {
+    final result = await _client.rpc(
+      'qr_delete_table',
+      params: {'p_table_id': tableId},
+    );
+    final j = Map<String, dynamic>.from(result as Map);
+    return (
+      draftsRemoved: (j['drafts_removed'] as num?)?.toInt() ?? 0,
+      salesDetached: (j['sales_detached'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 
 final tablesRepositoryProvider = Provider<TablesRepository>(
@@ -275,6 +293,16 @@ class TableTokenStore {
     if (token.isEmpty) return;
     final all = await readAll();
     all[tableId] = token;
+    await _preferences.setString(
+      _key,
+      jsonEncode(all.map((k, v) => MapEntry('$k', v))),
+    );
+  }
+
+  /// Buang token satu meja (dipanggil setelah meja dihapus dari server).
+  Future<void> remove(int tableId) async {
+    final all = await readAll();
+    if (all.remove(tableId) == null) return;
     await _preferences.setString(
       _key,
       jsonEncode(all.map((k, v) => MapEntry('$k', v))),

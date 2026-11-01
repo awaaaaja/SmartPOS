@@ -8,6 +8,25 @@ import '../../core/wa_link.dart';
 import '../pos/qr_claim_service.dart';
 import '../tables_qr/tables_repository.dart';
 
+/// Id draft yang aksinya sedang berjalan di server. Tombol dinonaktifkan
+/// selama RPC berjalan supaya tap ganda tidak mengirim dua permintaan —
+/// pemicu utama `draft_not_claimable` ("Status pesanan sudah berubah")
+/// saat menekan Diterima/Diproses/Selesai berulang di perangkat lambat.
+final orderActionBusyProvider = NotifierProvider<OrderActionBusy, Set<int>>(
+  OrderActionBusy.new,
+);
+
+class OrderActionBusy extends Notifier<Set<int>> {
+  @override
+  Set<int> build() => <int>{};
+
+  bool contains(int id) => state.contains(id);
+
+  void add(int id) => state = {...state, id};
+
+  void remove(int id) => state = {...state}..remove(id);
+}
+
 /// Tab Pesanan (rencana §C3): papan aktif draft QR — Baru masuk (PENDING) ·
 /// Diterima (CLAIMED) · Diproses (PREPARING) · Selesai — belum bayar
 /// (COMPLETED, sale null). Evolusi panel QR Masuk: satu sumber draft
@@ -298,83 +317,107 @@ class _OrderCard extends ConsumerWidget {
   }
 
   List<Widget> _actions(BuildContext context, WidgetRef ref) {
+    // Kunci seluruh tombol selama aksi draft ini masih berjalan (tap ganda).
+    final busy = ref.watch(
+      orderActionBusyProvider,
+    ).contains(draft.draftId);
     switch (draft.status) {
       case 'PENDING':
         return [
           FilledButton(
-            onPressed: () => _receive(context, ref),
+            onPressed: busy ? null : () => _receive(context, ref),
             child: const Text('Diterima'),
           ),
           OutlinedButton(
-            onPressed: () => _run(
-              context,
-              ref,
-              () => ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
-              success: 'Pesanan dibatalkan.',
-            ),
+            onPressed: busy
+                ? null
+                : () => _run(
+                    context,
+                    ref,
+                    () =>
+                        ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
+                    success: 'Pesanan dibatalkan.',
+                  ),
             child: const Text('Batalkan'),
           ),
         ];
       case 'CLAIMED':
         return [
           FilledButton(
-            onPressed: () => _run(
-              context,
-              ref,
-              () => ref
-                  .read(qrDraftRepositoryProvider)
-                  .markPreparing(draft.draftId),
-              success: 'Pesanan sedang diproses.',
-            ),
+            onPressed: busy
+                ? null
+                : () => _run(
+                    context,
+                    ref,
+                    () => ref
+                        .read(qrDraftRepositoryProvider)
+                        .markPreparing(draft.draftId),
+                    success: 'Pesanan sedang diproses.',
+                  ),
             child: const Text('Diproses'),
           ),
           FilledButton.tonal(
-            onPressed: () => QrClaimService.payDraft(ref, context, draft),
+            onPressed: busy
+                ? null
+                : () => QrClaimService.payDraft(ref, context, draft),
             child: const Text('Bayar'),
           ),
           OutlinedButton(
-            onPressed: () => _run(
-              context,
-              ref,
-              () => ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
-              success: 'Pesanan dibatalkan.',
-            ),
+            onPressed: busy
+                ? null
+                : () => _run(
+                    context,
+                    ref,
+                    () =>
+                        ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
+                    success: 'Pesanan dibatalkan.',
+                  ),
             child: const Text('Batalkan'),
           ),
         ];
       case 'PREPARING':
         return [
           FilledButton(
-            onPressed: () => _run(
-              context,
-              ref,
-              // Selesai BELUM bayar: sale_id null; id tetap di set perangkat
-              // sehingga checkout berikutnya melunasi (invarian C1.2).
-              () => ref
-                  .read(qrDraftRepositoryProvider)
-                  .complete(draft.draftId, null),
-              success: 'Pesanan selesai — menunggu pembayaran.',
-            ),
+            onPressed: busy
+                ? null
+                : () => _run(
+                    context,
+                    ref,
+                    // Selesai BELUM bayar: sale_id null; id tetap di set
+                    // perangkat sehingga checkout berikutnya melunasi
+                    // (invarian C1.2).
+                    () => ref
+                        .read(qrDraftRepositoryProvider)
+                        .complete(draft.draftId, null),
+                    success: 'Pesanan selesai — menunggu pembayaran.',
+                  ),
             child: const Text('Tandai selesai'),
           ),
           FilledButton.tonal(
-            onPressed: () => QrClaimService.payDraft(ref, context, draft),
+            onPressed: busy
+                ? null
+                : () => QrClaimService.payDraft(ref, context, draft),
             child: const Text('Bayar'),
           ),
           OutlinedButton(
-            onPressed: () => _run(
-              context,
-              ref,
-              () => ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
-              success: 'Pesanan dibatalkan.',
-            ),
+            onPressed: busy
+                ? null
+                : () => _run(
+                    context,
+                    ref,
+                    () =>
+                        ref.read(qrDraftRepositoryProvider).cancel(draft.draftId),
+                    success: 'Pesanan dibatalkan.',
+                  ),
             child: const Text('Batalkan'),
           ),
         ];
       default: // COMPLETED + sale null — Selesai, belum bayar.
         return [
           FilledButton(
-            onPressed: () => QrClaimService.payDraft(ref, context, draft),
+            onPressed: busy
+                ? null
+                : () => QrClaimService.payDraft(ref, context, draft),
             child: const Text('Bayar'),
           ),
         ];
@@ -382,9 +425,16 @@ class _OrderCard extends ConsumerWidget {
   }
 
   Future<void> _receive(BuildContext context, WidgetRef ref) async {
-    final ok = await QrClaimService.claimDraft(ref, context, draft);
-    if (ok) {
-      ref.invalidate(qrDraftsProvider);
+    final busy = ref.read(orderActionBusyProvider.notifier);
+    if (busy.contains(draft.draftId)) return;
+    busy.add(draft.draftId);
+    try {
+      final ok = await QrClaimService.claimDraft(ref, context, draft);
+      if (ok) {
+        ref.invalidate(qrDraftsProvider);
+      }
+    } finally {
+      busy.remove(draft.draftId);
     }
   }
 
@@ -394,6 +444,9 @@ class _OrderCard extends ConsumerWidget {
     Future<void> Function() action, {
     required String success,
   }) async {
+    final busy = ref.read(orderActionBusyProvider.notifier);
+    if (busy.contains(draft.draftId)) return;
+    busy.add(draft.draftId);
     try {
       await action();
       ref.invalidate(qrDraftsProvider);
@@ -408,6 +461,8 @@ class _OrderCard extends ConsumerWidget {
           context,
         ).showSnackBar(SnackBar(content: Text(mapErrorToMessage(e))));
       }
+    } finally {
+      busy.remove(draft.draftId);
     }
   }
 
