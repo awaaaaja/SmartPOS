@@ -1,5 +1,25 @@
 # Sprint Log
 
+## Fase R1 — Rekomendasi non-ML (peringatan HPP + kalibrasi energi)
+Tanggal: 1 November 2026
+Target: `docs/plan-ml-rekomendasi.md`; RFC: `docs/rfc-rekomendasi-hpp-energi.md`
+Status: **SELESAI** — dua rekomendasi statistik deskriptif live (bukan ML; amendemen PRD §9.0a).
+
+### Selesai
+| Bagian | Bukti |
+|---|---|
+| Migrasi `0020_recommendations.sql` | `inv_hpp_alerts` (rata-rata **tertimbang** pembelian RECEIVED, arah NAIK/TURUN, dampak HPP per porsi per menu resep aktif; tanpa riwayat → tidak masuk daftar) + `exp_energy_calibration` (default 30 hari WIB inklusif; deviasi/faktor **hanya** dari jenis dengan tagihan asli di kedua sisi); `SECURITY DEFINER` + guard `is_operator`; 20 migrasi lulus di Postgres polos (Zonky lokal, port 54339). |
+| Test integrasi `test_recommendations.py` | Pola CI-kanonik (DB sementara + stub + `set role authenticated` + klaim JWT), **7/7 lulus lokal**; regresi diperiksa — `test_mutation_retry` 19 + `test_settings_edit` 4 + `test_analytics_views` 8 semua lulus (38 total); step baru di CI job `migrations`. |
+| Live hosted | 0020 diterapkan via psycopg2 (kredensial dari `Kredensial.md`, tidak dicetak), tercatat di `supabase_migrations.schema_migrations` (`20261101000020`); smoke REST: operator 200 (output jujur: `alerts: []`, `enough_data: false`, deviasi `null`), anon **401**. |
+| Perbaikan bug deviasi campur-jenis | Ditemukan saat uji fixture: LPG ESTIMATED tanpa tagihan asli mengencerkan deviasi listrik +11,1% jadi −43,2%; diperbaiki (subset `compared_estimated`/`compared_actual`) sebelum rilis. |
+| Flutter | Model+provider `HppAlerts`/`hppAlertsProvider` (`inventory_repository.dart`) dan `EnergyCalibration`/`energyCalibrationProvider` (`operating_repository.dart`); kartu `_HppAlertsCard` (Resep) & `_EnergyCalibrationCard` (Energi); `flutter analyze` 0 issue; suite **195/195** (test override provider di `page_layout_test`, `inventory_pages_test`, `remaining_mutation_retry_test`). |
+| Dokumen | RFC `docs/rfc-rekomendasi-hpp-energi.md`; roadmap `docs/ml-roadmap.md` §2b (A2/B1 live non-ML, B2 menunggu ≥3 bulan tagihan ACTUAL + amendemen; otomasi belanja tetap ditolak) + catatan status amendemen di §7; amendemen tertulis PRD **§9.0a**; kontrak `docs/api-contracts.md`; rencana `docs/plan-ml-rekomendasi.md`. |
+
+- Aturan jujur yang ditegakkan: `compared_*` ≠ `total_*` (dua makna berbeda);
+  tanpa pembanding → `null`/empty state, bukan angka karangan; label
+  ESTIMATED ≠ ACTUAL; tanpa ML di klien; panggung ML tetap tertutup sampai
+  amendemen PRD §9 berikutnya.
+
 ## Sprint 07 — Wizard Web QR, Notifikasi & Katalog (plan v4)
 Tanggal: 1 November 2026
 Target: `docs/plan-qr-wizard-notif.md` (Fase 1–3, §A3, Fase B, Fase C, Fase D)

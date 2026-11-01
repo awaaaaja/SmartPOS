@@ -259,6 +259,15 @@ Jika data belum ada, tampilkan empty state yang jujur, bukan grafik atau angka f
 
 **Post-MVP (dokumen terpisah dan tidak dikerjakan sekarang):** kelayakan forecast menu dan jam ramai dipertimbangkan setelah terkumpul histori yang memadai. Tidak ada persiapan service/model ML yang wajib dalam Sprint 01–06.
 
+### 9.0a. Amendemen (1 Nov 2026) — batas statistik non-ML vs kode ML
+
+Bagian ini mengklarifikasi, **tanpa melonggarkan larangan model**, dua hal:
+
+1. **Statistik deskriptif non-ML diperbolehkan** (sudah live, migrasi `0020`, RFC `docs/rfc-rekomendasi-hpp-energi.md`): peringatan harga bahan vs rata-rata pembelian (`inv_hpp_alerts`) dan perbandingan kalibrasi ESTIMATED vs ACTUAL beserta faktor koreksi (`exp_energy_calibration`). Keduanya hanya **agregat SQL** — tanpa training, inferensi, atau prediksi — dan wajib menampilkan *empty state* jujur bila belum ada pembanding. Ini bukan "kode ML" sehingga tidak memerlukan amendemen lebih lanjut.
+2. **Panggung ML tetap tertutup sampai amendemen berikutnya.** Kode model (training/inferensi/forecast apa pun, termasuk proyeksi energi) hanya boleh masuk setelah: (a) §9 ini diubah lagi secara tertulis untuk menyebut deliverable ML, **dan** (b) guardrail `docs/ml-roadmap.md` §7 dipenuhi (label jujur, tanpa ML di klien, tanpa otomasi belanja, uji kelayakan §8 lolos). Selama dua syarat itu belum terpenuhi, tugas seperti demand forecasting dikerjakan **manual berbasis resep** (baris "Perhitungan kebutuhan bahan manual" di atas), bukan prediksi.
+
+Perubahan ini tidak mengubah deliverable MVP: tidak ada halaman `AI Insights`, endpoint `/v1/forecasts`, tabel `forecast_runs`, paket `ml_api`, atau library ML yang jadi bagian Sprint 01–06.
+
 ## 9.1 Standar UI MVP
 
 - `index.html` adalah referensi **struktur, hirarki halaman, interaksi, responsif, dan alur**, bukan sumber backend ataupun wajib ditiru secara pixel-perfect pada seluruh ukuran.

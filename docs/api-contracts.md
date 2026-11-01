@@ -187,6 +187,41 @@ test `tests/integration/test_analytics_views.py`: batas hari WIB, uang tidak
 terhitung ganda, `REFUNDED` keluar dari agregat menu, `security_invoker` aktif,
 anon ditolak, authenticated non-operator membaca 0 baris (RLS).
 
+### Rekomendasi non-ML (Fase R1, migrasi `0020`, RFC `docs/rfc-rekomendasi-hpp-energi.md`)
+
+Dua RPC **baca-saja** berbasis statistik deskriptif — **bukan prediksi/ML**
+(amendemen PRD §9.0a; guardrail `docs/ml-roadmap.md` §7 tetap berlaku penuh).
+`SECURITY DEFINER` + guard `is_operator()` (`operator_required`, 42501); grant
+hanya `authenticated`, dicabut dari `public`/`anon` (anon → 401 terverifikasi).
+
+| RPC | Signature | Params |
+|---|---|---|
+| `inv_hpp_alerts` | `inv_hpp_alerts(integer, integer) -> jsonb` | `p_threshold_pct` (1–500, default 10), `p_window_days` (7–730, default 90) |
+| `exp_energy_calibration` | `exp_energy_calibration(date, date) -> jsonb` | `p_from`, `p_to` (default null → 30 hari WIB inklusif; `from > to` → `invalid_range`) |
+
+- **`inv_hpp_alerts`** — bahan pada resep aktif yang `unit_cost` terkini
+  menyimpang `>= threshold_pct%` dari **rata-rata tertimbang**
+  (`sum total / sum qty`) pembelian `RECEIVED` dalam jendela. Output:
+  `{threshold_pct, window_days, alerts: [{ingredient_id, name, base_unit,
+  unit_cost, avg_cost, delta_pct, direction (NAIK|TURUN), purchases,
+  products: [{product_id, product_name, hpp_delta_per_portion}]}]}`.
+  **Tanpa riwayat pembelian dalam jendela → bahan tidak masuk daftar**
+  (bukan deviasi 0); threshold 500% umumnya menghasilkan `alerts: []`.
+- **`exp_energy_calibration`** — apakah kalkulator energi meleset dari
+  tagihan asli pada rentang. Output: `{d_from, d_to, estimated_total,
+  actual_total, compared_estimated, compared_actual, deviation_pct,
+  suggested_factor, enough_data, by_type: [{type, estimated, actual,
+  estimated_count, actual_count, deviation_pct, suggested_factor}]}`.
+  `deviation_pct`/`suggested_factor` dihitung **hanya** dari subset
+  `compared_*` (jenis dengan KEDUA sisi > 0) — jenis tanpa tagihan asli
+  (mis. LPG) tampil dengan deviasi `null`; tanpa data → `enough_data:
+  false` + `null` (bukan 0).
+
+Dijamin `tests/integration/test_recommendations.py` (7 test): rata-rata
+tertimbang + dampak HPP per porsi, daftar jujur kosong, validasi batas
+parameter, subset seimbang (bug campur-jenis), rentang kosong, dan guard
+non-operator.
+
 ## Keamanan
 
 - `anon` tidak punya policy SELECT/INSERT apa pun pada tabel privat.
@@ -204,7 +239,8 @@ anon ditolak, authenticated non-operator membaca 0 baris (RLS).
   `inv_receive_purchase`, `inv_save_recipe`, `inv_hpp`, `cost_allocate`,
   `cash_shift_status`, `cash_shift_open`, `cash_shift_close`, `pos_reports`
   (ditambah `pos_refund`, `inv_adjust_stock`, `inv_create_purchase`,
-  `inv_produce_batch`, `exp_save`, `energy_save_estimate` dari 0013/0014).
+  `inv_produce_batch`, `exp_save`, `energy_save_estimate` dari 0013/0014;
+  `inv_hpp_alerts`, `exp_energy_calibration` dari 0020).
 - Helper internal `pos_line_total`, `qr_draft_json`, dan `hash_table_token`
   dicabut grant-nya dari semua role klien; hanya dipanggil dari dalam fungsi
   `SECURITY DEFINER` lain (termasuk jalur anon `qr_submit_draft`). Badan lama

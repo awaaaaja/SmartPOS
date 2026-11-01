@@ -48,6 +48,26 @@ Catatan jujur:
 - Nama menu di-snapshot per transaksi: rename menu membuat baris terpisah,
   bukan digabung paksa.
 
+## 2b. Kandidat sekunder (terdaftar 1 Nov 2026 — NON-ML / menunggu syarat)
+
+Tiga kandidat dari analisa "HPP & Kalkulator Energi berpengaruh kemana"
+didaftarkan agar keputusannya terdokumen, bukan hilang begitu saja.
+Status: **A2 & B1 sudah DIIMPLEMENTASIKAN sebagai rekomendasi non-ML**
+(RFC `docs/rfc-rekomendasi-hpp-energi.md`, migrasi `0020`); **B2 menunggu
+syarat data & amendemen PRD §9** (guardrail §7 masih berlaku penuh).
+
+| ID | Kandidat | Keputusan | Alasan & syarat |
+|---|---|---|---|
+| A1 | Kebutuhan bahan + dampak HPP dari demand forecasting | **JALUR UTAMA** (Fase 1–2, §5) | Turunan langsung dari forecast qty menu; butuh amendemen PRD §9 sebelum kode model |
+| **A2** | **Peringatan HPP** (harga bahan menyimpang dari rata-rata pembelian + dampak per porsi) | **DIIMPLEMENTASIKAN non-ML** (`inv_hpp_alerts`, migrasi `0020`) | Statistik deskriptif murni — tidak butuh model, tidak butuh amendemen; sudah live |
+| **B1** | **Koreksi faktor kalkulator energi** (ESTIMATED vs ACTUAL + deviasi + faktor koreksi) | **DIIMPLEMENTASIKAN non-ML** (`exp_energy_calibration`, migrasi `0020`) | Sama: perbandingan dua angka yang sudah ada; deviasi hanya dari jenis dengan tagihan asli |
+| **B2** | **Proyeksi energi masa depan** (mis. "bulan depan listrik ± RpX") | **MENUNGGU** — kandidat sekunder | Butuh ≥ 3 bulan tagihan `ACTUAL` tercatat agar musiman bisa dinilai; kalau lolos uji kelayakan §8, masuk Fase 2; tetap wajib amendemen PRD §9 (guardrail §1) sebelum kode model |
+| — | Otomasi belanja/harga dari sinyal HPP | **DITOLAK** (tetap) | PRD melarang tindakan otomatis tanpa persetujuan operator; rekomendasi hanya saran, tombol di tangan operator |
+
+Catatan jujur A2/B1: keduanya **bukan ML** — tidak ada training, inferensi,
+atau prediksi; hanya agregat SQL. Keberadaannya **tidak membuka** panggung
+ML; panggung ML tetap tertutup sampai amendemen tertulis PRD §9 (lihat §7).
+
 ## 3. Kesiapan data — syarat naik fase
 
 Ukuran saat ini (dicek langsung ke hosted, 31 Okt 2026): **75 transaksi** dari
@@ -146,6 +166,14 @@ dibuat sebelum amendemen PRD §9 disetujui:
 6. **Determinisme saat gagal.** Jika pipeline cron mati, tampilan terdegradasi
    ke baseline musiman yang bisa dihitung Postgres — bukan kosong-menipu.
 7. **Audit setiap keputusan otomatis** promosi/rollback/drift.
+
+> **Status amendemen (1 Nov 2026): PRD §9 BELUM diubah.** Guardrail ini masih
+> berlaku penuh. Dua rekomendasi **non-ML** (peringatan HPP `inv_hpp_alerts`,
+> kalibrasi energi `exp_energy_calibration`, migrasi `0020`) **tidak memakai
+> model, training, atau prediksi** — murni statistik deskriptif SQL — sehingga
+> tidak dihitung sebagai "kode ML" dan tidak butuh amendemen. Panggung ML
+> (kandidat A1 jalur utama & B2 sekunder) tetap tertutup sampai §9 diamendemen
+> secara tertulis.
 
 ## 8. Uji kelayakan (dijalankan pertama kali saat syarat §3 terpenuhi)
 
