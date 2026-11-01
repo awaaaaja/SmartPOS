@@ -300,6 +300,90 @@ class ReportSummary {
   );
 }
 
+/// Kalibrasi kalkulator energi (non-ML): membandingkan total ESTIMATED vs
+/// ACTUAL (LISTRIK/LPG) pada rentang tanggal. Deviasi/faktor HANYA dihitung
+/// dari jenis yang punya KEDUA sisi (estimated>0 dan actual>0) — mencampur
+/// jenis yang belum punya tagihan asli menyesatkan. Murni saran tampilan;
+/// biaya tetap yang mengurangi margin. Estimasi tidak pernah jadi aktual.
+class EnergyCalibration {
+  const EnergyCalibration({
+    required this.from,
+    required this.to,
+    required this.estimatedTotal,
+    required this.actualTotal,
+    required this.comparedEstimated,
+    required this.comparedActual,
+    required this.deviationPct,
+    required this.suggestedFactor,
+    required this.enoughData,
+    this.byType = const [],
+  });
+
+  final DateTime from;
+  final DateTime to;
+  final int estimatedTotal;
+  final int actualTotal;
+
+  /// Subset pembanding (hanya jenis dengan dua sisi > 0).
+  final int comparedEstimated;
+  final int comparedActual;
+  final double? deviationPct;
+  final double? suggestedFactor;
+  final bool enoughData;
+  final List<EnergyCalibrationByType> byType;
+
+  factory EnergyCalibration.fromJson(Map<String, dynamic> j) =>
+      EnergyCalibration(
+        from: DateTime.parse(j['d_from'] as String),
+        to: DateTime.parse(j['d_to'] as String),
+        estimatedTotal: (j['estimated_total'] as num?)?.toInt() ?? 0,
+        actualTotal: (j['actual_total'] as num?)?.toInt() ?? 0,
+        comparedEstimated: (j['compared_estimated'] as num?)?.toInt() ?? 0,
+        comparedActual: (j['compared_actual'] as num?)?.toInt() ?? 0,
+        deviationPct: (j['deviation_pct'] as num?)?.toDouble(),
+        suggestedFactor: (j['suggested_factor'] as num?)?.toDouble(),
+        enoughData: (j['enough_data'] as bool?) ?? false,
+        byType: ((j['by_type'] as List?) ?? const [])
+            .map(
+              (e) => EnergyCalibrationByType.fromJson(
+                Map<String, dynamic>.from(e as Map),
+              ),
+            )
+            .toList(),
+      );
+}
+
+class EnergyCalibrationByType {
+  const EnergyCalibrationByType({
+    required this.type,
+    required this.estimated,
+    required this.actual,
+    required this.estimatedCount,
+    required this.actualCount,
+    required this.deviationPct,
+    required this.suggestedFactor,
+  });
+
+  final String type;
+  final int estimated;
+  final int actual;
+  final int estimatedCount;
+  final int actualCount;
+  final double? deviationPct;
+  final double? suggestedFactor;
+
+  factory EnergyCalibrationByType.fromJson(Map<String, dynamic> j) =>
+      EnergyCalibrationByType(
+        type: j['type'] as String? ?? '-',
+        estimated: (j['estimated'] as num?)?.toInt() ?? 0,
+        actual: (j['actual'] as num?)?.toInt() ?? 0,
+        estimatedCount: (j['estimated_count'] as num?)?.toInt() ?? 0,
+        actualCount: (j['actual_count'] as num?)?.toInt() ?? 0,
+        deviationPct: (j['deviation_pct'] as num?)?.toDouble(),
+        suggestedFactor: (j['suggested_factor'] as num?)?.toDouble(),
+      );
+}
+
 /// Repository operasional: semua tulisan lewat RPC definer (pola Sprint 04).
 class OperatingRepository {
   OperatingRepository(this._client, this._retries);
@@ -463,6 +547,23 @@ class OperatingRepository {
             as Map<String, dynamic>;
     return ReportSummary.fromJson(j);
   }
+
+  /// Kalibrasi kalkulator (non-ML): ESTIMATED vs ACTUAL pada rentang.
+  Future<EnergyCalibration> energyCalibration({
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    final j =
+        await _client.rpc(
+              'exp_energy_calibration',
+              params: {
+                'p_from': from?.toIso8601String().split('T').first,
+                'p_to': to?.toIso8601String().split('T').first,
+              },
+            )
+            as Map<String, dynamic>;
+    return EnergyCalibration.fromJson(j);
+  }
 }
 
 final operatingRepositoryProvider = Provider<OperatingRepository>(
@@ -523,3 +624,8 @@ final dashboardReportProvider = FutureProvider.autoDispose<ReportSummary>((
   final day = DateTime(nowWib.year, nowWib.month, nowWib.day);
   return ref.watch(operatingRepositoryProvider).report(from: day, to: day);
 });
+
+/// Kalibrasi energi (default: 30 hari terakhir WIB) — non-ML.
+final energyCalibrationProvider = FutureProvider.autoDispose<EnergyCalibration>(
+  (ref) => ref.watch(operatingRepositoryProvider).energyCalibration(),
+);

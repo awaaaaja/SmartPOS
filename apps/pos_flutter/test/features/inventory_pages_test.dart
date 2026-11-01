@@ -108,6 +108,8 @@ void main() {
             (ref, id) async => const RecipeHpp(productId: 10, hasRecipe: false)),
         recipeVersionsProvider.overrideWith((ref, id) async => const []),
         ingredientsProvider.overrideWith((ref) async => const []),
+        hppAlertsProvider.overrideWith((ref) async => const HppAlerts(
+            thresholdPct: 10, windowDays: 90, alerts: [])),
       ],
       child: MaterialApp(
         theme: buildAppTheme(),
@@ -167,6 +169,8 @@ void main() {
                   createdAt: DateTime.utc(2026, 10, 26, 3)),
             ]),
         ingredientsProvider.overrideWith((ref) async => const []),
+        hppAlertsProvider.overrideWith((ref) async => const HppAlerts(
+            thresholdPct: 10, windowDays: 90, alerts: [])),
       ],
       child: MaterialApp(
         theme: buildAppTheme(),

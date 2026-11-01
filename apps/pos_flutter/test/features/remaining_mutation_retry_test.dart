@@ -14,6 +14,8 @@ import 'package:pos_flutter/features/inventory/inventory_repository.dart';
 import 'package:pos_flutter/features/operating_cost/operating_repository.dart';
 import 'package:pos_flutter/features/purchases/purchases_page.dart';
 import 'package:pos_flutter/features/recipes_hpp/recipes_page.dart';
+// (hppAlertsProvider & energyCalibrationProvider di-override agar kartu
+// rekomendasi read-only tidak memanggil transport mock — di luar skop uji.)
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../helpers/memory_preferences.dart';
@@ -147,6 +149,24 @@ Widget _app(_Server server, String operation) => ProviderScope(
       ),
     ),
     recipeVersionsProvider.overrideWith((ref, id) async => const []),
+    // Kartu rekomendasi read-only (non-ML) tidak diuji di sini; di-override
+    // agar tidak menambah panggilan transport mock yang dihitung tes mutasi.
+    hppAlertsProvider.overrideWith(
+      (ref) async => const HppAlerts(thresholdPct: 10, windowDays: 90),
+    ),
+    energyCalibrationProvider.overrideWith(
+      (ref) async => EnergyCalibration(
+        from: DateTime(2026, 10, 3),
+        to: DateTime(2026, 11, 1),
+        estimatedTotal: 0,
+        actualTotal: 0,
+        comparedEstimated: 0,
+        comparedActual: 0,
+        deviationPct: null,
+        suggestedFactor: null,
+        enoughData: false,
+      ),
+    ),
   ],
   child: MaterialApp(
     theme: buildAppTheme(),

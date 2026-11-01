@@ -213,6 +213,10 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
               ],
             ),
           ),
+          // Kalibrasi kalkulator (non-ML): ESTIMATED vs ACTUAL 30 hari
+          // terakhir. Murni saran tampilan; biaya tetap yang mengurangi
+          // margin, estimasi tidak pernah berubah jadi aktual.
+          const _EnergyCalibrationCard(),
           Expanded(
             child: TabBarView(
               controller: _tabs,
@@ -476,4 +480,105 @@ class _EnergyPageState extends ConsumerState<EnergyPage>
       border: OutlineInputBorder(),
     ),
   );
+}
+
+/// Kartu kalibrasi kalkulator energi (non-ML): membandingkan total
+/// ESTIMATED vs ACTUAL (LISTRIK/LPG) 30 hari terakhir. Deviasi/faktor
+/// HANYA dihitung dari jenis yang punya tagihan asli — jenis yang belum
+/// punya tagihan asli ditandai jujur, bukan dihitung buta. Ini saran
+/// koreksi faktor untuk tampilan, bukan prediksi; biaya aktual tetap
+/// yang mengurangi margin dan estimasi tidak pernah jadi aktual.
+class _EnergyCalibrationCard extends ConsumerWidget {
+  const _EnergyCalibrationCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final calAsync = ref.watch(energyCalibrationProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: calAsync.when(
+        loading: () => const SizedBox.shrink(),
+        error: (e, _) => const SizedBox.shrink(),
+        data: (cal) {
+          final noActual = cal.byType
+              .where((t) => t.estimated > 0 && t.actual == 0)
+              .map((t) => t.type)
+              .toList();
+          final dev = cal.deviationPct;
+          final factor = cal.suggestedFactor;
+          final sign = (dev ?? 0) >= 0 ? '+' : '';
+
+          return Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.balance_rounded,
+                        size: 20,
+                        color: cal.enoughData ? successColor : warningColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Kalibrasi kalkulator',
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  if (cal.enoughData) ...[
+                    Text(
+                      'Estimasi meleset $sign${dev?.toStringAsFixed(1)}% dari '
+                      'tagihan asli. Faktor koreksi disarankan: '
+                      '${factor?.toStringAsFixed(3)}.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    Text(
+                      'Pembanding: estimasi '
+                      '${formatRupiah(cal.comparedEstimated)} vs aktual '
+                      '${formatRupiah(cal.comparedActual)} (jenis dengan '
+                      'tagihan asli). Ini saran tampilan saja — biaya aktual '
+                      'tetap yang mengurangi margin.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: textSecondary,
+                      ),
+                    ),
+                  ] else
+                    Text(
+                      'Belum ada tagihan asli (ACTUAL) pada 30 hari terakhir '
+                      'untuk membandingkan kalkulator. Masukkan tagihan listrik/'
+                      'LPG yang sebenarnya agar deviasi dapat dihitung — bukan '
+                      'angka karangan.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: textSecondary,
+                      ),
+                    ),
+                  if (noActual.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Belum ada tagihan asli untuk: ${noActual.join(', ')} '
+                      '— tidak dihitung dalam deviasi.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: warningColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

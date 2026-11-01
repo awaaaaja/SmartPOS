@@ -199,6 +199,90 @@ class RecipeItemCost {
   );
 }
 
+/// Dampak perubahan harga satu bahan pada satu menu (resep aktif).
+class HppAlertProduct {
+  const HppAlertProduct({
+    required this.productId,
+    required this.productName,
+    required this.hppDeltaPerPortion,
+  });
+
+  final int productId;
+  final String productName;
+  final double hppDeltaPerPortion;
+
+  factory HppAlertProduct.fromJson(Map<String, dynamic> j) => HppAlertProduct(
+    productId: (j['product_id'] as num).toInt(),
+    productName: j['product_name'] as String? ?? '-',
+    hppDeltaPerPortion: (j['hpp_delta_per_portion'] as num?)?.toDouble() ?? 0,
+  );
+}
+
+/// Peringatan HPP non-ML: unit_cost terkini bahan vs rata-rata tertimbang
+/// pembelian N hari terakhir, plus dampak per porsi pada tiap menu yang
+/// memakai bahan itu di resep aktif. Murni statistik deskriptif.
+class HppAlert {
+  const HppAlert({
+    required this.ingredientId,
+    required this.name,
+    required this.baseUnit,
+    required this.unitCost,
+    required this.avgCost,
+    required this.deltaPct,
+    required this.direction,
+    required this.purchases,
+    this.products = const [],
+  });
+
+  final int ingredientId;
+  final String name;
+  final String baseUnit;
+  final int unitCost;
+  final int avgCost;
+  final double deltaPct;
+
+  /// 'NAIK' | 'TURUN'
+  final String direction;
+  final int purchases;
+  final List<HppAlertProduct> products;
+
+  factory HppAlert.fromJson(Map<String, dynamic> j) => HppAlert(
+    ingredientId: (j['ingredient_id'] as num).toInt(),
+    name: j['name'] as String? ?? '-',
+    baseUnit: j['base_unit'] as String? ?? '',
+    unitCost: (j['unit_cost'] as num).toInt(),
+    avgCost: (j['avg_cost'] as num).toInt(),
+    deltaPct: (j['delta_pct'] as num?)?.toDouble() ?? 0,
+    direction: j['direction'] as String? ?? '-',
+    purchases: (j['purchases'] as num?)?.toInt() ?? 0,
+    products: ((j['products'] as List?) ?? const [])
+        .map(
+          (e) => HppAlertProduct.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
+        .toList(),
+  );
+}
+
+class HppAlerts {
+  const HppAlerts({
+    required this.thresholdPct,
+    required this.windowDays,
+    this.alerts = const [],
+  });
+
+  final int thresholdPct;
+  final int windowDays;
+  final List<HppAlert> alerts;
+
+  factory HppAlerts.fromJson(Map<String, dynamic> j) => HppAlerts(
+    thresholdPct: (j['threshold_pct'] as num?)?.toInt() ?? 0,
+    windowDays: (j['window_days'] as num?)?.toInt() ?? 0,
+    alerts: ((j['alerts'] as List?) ?? const [])
+        .map((e) => HppAlert.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList(),
+  );
+}
+
 /// Satu baris riwayat versi resep (versi lama tidak dihapus).
 class RecipeVersion {
   const RecipeVersion({
@@ -459,6 +543,19 @@ class InventoryRepository {
       await _client.rpc('inv_produce_batch', params: params);
     },
   );
+
+  /// Peringatan harga bahan (non-ML): rata-rata tertimbang pembelian N hari
+  /// terakhir vs unit_cost terkini, dengan dampak HPP per porsi per menu.
+  Future<HppAlerts> fetchHppAlerts({
+    int thresholdPct = 10,
+    int windowDays = 90,
+  }) async {
+    final row = await _client.rpc(
+      'inv_hpp_alerts',
+      params: {'p_threshold_pct': thresholdPct, 'p_window_days': windowDays},
+    );
+    return HppAlerts.fromJson(Map<String, dynamic>.from(row as Map));
+  }
 }
 
 final inventoryRepositoryProvider = Provider<InventoryRepository>(
@@ -503,3 +600,8 @@ final stockMovementsProvider = FutureProvider.autoDispose
       (ref, ingredientId) =>
           ref.watch(inventoryRepositoryProvider).fetchMovements(ingredientId),
     );
+
+/// Peringatan HPP (non-ML) untuk seluruh resep aktif — statistik deskriptif.
+final hppAlertsProvider = FutureProvider.autoDispose<HppAlerts>(
+  (ref) => ref.watch(inventoryRepositoryProvider).fetchHppAlerts(),
+);

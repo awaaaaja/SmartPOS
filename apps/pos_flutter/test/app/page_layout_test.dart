@@ -76,6 +76,51 @@ void main() {
     expensesByType: const [],
     allocatedTotal: 0,
   );
+  const alertsFixture = HppAlerts(
+    thresholdPct: 10,
+    windowDays: 90,
+    alerts: [
+      HppAlert(
+        ingredientId: 1,
+        name: 'Cabai',
+        baseUnit: 'g',
+        unitCost: 1300,
+        avgCost: 1000,
+        deltaPct: 30,
+        direction: 'NAIK',
+        purchases: 3,
+        products: [
+          HppAlertProduct(
+            productId: 1,
+            productName: 'Nasi Goreng',
+            hppDeltaPerPortion: 60000,
+          ),
+        ],
+      ),
+    ],
+  );
+  final calFixture = EnergyCalibration(
+    from: DateTime(2026, 10, 3),
+    to: DateTime(2026, 11, 1),
+    estimatedTotal: 5630,
+    actualTotal: 3200,
+    comparedEstimated: 2880,
+    comparedActual: 3200,
+    deviationPct: 11.1,
+    suggestedFactor: 1.111,
+    enoughData: true,
+    byType: const [
+      EnergyCalibrationByType(
+        type: 'LISTRIK',
+        estimated: 2880,
+        actual: 3200,
+        estimatedCount: 1,
+        actualCount: 1,
+        deviationPct: 11.1,
+        suggestedFactor: 1.111,
+      ),
+    ],
+  );
   for (final size in [const Size(1024, 768), const Size(390, 844)]) {
     for (final state in ['empty', 'loading', 'error']) {
       for (final page in pages.entries) {
@@ -113,6 +158,12 @@ void main() {
                 purchasesProvider.overrideWith((ref) => _response(state, [])),
                 recipeProductsProvider.overrideWith(
                   (ref) => _response(state, []),
+                ),
+                hppAlertsProvider.overrideWith(
+                  (ref) => _response(state, alertsFixture),
+                ),
+                energyCalibrationProvider.overrideWith(
+                  (ref) => _response(state, calFixture),
                 ),
                 expensesProvider.overrideWith((ref) => _response(state, [])),
                 salesListProvider.overrideWith(

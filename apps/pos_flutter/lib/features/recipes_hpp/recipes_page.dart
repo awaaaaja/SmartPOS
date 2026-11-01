@@ -20,6 +20,7 @@ class RecipesHppPage extends ConsumerStatefulWidget {
 
 class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
   int? _selectedProductId;
+  bool _showAlerts = true;
 
   Future<void> _refresh(int productId) async {
     ref.invalidate(hppProvider(productId));
@@ -60,6 +61,12 @@ class _RecipesHppPageState extends ConsumerState<RecipesHppPage> {
                 ),
               ],
             ),
+          ),
+          // Peringatan HPP (non-ML): bahan dengan harga menyimpang dari
+          // rata-rata pembelian + dampak per porsi. Ringkas, bisa ditutup.
+          _HppAlertsCard(
+            expanded: _showAlerts,
+            onToggle: () => setState(() => _showAlerts = !_showAlerts),
           ),
           Expanded(
             child: products.when(
@@ -738,6 +745,137 @@ class _HppDetail extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Kartu peringatan HPP (non-ML): bahan pada resep aktif yang harga
+/// terkininya menyimpang dari rata-rata tertimbang pembelian jendela.
+/// Murni statistik deskriptif (tanpa model) — hanya saran tampilan;
+/// tidak ada uang/stok yang diubah. Tanpa pembanding = tidak ditampilkan.
+class _HppAlertsCard extends ConsumerWidget {
+  const _HppAlertsCard({required this.expanded, required this.onToggle});
+
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final alerts = ref.watch(hppAlertsProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: alerts.when(
+        loading: () => const SizedBox.shrink(),
+        error: (e, _) => const SizedBox.shrink(),
+        data: (data) {
+          if (data.alerts.isEmpty) return const SizedBox.shrink();
+          final naik = data.alerts
+              .where((a) => a.direction == 'NAIK')
+              .length;
+          return Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: onToggle,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.trending_up_rounded,
+                          color: errorColor,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Peringatan HPP: $naik bahan naik, '
+                            '${data.alerts.length - naik} turun',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          expanded
+                              ? Icons.expand_less_rounded
+                              : Icons.expand_more_rounded,
+                          color: textSecondary,
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (expanded) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Harga terkini vs rata-rata pembelian '
+                      '${data.windowDays} hari; penyimpangan ≥ '
+                      '${data.thresholdPct}%. Ini statistik, bukan prediksi.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    for (final a in data.alerts)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  a.direction == 'NAIK'
+                                      ? Icons.arrow_upward_rounded
+                                      : Icons.arrow_downward_rounded,
+                                  size: 16,
+                                  color: a.direction == 'NAIK'
+                                      ? errorColor
+                                      : successColor,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    '${a.name} '
+                                    '${a.direction.toLowerCase()} '
+                                    '${a.deltaPct.toStringAsFixed(1)}%',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '${formatRupiah(a.unitCost)}/${a.baseUnit}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            for (final p in a.products)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 22),
+                                child: Text(
+                                  '→ ${p.productName}: HPP per porsi '
+                                  '${p.hppDeltaPerPortion >= 0 ? '+' : ''}'
+                                  '${formatRupiah(p.hppDeltaPerPortion)}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: textSecondary,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
