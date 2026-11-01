@@ -147,6 +147,42 @@ class QrDraftRepository {
       params: {'p_draft_id': draftId, 'p_sale_id': saleId},
     );
   }
+
+  /// Buat pesanan manual (migrasi 0022): operator menulis pesanan atas nama
+  /// pelanggan (nama + WA opsional + meja + item). Lahir langsung CLAIMED
+  /// (kolom Diterima). Harga item = snapshot server — bentuk [items] sama
+  /// dengan `CartLine.toRpc()`: [{product_id, qty, modifier_ids, note?}].
+  Future<QrDraft> createManualOrder({
+    required int tableId,
+    required String customerName,
+    String? customerPhone,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final result = await _client.rpc(
+      'qr_manual_order_create',
+      params: {
+        'p_table_id': tableId,
+        'p_customer_name': customerName,
+        'p_customer_phone': customerPhone,
+        'p_items': items,
+      },
+    );
+    return QrDraft.fromJson(Map<String, dynamic>.from(result as Map));
+  }
+
+  /// Tambah item pesanan aktif ("minta lagi", migrasi 0022). Hanya
+  /// PENDING/CLAIMED/PREPARING; server menghitung ulang subtotal dari
+  /// seluruh baris item. Mengembalikan draft terbaru.
+  Future<QrDraft> addDraftItems(
+    int draftId,
+    List<Map<String, dynamic>> items,
+  ) async {
+    final result = await _client.rpc(
+      'qr_draft_add_items',
+      params: {'p_draft_id': draftId, 'p_items': items},
+    );
+    return QrDraft.fromJson(Map<String, dynamic>.from(result as Map));
+  }
 }
 
 final qrDraftRepositoryProvider = Provider<QrDraftRepository>(

@@ -92,6 +92,32 @@ String _mapBusinessError(String message) {
     return 'Masih ada pesanan aktif di meja ini. Selesaikan atau batalkan '
         'semua pesanan di tab Pesanan dulu, baru hapus mejanya.';
   }
+  // --- Pesanan manual (migrasi 0022: buat & tambah item) ---
+  if (m.startsWith('invalid_customer_name')) {
+    return 'Nama pesanan wajib diisi (maksimal 60 huruf).';
+  }
+  if (m.startsWith('invalid_customer_phone')) {
+    return 'Nomor HP tidak valid (maksimal 24 karakter).';
+  }
+  if (m.startsWith('draft_not_editable')) {
+    return 'Hanya pesanan yang masih aktif (Baru masuk, Diterima, atau '
+        'Diproses) yang bisa ditambah itemnya. Pesanan yang sudah selesai, '
+        'dibatalkan, atau kedaluwarsa tidak bisa diubah.';
+  }
+  if (m.startsWith('product_unavailable')) {
+    return 'Menu tidak tersedia (sudah diarsipkan atau dinonaktifkan). '
+        'Pilih menu lain.';
+  }
+  if (m.startsWith('product_not_found')) {
+    return 'Menu tidak ditemukan di katalog. Muat ulang lalu coba lagi.';
+  }
+  if (m.startsWith('modifier_max_exceeded')) {
+    return 'Jumlah pilihan varian/melebihi batas yang diizinkan menu ini.';
+  }
+  if (m.startsWith('invalid_items')) {
+    return 'Daftar menu pesanan tidak valid. Pilih minimal satu menu lalu '
+        'coba lagi.';
+  }
   return 'Data tidak valid. Periksa isian lalu coba lagi.';
 }
 

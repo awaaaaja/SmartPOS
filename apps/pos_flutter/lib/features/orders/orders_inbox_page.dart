@@ -7,6 +7,7 @@ import '../../core/formatters.dart';
 import '../../core/wa_link.dart';
 import '../pos/qr_claim_service.dart';
 import '../tables_qr/tables_repository.dart';
+import 'create_order_sheet.dart';
 
 /// Id draft yang aksinya sedang berjalan di server. Tombol dinonaktifkan
 /// selama RPC berjalan supaya tap ganda tidak mengirim dua permintaan —
@@ -61,6 +62,14 @@ class OrdersPage extends ConsumerWidget {
                     ),
                   ),
                 ),
+                // Pesanan manual (migrasi 0022): operator menulis pesanan
+                // atas nama pelanggan — lahir langsung kolom Diterima.
+                FilledButton.icon(
+                  icon: const Icon(Icons.edit_note_rounded, size: 18),
+                  label: const Text('Buat Pesanan'),
+                  onPressed: () => showCreateOrderSheet(context),
+                ),
+                const SizedBox(width: 8),
                 IconButton(
                   tooltip: 'Segarkan',
                   icon: const Icon(Icons.refresh_rounded),
@@ -321,6 +330,16 @@ class _OrderCard extends ConsumerWidget {
     final busy = ref.watch(
       orderActionBusyProvider,
     ).contains(draft.draftId);
+    // Tambah item ("minta lagi") hanya untuk pesanan AKTIF — server
+    // menolak draft selesai/batal/kedaluwarsa (migrasi 0022).
+    final canAddItems = draft.status != 'COMPLETED' && !busy;
+    Widget addItemsButton() => OutlinedButton.icon(
+      icon: const Icon(Icons.add_rounded, size: 16),
+      label: const Text('Tambah item'),
+      onPressed: canAddItems
+          ? () => showAddItemsSheet(context, draft)
+          : null,
+    );
     switch (draft.status) {
       case 'PENDING':
         return [
@@ -328,6 +347,7 @@ class _OrderCard extends ConsumerWidget {
             onPressed: busy ? null : () => _receive(context, ref),
             child: const Text('Diterima'),
           ),
+          addItemsButton(),
           OutlinedButton(
             onPressed: busy
                 ? null
@@ -362,6 +382,7 @@ class _OrderCard extends ConsumerWidget {
                 : () => QrClaimService.payDraft(ref, context, draft),
             child: const Text('Bayar'),
           ),
+          addItemsButton(),
           OutlinedButton(
             onPressed: busy
                 ? null
@@ -399,6 +420,7 @@ class _OrderCard extends ConsumerWidget {
                 : () => QrClaimService.payDraft(ref, context, draft),
             child: const Text('Bayar'),
           ),
+          addItemsButton(),
           OutlinedButton(
             onPressed: busy
                 ? null
