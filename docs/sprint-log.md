@@ -1,5 +1,35 @@
 # Sprint Log
 
+## Batch — Fitur Pesanan manual (Buat Pesanan + Tambah item)
+Tanggal: 1 November 2026
+Target: permintaan pengguna — operator bisa membuat pesanan manual di tab Pesanan (nama pelanggan + menu) dan menambah item saat pelanggan minta lagi.
+Status: **SELESAI (kode + test)** — migrasi & deploy hosted menyusul.
+
+### Yang dibangun
+| Bagian | Bukti |
+|---|---|
+| Migrasi `0022_manual_orders.sql` | `qr_manual_order_create(table_id, nama, telp, items)`: guard `is_operator`; nama wajib 1–60 huruf, WA opsional ≤24; meja wajib **aktif**; 1–30 item; harga **snapshot server** lewat `pos_line_total` (produk aktif, qty 1–99, modifier sah) — sama seperti jalur QR; lahir **langsung CLAIMED** (operator yang menulis = sudah diterima; tidak kena lazy-expired karena hanya PENDING yang kedaluwarsa, tidak memicu banner QR); audit `CREATE_MANUAL`. `qr_draft_add_items(draft_id, items)`: hanya draft **aktif** `PENDING/CLAIMED/PREPARING` (`COMPLETED/CANCELLED/EXPIRED` → `draft_not_editable`); **subtotal & item_count dihitung ulang server dari seluruh baris item** (bukan tambahan kiriman klien); audit `ADD_ITEMS`. Uang tidak tersentuh — keduanya hanya menulis `qr_drafts`/`qr_draft_items`; total final tetap dari `pos_checkout`. |
+| Flutter — form & repository | File baru `create_order_sheet.dart`: `showCreateOrderSheet` (nama wajib, WA opsional, dropdown meja aktif, pemilih menu dengan pencarian, sheet varian modifier min/max + qty + catatan, preview subtotal) + `showAddItemsSheet` (pemilih menu sama untuk pesanan aktif). `tables_repository.dart`: `createManualOrder()` / `addDraftItems()`. |
+| Flutter — tab Pesanan | Tombol **Buat Pesanan** di header; tombol **Tambah item** di kartu status aktif (PENDING/CLAIMED/PREPARING; dinonaktif saat aksi berjalan atau draft selesai). `error_mapper.dart` +7 kode (`invalid_customer_name`, `invalid_customer_phone`, `draft_not_editable`, `product_unavailable`, `product_not_found`, `modifier_max_exceeded`, `invalid_items`). |
+| Test | `test_manual_orders.py` **6/6 lulus** (alur buat + snapshot harga server, hitung ulang subtotal, blokir draft terminal + izin PENDING QR, validasi produk/modifier/qty atomik tanpa sisa, guard operator, input tidak valid); regresi **6 suite DB / 50 test OK**; Flutter **210/210** + `flutter analyze` 0 issue (test baru `create_order_sheet_test.dart` 5 case: validasi form bertahap, submit terkirim qty+catatan, error server tampil & isian bertahan, add items kirim draftId, draft non-aktif ditolak jujur — fake melempar `PostgrestException(code: P0001)` seperti jalur nyata). |
+| CI | Step `test_manual_orders.py` di job `migrations` (`ci.yml`). |
+
+### Keputusan desain
+- Pesanan manual **lahir CLAIMED** (kolom Diterima): operator yang menulis order
+  tidak perlu menekan Diterima pada pesanan buatannya sendiri.
+- **`table_id` wajib** (skema `qr_drafts.table_id` NOT NULL): konsisten dengan
+  kartu pesanan, banner, dan guard hapus meja.
+- Tambah item hanya untuk pesanan **aktif** — pesanan selesai/batal/kedaluwarsa
+  ditolak `draft_not_editable` dengan pesan jujur di klien.
+- Uang tetap jujur: harga & subtotal dihitung server (`pos_line_total`,
+  hitung ulang dari baris); klien hanya mengirim `product_id/qty/modifier_ids/note`.
+
+### Sisa pekerjaan
+- Terapkan migrasi 0022 ke hosted + smoke REST anon (wajib 401).
+- Push commit `b4ea392` (migrasi) + `f6f2e6e` (Flutter) & pantau CI.
+- Pembersihan data hosted (disetujui pengguna): hapus 5 sale uji (id 10, 11, 12, 20, 21) lalu 53 `dining_tables`; jangan sentuh sale id 25, 24, 7, 3.
+- Build APK + install ke H13Pro untuk verifikasi pengguna (2 bug fix + banner + hapus meja + pesanan manual).
+
 ## Batch — Perbaikan bug pesanan, banner notifikasi & fitur hapus meja
 Tanggal: 1 November 2026
 Target: laporan langsung pengguna (bug "Terima pesanan", tampilan notifikasi, kelola meja)
