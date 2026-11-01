@@ -101,3 +101,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pos_test
         run: python3 tests/integration/test_analytics_views.py
+      - name: Rekomendasi non-ML (peringatan HPP + kalibrasi energi)
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pos_test
+        run: python3 tests/integration/test_recommendations.py
