@@ -80,6 +80,18 @@ button, input { font: inherit; }
 .small { font-size: 12px; }
 .error { color: var(--error); font-size: 13px; }
 
+/* Tawaran simpan data pemesan (mode online; localStorage, tanpa login) */
+.remember {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1.5;
+}
+.remember input { margin-top: 2px; accent-color: var(--brand); }
+
 .cat-title {
   font-size: 13px;
   font-weight: 700;

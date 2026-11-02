@@ -408,3 +408,205 @@ describe('langkah 3: pembayaran & submit draft', () => {
       .toContain('active');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Mode online (?mode=online) — pesanan tanpa QR meja, tanpa login.
+// ---------------------------------------------------------------------------
+function setOnline() {
+  window.history.replaceState({}, '', '/?mode=online');
+}
+
+async function mountOnline(menu = MENU) {
+  rpcMock.mockResolvedValueOnce({ data: menu, error: null });
+  const wrapper = mount(App);
+  await flushPromises();
+  return wrapper;
+}
+
+/** Isi form data pemesan (mode online: nama, WA, alamat). */
+async function fillIdentity(wrapper, {
+  name = 'Budi', phone = '081234567890', address = 'Jl. Mawar 7',
+} = {}) {
+  const inputs = wrapper.findAll('input.input');
+  await inputs[0].setValue(name);
+  await inputs[1].setValue(phone);
+  if (inputs[2]) await inputs[2].setValue(address);
+}
+
+describe('mode online (?mode=online)', () => {
+  it('tanpa token: menu termuat lewat get_online_menu, bukan halaman invalid',
+     async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    expect(rpcMock).toHaveBeenCalledWith('get_online_menu');
+    expect(rpcMock).not.toHaveBeenCalledWith('get_public_menu',
+      expect.anything());
+    expect(wrapper.text()).toContain('Pesan online');
+    expect(wrapper.text()).not.toContain('QR tidak valid');
+    await fillIdentity(wrapper);
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    expect(wrapper.text()).toContain('Nasi Goreng');
+  });
+
+  it('nama & WA wajib; alamat wajib hanya saat COD', async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    const next = () => wrapper.find('button.btn.primary.wide');
+    // Belum ada isi -> terkunci + pesan jujur.
+    expect(next().attributes('disabled')).toBeDefined();
+    expect(wrapper.text()).toContain('Nama wajib diisi.');
+    expect(wrapper.text()).toContain('No. WA wajib diisi.');
+    await wrapper.findAll('input.input')[0].setValue('Budi');
+    await wrapper.findAll('input.input')[1].setValue('081234567890');
+    expect(next().attributes('disabled')).toBeUndefined();
+    // Pilih COD -> alamat jadi wajib.
+    await wrapper.findAll('.intent-grid .intent')[1].trigger('click');
+    expect(wrapper.text()).toContain('Alamat wajib diisi untuk pesanan COD');
+    expect(next().attributes('disabled')).toBeDefined();
+    await wrapper.findAll('input.input')[2].setValue('Jl. Mawar 7');
+    expect(next().attributes('disabled')).toBeUndefined();
+  });
+
+  it('dua pilihan bayar: Bayar di tempat (DEFAULT) & COD (diantar)',
+     async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    const intents = wrapper.findAll('.intent-grid .intent');
+    expect(intents).toHaveLength(2);
+    expect(intents[0].text()).toContain('Bayar di tempat');
+    expect(intents[1].text()).toContain('COD (diantar)');
+    expect(intents[0].classes()).toContain('active');
+    // Mode online TIDAK menawarkan niat bayar QR.
+    expect(wrapper.text()).not.toContain('Open Bill');
+    expect(wrapper.text()).not.toContain('Bayar sekarang (ke kasir)');
+  });
+
+  it('submit memanggil qr_online_submit (tanpa token meja) + konfirmasi jujur',
+     async () => {
+    setOnline();
+    localStorage.setItem('qr_client_key', 'client-key-online-01');
+    const wrapper = await mountOnline();
+    await fillIdentity(wrapper);
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    await addFirstProduct(wrapper);
+    await openCartAndPay(wrapper);
+    rpcMock.mockResolvedValueOnce({
+      data: {
+        ref_code: 'Q00077', table_label: 'Pesanan Online',
+        subtotal: 5000, item_count: 1,
+      },
+      error: null,
+    });
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+
+    expect(rpcMock).toHaveBeenLastCalledWith('qr_online_submit', {
+      p_client_key: 'client-key-online-01',
+      p_customer_name: 'Budi',
+      p_customer_phone: '081234567890',
+      p_customer_address: 'Jl. Mawar 7',
+      p_pay_intent: 'AT_PLACE',
+      p_items: [{ product_id: 10, qty: 1, modifier_ids: [], note: '' }],
+    });
+    // Konfirmasi jujur: diterima, tapi BUKAN sudah dibayar.
+    expect(wrapper.text()).toContain('Pesanan diterima');
+    expect(wrapper.text()).toContain('Referensi Q00077');
+    expect(wrapper.text()).toContain('Bayar di tempat');
+    expect(wrapper.text()).toContain('belum dibayar');
+    expect(wrapper.text()).not.toContain('meja Pesanan Online');
+  });
+
+  it('COD terkirim dengan alamat & tampil di konfirmasi', async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    await fillIdentity(wrapper, { address: 'Jl. Mawar 7' });
+    await wrapper.findAll('.intent-grid .intent')[1].trigger('click'); // COD
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    await addFirstProduct(wrapper);
+    await openCartAndPay(wrapper);
+    rpcMock.mockResolvedValueOnce({
+      data: {
+        ref_code: 'Q00078', table_label: 'Pesanan Online',
+        subtotal: 5000, item_count: 1,
+      },
+      error: null,
+    });
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    expect(rpcMock).toHaveBeenLastCalledWith('qr_online_submit',
+      expect.objectContaining({
+        p_pay_intent: 'COD',
+        p_customer_address: 'Jl. Mawar 7',
+      }));
+    expect(wrapper.text()).toContain('Diantar ke Jl. Mawar 7');
+  });
+
+  it('tawaran "Ingat data saya" default aktif & tersimpan setelah submit',
+     async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    // Checkbox default TERCENTANG (keputusan produk).
+    expect(wrapper.find('.remember input').element.checked).toBe(true);
+    expect(localStorage.getItem('qr_customer_profile')).toBeNull();
+    await fillIdentity(wrapper, {
+      name: 'Sari', phone: '081299988877', address: 'Jl. Melati 3',
+    });
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    await addFirstProduct(wrapper);
+    await openCartAndPay(wrapper);
+    rpcMock.mockResolvedValueOnce({
+      data: {
+        ref_code: 'Q00079', table_label: 'Pesanan Online',
+        subtotal: 5000, item_count: 1,
+      },
+      error: null,
+    });
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+
+    // Tersimpan di perangkat INI saja (localStorage, tanpa login).
+    expect(JSON.parse(localStorage.getItem('qr_customer_profile')))
+      .toEqual({ name: 'Sari', phone: '081299988877',
+                 address: 'Jl. Melati 3' });
+
+    // Kunjungan berikutnya: field terisi otomatis + tombol hapus muncul.
+    const again = await mountOnline();
+    expect(again.findAll('input.input')[0].element.value).toBe('Sari');
+    expect(again.findAll('input.input')[1].element.value)
+      .toBe('081299988877');
+    expect(again.findAll('input.input')[2].element.value)
+      .toBe('Jl. Melati 3');
+    const clear = again.findAll('button.btn.ghost')
+      .find((b) => b.text() === 'Hapus data tersimpan');
+    expect(clear).toBeTruthy();
+    await clear.trigger('click');
+    expect(localStorage.getItem('qr_customer_profile')).toBeNull();
+    expect(again.findAll('input.input')[0].element.value).toBe('');
+  });
+
+  it('bila centang dilepas, data TIDAK disimpan di perangkat', async () => {
+    setOnline();
+    const wrapper = await mountOnline();
+    await wrapper.find('.remember input').setValue(false);
+    expect(wrapper.find('.remember input').element.checked).toBe(false);
+    await fillIdentity(wrapper);
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    await addFirstProduct(wrapper);
+    await openCartAndPay(wrapper);
+    rpcMock.mockResolvedValueOnce({
+      data: {
+        ref_code: 'Q00080', table_label: 'Pesanan Online',
+        subtotal: 5000, item_count: 1,
+      },
+      error: null,
+    });
+    await wrapper.find('button.btn.primary.wide').trigger('click');
+    await flushPromises();
+    expect(localStorage.getItem('qr_customer_profile')).toBeNull();
+  });
+});

@@ -2,20 +2,28 @@
 import { ref, computed, onMounted } from 'vue';
 import { supabase } from './api/supabaseClient.js';
 
-const token = ref(new URLSearchParams(location.search).get('token') || '');
+const params = new URLSearchParams(location.search);
+const token = ref(params.get('token') || '');
+// Mode online: ?mode=online (tanpa QR/tanpa token). Tanpa token DAN tanpa
+// mode tetap halaman "QR tidak valid" (jujur) — itulah tuntutan test lama.
+const isOnline = params.get('mode') === 'online';
 const categories = ref([]);
 const table = ref(null);
 const status = ref('idle'); // idle | loading | ready | invalid | error
 const errorMessage = ref('');
 
 // --- Wizard 3 langkah (tanpa router; ramah GitHub Pages base /SmartPOS/)
-// 1 MULAI (niat bayar + identitas opsional) · 2 PILIH MENU · 3 PEMBAYARAN
+// 1 MULAI (niat bayar + identitas) · 2 PILIH MENU · 3 PEMBAYARAN
 const step = ref(1);
 
 // --- Niat bayar & identitas pelanggan (opsional; dikirim saat submit saja)
 const PAY_NOW = 'PAY_NOW';
 const OPEN_BILL = 'OPEN_BILL';
-const payIntent = ref(PAY_NOW); // DEFAULT: bayar sekarang (ke kasir)
+// Niat bayar khusus mode online (server 0023 menerima AT_PLACE | COD saja).
+const AT_PLACE = 'AT_PLACE'; // ambil di kasir, bayar di tempat
+const COD = 'COD';           // diantar ke alamat, tunai saat diterima
+const defaultIntent = () => (isOnline ? AT_PLACE : PAY_NOW);
+const payIntent = ref(defaultIntent()); // DEFAULT: bayar sekarang (ke kasir)
 const payMethod = ref(null);    // CASH | QRIS | TRANSFER (hanya PAY_NOW)
 const METHODS = [
   { id: 'CASH', name: 'Tunai', hint: 'Bayar tunai di kasir' },
@@ -24,7 +32,55 @@ const METHODS = [
 ];
 const customerName = ref('');
 const customerPhone = ref('');
+const customerAddress = ref(''); // hanya mode online (COD wajib; AT_PLACE opsional)
 const selectedCategory = ref('all'); // 'all' | id kategori
+
+// --- Simpan data pemesan di PERANGKAT INI (localStorage, TANPA login/tanpa
+// akun) agar pesan ulang tak perlu mengisi lagi. Default aktif; ada tombol
+// hapus. Hanya mode online — mode QR tidak pernah menulis ini.
+const PROFILE_KEY = 'qr_customer_profile';
+const rememberMe = ref(true);
+const hasStoredProfile = ref(false);
+
+function applyStoredProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return;
+    const p = JSON.parse(raw);
+    customerName.value = p.name || '';
+    customerPhone.value = p.phone || '';
+    customerAddress.value = p.address || '';
+    hasStoredProfile.value = true;
+  } catch {
+    localStorage.removeItem(PROFILE_KEY); // data rusak -> bersihkan
+  }
+}
+
+function saveProfile() {
+  if (rememberMe.value) {
+    localStorage.setItem(
+      PROFILE_KEY,
+      JSON.stringify({
+        name: customerName.value.trim(),
+        phone: customerPhone.value.trim(),
+        address: customerAddress.value.trim(),
+      }),
+    );
+    hasStoredProfile.value = true;
+  } else {
+    // Centang dilepas = pemilik perangkat tidak ingin data diingat.
+    localStorage.removeItem(PROFILE_KEY);
+    hasStoredProfile.value = false;
+  }
+}
+
+function clearProfile() {
+  localStorage.removeItem(PROFILE_KEY);
+  hasStoredProfile.value = false;
+  customerName.value = '';
+  customerPhone.value = '';
+  customerAddress.value = '';
+}
 
 // --- Keranjang: [{productId, name, basePrice, qty, note, modifierIds, modifiers}]
 const cart = ref([]);
@@ -69,13 +125,17 @@ function rupiah(n) {
   return 'Rp ' + Number(n).toLocaleString('id-ID');
 }
 
-// --- Validasi identitas (ringan, jujur): kosong selalu boleh.
-const nameError = computed(() =>
-  customerName.value.trim().length > 60 ? 'Nama maksimal 60 karakter.' : ''
-);
+// --- Validasi identitas (ringan, jujur).
+// Mode QR: kosong selalu boleh (identitas opsional).
+// Mode online: nama & WA WAJIB; alamat wajib hanya untuk COD.
+const nameError = computed(() => {
+  const raw = customerName.value.trim();
+  if (isOnline && !raw) return 'Nama wajib diisi.';
+  return raw.length > 60 ? 'Nama maksimal 60 karakter.' : '';
+});
 const phoneError = computed(() => {
   const raw = customerPhone.value.trim();
-  if (!raw) return '';
+  if (!raw) return isOnline ? 'No. WA wajib diisi.' : '';
   if (!/^[0-9+\- ]+$/.test(raw)) {
     return 'No. WA hanya boleh angka, +, - dan spasi.';
   }
@@ -83,7 +143,18 @@ const phoneError = computed(() => {
   if (digits < 8 || digits > 20) return 'No. WA harus 8–20 digit.';
   return '';
 });
-const identityValid = computed(() => !nameError.value && !phoneError.value);
+const addressError = computed(() => {
+  if (!isOnline) return '';
+  const raw = customerAddress.value.trim();
+  if (raw.length > 200) return 'Alamat maksimal 200 karakter.';
+  if (payIntent.value === COD && !raw) {
+    return 'Alamat wajib diisi untuk pesanan COD (diantar).';
+  }
+  return '';
+});
+const identityValid = computed(
+  () => !nameError.value && !phoneError.value && !addressError.value,
+);
 
 // --- Navigasi langkah
 function goMenu() {
@@ -176,6 +247,16 @@ function lineTotal(l) {
   return (l.basePrice + delta) * l.qty;
 }
 
+function intentLabel(i) {
+  switch (i) {
+    case PAY_NOW: return 'Bayar sekarang';
+    case OPEN_BILL: return 'Open Bill';
+    case AT_PLACE: return 'Bayar di tempat';
+    case COD: return 'COD';
+    default: return '';
+  }
+}
+
 async function submitDraft() {
   if (submitting.value || cart.value.length === 0 || !identityValid.value) {
     return;
@@ -189,17 +270,31 @@ async function submitDraft() {
       modifier_ids: l.modifierIds,
       note: l.note,
     }));
-    const { data, error } = await supabase.rpc('qr_submit_draft', {
-      p_table_token: token.value.trim(),
-      p_client_key: clientKey,
-      p_items: items,
-      p_pay_intent: payIntent.value,
-      // Metode hanya bermakna saat bayar sekarang (validasi server 0018).
-      p_pay_method: payIntent.value === PAY_NOW ? payMethod.value : null,
-      // Nama/No. WA hanya meta penagihan; tidak disimpan di localStorage.
-      p_customer_name: customerName.value.trim() || null,
-      p_customer_phone: customerPhone.value.trim() || null,
-    });
+    const payload = isOnline
+      ? {
+          // Pesanan online: identitas WAJIB, tanpa token meja (0023).
+          p_client_key: clientKey,
+          p_customer_name: customerName.value.trim(),
+          p_customer_phone: customerPhone.value.trim(),
+          p_customer_address: customerAddress.value.trim() || null,
+          p_pay_intent: payIntent.value, // AT_PLACE | COD
+          p_items: items,
+        }
+      : {
+          p_table_token: token.value.trim(),
+          p_client_key: clientKey,
+          p_items: items,
+          p_pay_intent: payIntent.value,
+          // Metode hanya bermakna saat bayar sekarang (validasi server 0018).
+          p_pay_method: payIntent.value === PAY_NOW ? payMethod.value : null,
+          // Nama/No. WA hanya meta penagihan; tidak disimpan di localStorage.
+          p_customer_name: customerName.value.trim() || null,
+          p_customer_phone: customerPhone.value.trim() || null,
+        };
+    const { data, error } = await supabase.rpc(
+      isOnline ? 'qr_online_submit' : 'qr_submit_draft',
+      payload,
+    );
     if (error) throw error;
     confirmation.value = {
       refCode: data.ref_code,
@@ -207,9 +302,13 @@ async function submitDraft() {
       subtotal: data.subtotal,
       itemCount: data.item_count,
       payIntent: payIntent.value,
-      payMethod: payIntent.value === PAY_NOW ? payMethod.value : null,
+      payMethod: !isOnline && payIntent.value === PAY_NOW
+        ? payMethod.value
+        : null,
       customerName: customerName.value.trim(),
+      customerAddress: customerAddress.value.trim(),
     };
+    if (isOnline) saveProfile(); // pilihan "Ingat data saya" dieksekusi di sini
     cart.value = [];
     cartOpen.value = false;
     newClientKey(); // pesanan berikutnya = draft baru
@@ -221,6 +320,13 @@ async function submitDraft() {
     } else if (msg.includes('invalid_table_token')) {
       submitError.value =
         'QR tidak valid atau sudah diganti. Mintalah QR meja terbaru ke kasir.';
+    } else if (msg.includes('invalid_customer_address')) {
+      submitError.value =
+        'Alamat wajib diisi untuk pesanan COD (diantar).';
+    } else if (msg.includes('invalid_customer_name')) {
+      submitError.value = 'Nama pemesan wajib diisi (maks 60 karakter).';
+    } else if (msg.includes('invalid_customer_phone')) {
+      submitError.value = 'Nomor WhatsApp wajib diisi.';
     } else if (msg.includes('product_unavailable')) {
       submitError.value =
         'Ada menu yang sudah tidak tersedia. Perbarui keranjang Anda.';
@@ -235,18 +341,24 @@ async function submitDraft() {
 function orderAgain() {
   // Privasi: identitas & pilihan kosong kembali — tidak menempel di
   // perangkat berikutnya. Client key sudah dirotasi saat submit sukses.
+  // Mode online: bila pemilik perangkat memilih "Ingat data saya",
+  // isian diisi ulang dari profil tersimpan (itu gunanya disimpan).
   confirmation.value = null;
   step.value = 1;
-  payIntent.value = PAY_NOW;
+  payIntent.value = defaultIntent();
   payMethod.value = null;
-  customerName.value = '';
-  customerPhone.value = '';
+  if (isOnline && hasStoredProfile.value) {
+    applyStoredProfile();
+  } else {
+    customerName.value = '';
+    customerPhone.value = '';
+    customerAddress.value = '';
+  }
   selectedCategory.value = 'all';
 }
 
 async function loadMenu() {
-  const t = token.value.trim();
-  if (!t) {
+  if (!isOnline && !token.value.trim()) {
     status.value = 'invalid';
     errorMessage.value =
       'Token meja tidak ditemukan di tautan. Mintalah QR meja yang benar ke kasir.';
@@ -255,13 +367,16 @@ async function loadMenu() {
   status.value = 'loading';
   errorMessage.value = '';
   try {
-    const { data, error } = await supabase.rpc('get_public_menu', {
-      p_table_token: t,
-    });
+    const { data, error } = isOnline
+      ? await supabase.rpc('get_online_menu')
+      : await supabase.rpc('get_public_menu', {
+          p_table_token: token.value.trim(),
+        });
     if (error) throw error;
     categories.value = data?.categories ?? [];
     table.value = data?.table ?? null;
     status.value = 'ready';
+    if (isOnline) applyStoredProfile(); // kunjungan ulang = terisi otomatis
   } catch (e) {
     const msg = String(e?.message || e);
     if (msg.includes('invalid_table_token')) {
@@ -291,7 +406,8 @@ onMounted(loadMenu);
     />
     <div class="brand-text">
       <h1>Waroeng MeJeng Kampoeng</h1>
-      <p v-if="table">{{ table.label }} · Pesan dari meja Anda</p>
+      <p v-if="isOnline">Pesan online · tanpa QR meja</p>
+      <p v-else-if="table">{{ table.label }} · Pesan dari meja Anda</p>
       <p v-else>Menu pelanggan</p>
     </div>
   </header>
@@ -316,18 +432,29 @@ onMounted(loadMenu);
       <p class="confirm-ref">Referensi {{ confirmation.refCode }}</p>
       <p>
         {{ confirmation.itemCount }} item ·
-        {{ rupiah(confirmation.subtotal) }} · meja
-        {{ confirmation.tableLabel }}
+        {{ rupiah(confirmation.subtotal) }}<template v-if="!isOnline"> · meja
+        {{ confirmation.tableLabel }}</template>
       </p>
       <p class="confirm-meta">
-        {{ confirmation.payIntent === 'PAY_NOW' ? 'Bayar sekarang' : 'Open Bill' }}<template
+        {{ intentLabel(confirmation.payIntent) }}<template
           v-if="confirmation.payMethod"> · {{ confirmation.payMethod }}</template>
         <template v-if="confirmation.customerName"> · atas nama
           {{ confirmation.customerName }}</template>
       </p>
+      <p v-if="isOnline && confirmation.payIntent === 'COD'"
+         class="confirm-meta">
+        Diantar ke {{ confirmation.customerAddress }}
+      </p>
       <p class="confirm-note">
-        Tunjukkan referensi ini ke kasir untuk konfirmasi dan pembayaran.
-        Pesanan belum dibayar.
+        <template v-if="isOnline">
+          Kasir akan mengonfirmasi pesanan Anda. Pesanan
+          <strong>belum dibayar</strong> — bayar saat pesanan diambil atau
+          diterima.
+        </template>
+        <template v-else>
+          Tunjukkan referensi ini ke kasir untuk konfirmasi dan pembayaran.
+          Pesanan belum dibayar.
+        </template>
       </p>
       <button class="btn primary" @click="orderAgain">Pesan lagi</button>
     </div>
@@ -348,37 +475,65 @@ onMounted(loadMenu);
     </div>
 
     <template v-else>
-      <!-- Langkah 1: niat bayar + identitas opsional -->
+      <!-- Langkah 1: niat bayar + identitas -->
       <section v-if="step === 1">
         <h2 class="cat-title">Bagaimana Anda ingin bayar?</h2>
         <div class="intent-grid">
-          <button
-            class="intent"
-            :class="{ active: payIntent === 'PAY_NOW' }"
-            :aria-pressed="payIntent === 'PAY_NOW'"
-            @click="payIntent = 'PAY_NOW'"
-          >
-            <strong>Bayar sekarang (ke kasir)</strong>
-            <span class="muted small">
-              Pesanan dikirim ke kasir; siapkan pembayaran.
-            </span>
-          </button>
-          <button
-            class="intent"
-            :class="{ active: payIntent === 'OPEN_BILL' }"
-            :aria-pressed="payIntent === 'OPEN_BILL'"
-            @click="payIntent = 'OPEN_BILL'"
-          >
-            <strong>Open Bill</strong>
-            <span class="muted small">
-              Pesan dulu, bayar nanti di kasir.
-            </span>
-          </button>
+          <template v-if="!isOnline">
+            <button
+              class="intent"
+              :class="{ active: payIntent === 'PAY_NOW' }"
+              :aria-pressed="payIntent === 'PAY_NOW'"
+              @click="payIntent = 'PAY_NOW'"
+            >
+              <strong>Bayar sekarang (ke kasir)</strong>
+              <span class="muted small">
+                Pesanan dikirim ke kasir; siapkan pembayaran.
+              </span>
+            </button>
+            <button
+              class="intent"
+              :class="{ active: payIntent === 'OPEN_BILL' }"
+              :aria-pressed="payIntent === 'OPEN_BILL'"
+              @click="payIntent = 'OPEN_BILL'"
+            >
+              <strong>Open Bill</strong>
+              <span class="muted small">
+                Pesan dulu, bayar nanti di kasir.
+              </span>
+            </button>
+          </template>
+          <template v-else>
+            <button
+              class="intent"
+              :class="{ active: payIntent === 'AT_PLACE' }"
+              :aria-pressed="payIntent === 'AT_PLACE'"
+              @click="payIntent = 'AT_PLACE'"
+            >
+              <strong>Bayar di tempat</strong>
+              <span class="muted small">
+                Ambil pesanan di kasir, bayar saat mengambil.
+              </span>
+            </button>
+            <button
+              class="intent"
+              :class="{ active: payIntent === 'COD' }"
+              :aria-pressed="payIntent === 'COD'"
+              @click="payIntent = 'COD'"
+            >
+              <strong>COD (diantar)</strong>
+              <span class="muted small">
+                Diantar ke alamat Anda, bayar tunai saat diterima.
+              </span>
+            </button>
+          </template>
         </div>
 
         <div class="card">
-          <h3 class="pay-h">Identitas (opsional)</h3>
-          <p class="muted small">
+          <h3 class="pay-h">
+            {{ isOnline ? 'Data pemesan (wajib)' : 'Identitas (opsional)' }}
+          </h3>
+          <p v-if="!isOnline" class="muted small">
             Untuk kasir menghubungi Anda bila perlu; tidak disimpan di
             perangkat ini.
           </p>
@@ -386,7 +541,7 @@ onMounted(loadMenu);
             v-model="customerName"
             class="input"
             :class="{ bad: nameError }"
-            placeholder="Nama (opsional)"
+            :placeholder="isOnline ? 'Nama (wajib)' : 'Nama (opsional)'"
             maxlength="120"
           />
           <p v-if="nameError" class="error small">{{ nameError }}</p>
@@ -394,11 +549,35 @@ onMounted(loadMenu);
             v-model="customerPhone"
             class="input"
             :class="{ bad: phoneError }"
-            placeholder="No. WA (opsional)"
+            :placeholder="isOnline ? 'No. WA (wajib)' : 'No. WA (opsional)'"
             inputmode="tel"
             maxlength="40"
           />
           <p v-if="phoneError" class="error small">{{ phoneError }}</p>
+          <template v-if="isOnline">
+            <input
+              v-model="customerAddress"
+              class="input"
+              :class="{ bad: addressError }"
+              :placeholder="payIntent === 'COD'
+                ? 'Alamat pengantaran (wajib)'
+                : 'Alamat (opsional — hanya jika pesanan diantar)'"
+              maxlength="300"
+            />
+            <p v-if="addressError" class="error small">{{ addressError }}</p>
+            <label class="remember small">
+              <input v-model="rememberMe" type="checkbox" />
+              Ingat data saya di perangkat ini (tanpa login) — pesan ulang
+              tanpa mengisi lagi
+            </label>
+            <button
+              v-if="hasStoredProfile"
+              class="btn ghost wide"
+              @click="clearProfile"
+            >
+              Hapus data tersimpan
+            </button>
+          </template>
           <button
             class="btn primary wide"
             :disabled="!identityValid"
@@ -509,20 +688,38 @@ onMounted(loadMenu);
             </button>
           </div>
         </div>
-        <div v-else class="card center">
+        <div v-else-if="!isOnline" class="card center">
           <p class="pay-h">Bayar nanti di kasir</p>
           <p class="muted small">
             Kasir menyimpan pesanan Anda; bayar saat selesai menyantap.
           </p>
         </div>
+        <div v-else class="card center">
+          <p class="pay-h">
+            {{ payIntent === 'COD'
+              ? 'Bayar tunai saat pesanan diterima (COD)'
+              : 'Bayar di tempat saat mengambil' }}
+          </p>
+          <p class="muted small">
+            {{ payIntent === 'COD'
+              ? 'Pesanan diantar ke alamat Anda; bayar tunai saat diterima. Kasir mengonfirmasi lewat WA.'
+              : 'Ambil pesanan di kasir; bayar tunai saat mengambil. Kasir mengonfirmasi lewat WA.' }}
+          </p>
+        </div>
 
-        <div v-if="customerName.trim() || customerPhone.trim()" class="card">
+        <div
+          v-if="customerName.trim() || customerPhone.trim()"
+          class="card"
+        >
           <h3 class="pay-h">Pesanan Anda</h3>
           <p v-if="customerName.trim()">
             Pesanan atas nama {{ customerName.trim() }}
           </p>
           <p v-if="customerPhone.trim()" class="muted small">
             No. WA {{ customerPhone.trim() }} — untuk dihubungi kasir.
+          </p>
+          <p v-if="isOnline && customerAddress.trim()" class="muted small">
+            Alamat: {{ customerAddress.trim() }}
           </p>
         </div>
 
@@ -535,8 +732,14 @@ onMounted(loadMenu);
           {{ submitting ? 'Mengirim…' : 'Kirim pesanan ke kasir' }}
         </button>
         <p class="muted small">
-          Pesanan dikirim sebagai draf; kasir akan memanggil Anda untuk
-          konfirmasi dan pembayaran.
+          <template v-if="isOnline">
+            Pesanan dikirim sebagai draf; kasir akan mengonfirmasi lewat WA.
+            Pesanan belum dibayar.
+          </template>
+          <template v-else>
+            Pesanan dikirim sebagai draf; kasir akan memanggil Anda untuk
+            konfirmasi dan pembayaran.
+          </template>
         </p>
         <button class="btn ghost" @click="goBack">Kembali ke menu</button>
       </section>
