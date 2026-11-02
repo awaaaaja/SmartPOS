@@ -266,6 +266,13 @@ class _OrderCard extends ConsumerWidget {
                 ],
               ),
             ],
+            if ((draft.customerAddress ?? '').trim().isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Alamat: ${draft.customerAddress!.trim()}',
+                style: const TextStyle(fontSize: 13, color: textSecondary),
+              ),
+            ],
             if (pref != null) ...[
               const SizedBox(height: 6),
               Container(
@@ -534,6 +541,9 @@ String? _preferenceLabel(QrDraft d) {
   final intent = switch (d.payIntent) {
     'PAY_NOW' => 'Bayar sekarang',
     'OPEN_BILL' => 'Buka bill',
+    // Niat bayar khusus pesanan online (migrasi 0023).
+    'AT_PLACE' => 'Bayar di tempat',
+    'COD' => 'COD (bayar saat diterima)',
     _ => null,
   };
   final method = switch (d.payMethod) {

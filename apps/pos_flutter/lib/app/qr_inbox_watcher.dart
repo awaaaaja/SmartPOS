@@ -113,7 +113,12 @@ class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pesanan baru dari ${draft.tableLabel}',
+                      // Meja virtual pesanan online (migrasi 0023) berlabel
+                      // 'Pesanan Online' — frasa "dari Pesanan Online"
+                      // janggal, jadi diberi label khusus.
+                      draft.tableLabel == 'Pesanan Online'
+                          ? 'Pesanan online baru'
+                          : 'Pesanan baru dari ${draft.tableLabel}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

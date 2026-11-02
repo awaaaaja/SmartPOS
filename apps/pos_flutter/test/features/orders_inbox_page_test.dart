@@ -65,12 +65,14 @@ QrDraft _draft({
   String? payMethod,
   String? customerName,
   String? customerPhone,
+  String? customerAddress,
+  String tableLabel = 'Meja 3',
   int unitPrice = 15000,
 }) => QrDraft(
   draftId: id,
   refCode: 'Q${id.toString().padLeft(5, '0')}',
   tableId: 3,
-  tableLabel: 'Meja 3',
+  tableLabel: tableLabel,
   status: status,
   saleId: saleId,
   subtotal: unitPrice,
@@ -80,6 +82,7 @@ QrDraft _draft({
   payMethod: payMethod,
   customerName: customerName,
   customerPhone: customerPhone,
+  customerAddress: customerAddress,
   items: [
     QrDraftItem(
       productId: 1,
@@ -166,6 +169,51 @@ void main() {
 
     // [Hubungi WA] hanya di kartu BELUM BAYAR ber-identitas.
     expect(find.text('Hubungi WA'), findsOneWidget);
+  });
+
+  // --- Pesanan online (migrasi 0023): alamat + niat bayar baru ---
+  testWidgets('kartu pesanan online menampilkan alamat & label AT_PLACE/COD', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final repo = _FakeQrRepository();
+    await tester.pumpWidget(
+      _harness(
+        repo: repo,
+        drafts: [
+          _draft(
+            id: 60,
+            tableLabel: 'Pesanan Online',
+            payIntent: 'AT_PLACE',
+            customerName: 'Bu Rina',
+            customerPhone: '6281234567890',
+          ),
+          _draft(
+            id: 61,
+            status: 'CLAIMED',
+            tableLabel: 'Pesanan Online',
+            payIntent: 'COD',
+            customerName: 'Pak Ade',
+            customerPhone: '628999888777',
+            customerAddress: 'Jl. Mawar 7',
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Kepala kartu memakai label meja virtual + referensi.
+    expect(find.text('Pesanan Online · Q00060'), findsOneWidget);
+    expect(find.text('Pesanan Online · Q00061'), findsOneWidget);
+    // Niat bayar online diterjemahkan jadi bahasa operator.
+    expect(find.text('Bayar di tempat'), findsOneWidget);
+    expect(find.text('COD (bayar saat diterima)'), findsOneWidget);
+    // Alamat tampil di kartu (wajib untuk COD).
+    expect(find.text('Alamat: Jl. Mawar 7'), findsOneWidget);
+    // Alamat tidak dipaksakan pada pesanan ambil-di-tempat.
+    expect(find.text('Alamat: '), findsNothing);
   });
 
   // --- Aksi per status ---
@@ -416,6 +464,28 @@ void main() {
     expect(draft.payMethod, isNull);
     expect(draft.customerName, 'Pak Ade');
     expect(draft.customerPhone, '628999');
+    expect(draft.customerAddress, isNull); // kolom 0023 belum tentu ada
+  });
+
+  test('fromJson pesanan online membaca alamat + niat AT_PLACE/COD', () {
+    final draft = QrDraft.fromJson(const {
+      'draft_id': 8,
+      'ref_code': 'Q00008',
+      'table_id': 99,
+      'table_label': 'Pesanan Online',
+      'status': 'PENDING',
+      'subtotal': 20000,
+      'item_count': 2,
+      'pay_intent': 'COD',
+      'customer_name': 'Bu Rina',
+      'customer_phone': '628123',
+      'customer_address': 'Jl. Mawar 7',
+      'items': [],
+    });
+    expect(draft.tableLabel, 'Pesanan Online');
+    expect(draft.payIntent, 'COD');
+    expect(draft.customerAddress, 'Jl. Mawar 7');
+    expect(draft.tableId, 99); // meja virtual tetap terisi (NOT NULL)
   });
 
   test('fromJson draft lama tanpa kolom 0018/0019 tetap sah (null)', () {

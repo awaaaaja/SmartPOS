@@ -7,11 +7,11 @@ import 'package:pos_flutter/features/tables_qr/tables_repository.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
-QrDraft _draft({int id = 42}) => QrDraft(
+QrDraft _draft({int id = 42, String tableLabel = 'Meja 3'}) => QrDraft(
   draftId: id,
   refCode: 'Q000$id',
   tableId: 3,
-  tableLabel: 'Meja 3',
+  tableLabel: tableLabel,
   status: 'PENDING',
   subtotal: 25000,
   itemCount: 2,
@@ -85,6 +85,22 @@ void main() {
     expect(recorder.calls.single.$1, 'confirmation_001');
     expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
     expect(find.text('Q00042 · 2 item'), findsOneWidget);
+  });
+
+  testWidgets('draft pesanan online memicu banner "Pesanan online baru"', (
+    tester,
+  ) async {
+    final box = _DraftBox();
+    await tester.pumpWidget(_harness(() => box.rows));
+    await tester.pumpAndSettle();
+
+    box.rows = [_draft(id: 77, tableLabel: 'Pesanan Online')];
+    await tester.pump(const Duration(seconds: 11));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pesanan online baru'), findsOneWidget);
+    expect(find.text('Pesanan baru dari Pesanan Online'), findsNothing);
+    expect(find.text('Q00077 · 2 item'), findsOneWidget);
   });
 
   testWidgets('muat pertama dengan draft lama = baseline sunyi', (

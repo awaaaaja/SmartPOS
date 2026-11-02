@@ -63,10 +63,14 @@ class QrDraft {
     this.payMethod,
     this.customerName,
     this.customerPhone,
+    this.customerAddress,
   });
 
   final int draftId;
   final String refCode;
+
+  /// Meja asal draft. Pesanan online (migrasi 0023) menempel pada meja
+  /// virtual "Pesanan Online" — tetap terisi, tidak pernah null.
   final int tableId;
   final String tableLabel;
   final String status;
@@ -78,19 +82,23 @@ class QrDraft {
   /// Terisi setelah pembayaran (lencana SUDAH BAYAR); null = belum bayar.
   final int? saleId;
 
-  /// Preferensi bayar dari wizard web (migrasi 0018); null = draft lama.
-  /// [payIntent]: PAY_NOW | OPEN_BILL; [payMethod]: CASH | QRIS | TRANSFER.
+  /// Preferensi bayar dari wizard web (migrasi 0018 & 0023).
+  /// [payIntent]: PAY_NOW | OPEN_BILL (QR meja) AT_PLACE | COD (online);
+  /// [payMethod]: CASH | QRIS | TRANSFER (hanya PAY_NOW).
   final String? payIntent;
   final String? payMethod;
 
-  /// Identitas opsional pelanggan untuk penagihan & [Hubungi WA].
+  /// Identitas pelanggan untuk penagihan & [Hubungi WA].
   final String? customerName;
   final String? customerPhone;
+
+  /// Alamat pengantaran — hanya pesanan online (wajib saat COD).
+  final String? customerAddress;
 
   static QrDraft fromJson(Map<String, dynamic> j) => QrDraft(
     draftId: (j['draft_id'] as num).toInt(),
     refCode: j['ref_code'] as String? ?? '',
-    tableId: (j['table_id'] as num).toInt(),
+    tableId: (j['table_id'] as num?)?.toInt() ?? 0,
     tableLabel: j['table_label'] as String? ?? '',
     status: j['status'] as String? ?? '',
     subtotal: (j['subtotal'] as num?)?.toInt() ?? 0,
@@ -103,6 +111,7 @@ class QrDraft {
     payMethod: j['pay_method'] as String?,
     customerName: j['customer_name'] as String?,
     customerPhone: j['customer_phone'] as String?,
+    customerAddress: j['customer_address'] as String?,
     items: (j['items'] as List? ?? [])
         .map((i) => QrDraftItem.fromJson(Map<String, dynamic>.from(i as Map)))
         .toList(),
