@@ -117,3 +117,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pos_test
         run: python3 tests/integration/test_online_orders.py
+      - name: Notifikasi realtime draft (policy select operator + publication)
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pos_test
+        run: python3 tests/integration/test_draft_realtime.py

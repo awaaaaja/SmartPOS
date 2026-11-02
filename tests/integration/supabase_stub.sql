@@ -25,3 +25,14 @@ begin
     create role authenticated nologin;
   end if;
 end $$;
+
+-- Publication realtime (Supabase asli memilikinya; migrasi 0024 menambahkan
+-- tabel qr_drafts ke sini — guard-nya ikut teruji di CI).
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication where pubname = 'supabase_realtime'
+  ) then
+    create publication supabase_realtime;
+  end if;
+end $$;
