@@ -78,7 +78,13 @@ DiningTableEntry _table({int id = 1, String label = 'Meja 1'}) =>
     DiningTableEntry(id: id, label: label, isEnabled: true, tokenVersion: 1);
 
 List<Product> _products() => [
-  Product(id: 7, name: 'Nasi Goreng', price: 15000),
+  Product(id: 7, name: 'Nasi Goreng', price: 15000, categoryName: 'Makanan'),
+  Product(id: 8, name: 'Es Teh', price: 5000, categoryName: 'Minuman'),
+];
+
+List<ProductCategory> _categories() => [
+  ProductCategory(id: 1, name: 'Makanan'),
+  ProductCategory(id: 2, name: 'Minuman'),
 ];
 
 Widget _harness({
@@ -89,6 +95,7 @@ Widget _harness({
     qrDraftRepositoryProvider.overrideWithValue(repo),
     tablesListProvider.overrideWith((ref) async => [_table()]),
     productsProvider.overrideWith((ref) async => _products()),
+    categoriesProvider.overrideWith((ref) async => _categories()),
   ],
   child: MaterialApp(
     theme: buildAppTheme(),
@@ -145,6 +152,46 @@ void main() {
 
       await _pickProduct(tester);
       expect(submit().onPressed, isNotNull, reason: 'lengkap');
+    });
+
+    testWidgets('pemilih menu: tanpa keyboard otomatis + filter kategori', (
+      tester,
+    ) async {
+      await _pumpTrigger(tester, showCreateOrderSheet, _FakeDraftRepo());
+
+      await tester.tap(find.text('Tambah menu'));
+      await tester.pumpAndSettle();
+
+      // Keyboard TIDAK langsung terbuka (autofocus mati) — daftar langsung
+      // terlihat tanpa menutupi layar.
+      final search = tester.widget<TextField>(
+        find.widgetWithText(TextField, 'Cari makanan atau minuman...'),
+      );
+      expect(search.autofocus, isFalse, reason: 'tanpa autofocus');
+      // Fokus utama BUKAN field teks (keyboard tidak terangkat) — fokus
+      // menetap di scope modal, bukan di EditableText.
+      expect(
+        tester.binding.focusManager.primaryFocus?.context?.widget,
+        isNot(isA<EditableText>()),
+      );
+
+      // Chip kategori tampil; default 'Semua' menampilkan semua menu.
+      expect(find.text('Semua'), findsOneWidget);
+      expect(find.text('Makanan'), findsOneWidget);
+      expect(find.text('Minuman'), findsOneWidget);
+      expect(find.text('Nasi Goreng'), findsOneWidget);
+      expect(find.text('Es Teh'), findsOneWidget);
+
+      // Tap kategori: daftar terfilter tanpa mengetik.
+      await tester.tap(find.text('Minuman'));
+      await tester.pumpAndSettle();
+      expect(find.text('Es Teh'), findsOneWidget);
+      expect(find.text('Nasi Goreng'), findsNothing);
+
+      // Pilih menu terfilter → masuk daftar pesanan.
+      await tester.tap(find.text('Es Teh'));
+      await tester.pumpAndSettle();
+      expect(find.text('Es Teh'), findsOneWidget); // baris di form
     });
 
     testWidgets('submit mengirim nama, meja, dan item (qty + catatan) ke RPC', (

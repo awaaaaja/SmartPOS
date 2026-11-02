@@ -565,7 +565,9 @@ class _AddItemsSheetState extends ConsumerState<_AddItemsSheet> {
 }
 
 // ---------------------------------------------------------------------------
-// Pemilih produk (menu aktif + pencarian)
+// Pemilih produk (menu aktif) — pola sama dengan katalog Kasir POS:
+// pencarian TANPA autofocus (keyboard tidak langsung menutupi daftar) +
+// chip filter kategori supaya operator tinggal tap, bukan mengetik.
 // ---------------------------------------------------------------------------
 
 class _ProductPickerSheet extends ConsumerStatefulWidget {
@@ -578,84 +580,112 @@ class _ProductPickerSheet extends ConsumerStatefulWidget {
 
 class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
   String _query = '';
+  String _category = 'Semua';
 
   @override
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(productsProvider);
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-            child: TextField(
-              autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'Cari menu',
-                prefixIcon: Icon(Icons.search_rounded),
-                isDense: true,
+    final categoriesAsync = ref.watch(categoriesProvider);
+    // Keyboard (bila operator mengetik sendiri) tidak menutupi daftar.
+    final insets = MediaQuery.of(context).viewInsets.bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: insets),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Cari makanan atau minuman...',
+                  prefixIcon: Icon(Icons.search_rounded),
+                  isDense: true,
+                ),
+                onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
               ),
-              onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
             ),
-          ),
-          Expanded(
-            child: productsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    mapErrorToMessage(e),
-                    textAlign: TextAlign.center,
+            // Filter kategori: tap, tanpa mengetik (pola POS).
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final c in [
+                    'Semua',
+                    ...?categoriesAsync.value?.map((c) => c.name),
+                  ])
+                    ChoiceChip(
+                      label: Text(c),
+                      selected: c == _category,
+                      onSelected: (_) => setState(() => _category = c),
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: productsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, _) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      mapErrorToMessage(e),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
-              data: (products) {
-                final sellable = products
-                    .where(
-                      (p) =>
-                          p.sellable &&
-                          (_query.isEmpty ||
-                              p.name.toLowerCase().contains(_query)),
-                    )
-                    .toList();
-                if (sellable.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'Tidak ada menu cocok.',
-                      style: TextStyle(color: textSecondary),
-                    ),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: sellable.length,
-                  itemBuilder: (context, i) {
-                    final p = sellable[i];
-                    return ListTile(
-                      dense: true,
-                      title: Text(p.name),
-                      subtitle: p.modifiers.isNotEmpty
-                          ? const Text(
-                              'Ada varian',
-                              style: TextStyle(fontSize: 11),
-                            )
-                          : null,
-                      trailing: Text(
-                        formatRupiah(p.price),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: brandPrimary,
-                        ),
+                data: (products) {
+                  final sellable = products
+                      .where(
+                        (p) =>
+                            p.sellable &&
+                            (_category == 'Semua' ||
+                                p.categoryName == _category) &&
+                            (_query.isEmpty ||
+                                p.name.toLowerCase().contains(_query)),
+                      )
+                      .toList();
+                  if (sellable.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Tidak ada menu cocok.',
+                        style: TextStyle(color: textSecondary),
                       ),
-                      onTap: () => Navigator.pop(context, p),
                     );
-                  },
-                );
-              },
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: sellable.length,
+                    itemBuilder: (context, i) {
+                      final p = sellable[i];
+                      return ListTile(
+                        dense: true,
+                        title: Text(p.name),
+                        subtitle: p.modifiers.isNotEmpty
+                            ? const Text(
+                                'Ada varian',
+                                style: TextStyle(fontSize: 11),
+                              )
+                            : null,
+                        trailing: Text(
+                          formatRupiah(p.price),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: brandPrimary,
+                          ),
+                        ),
+                        onTap: () => Navigator.pop(context, p),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
