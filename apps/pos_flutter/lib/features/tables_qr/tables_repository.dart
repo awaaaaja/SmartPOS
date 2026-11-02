@@ -235,9 +235,12 @@ class TablesRepository {
   final SupabaseClient _client;
 
   Future<List<DiningTableEntry>> fetchTables() async {
+    // Meja virtual 'Pesanan Online' (migrasi 0023) bukan meja fisik:
+    // tidak ditawarkan untuk dicetak QR maupun dipakai pesanan manual.
     final rows = await _client
         .from('dining_tables')
         .select('id,label,is_enabled,token_version')
+        .neq('label', 'Pesanan Online')
         .order('id');
     return (rows as List)
         .map(
