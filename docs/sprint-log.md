@@ -1,5 +1,27 @@
 # Sprint Log
 
+## Batch — Perbaikan notifikasi pesanan delay / harus refresh manual
+Tanggal: 2 November 2026
+Target: laporan pengguna — notifikasi pesanan kadang telat & papan pesanan harus di-refresh manual untuk memastikan pesanan masuk.
+Status: **SELESAI (kode + test + live hosted)** — build APK & verifikasi perangkat menyusul.
+
+### Yang dibangun
+| Bagian | Bukti |
+|---|---|
+| Migrasi `0024_draft_realtime.sql` | `qr_drafts` masuk publication **`supabase_realtime`** (guard idempoten — Postgres CI polos memakai publication dari stub) → INSERT/UPDATE **didorong realtime** ke klien. Policy **`operator_read` FOR SELECT TO authenticated USING (is_operator())** + `grant select` eksplisit (hosted Supabase memberinya bawaan via default privileges; Postgres polos tidak) — tanpa policy ini realtime memeriksa RLS pelanggan dan event tidak pernah sampai. **Anon tidak disentuh** (policy hanya `to authenticated`) → uji anon tetap tertutup; **tidak ada policy tulis** → semua tulisan tetap lewat RPC SECURITY DEFINER, alur lama tak berubah. Stub CI kini membuat publication `supabase_realtime` (idempoten) supaya guard migrasi benar-benar teruji. |
+| Flutter `QrInboxWatcher` | 3 lapis: **(1) langganan realtime** `postgres_changes` pada `qr_drafts` → `ref.invalidate(qrDraftsProvider)` seketika (bunga try/catch — `Supabase.instance` melempar di widget test); **(2) refresh saat `AppLifecycleState.resumed`** (isolate polling sempat berhenti di background); **(3) polling 10 detik dipertahankan sebagai fallback** — perilaku & baseline anti-notifikasi-bertahan utuh; `dispose` melepas observer + `removeChannel`. |
+| Test | `test_draft_realtime.py` **5/5** (operator boleh baca langsung, anon ditolak, authenticated non-operator 0 baris, `qr_drafts` di publication, tulis langsung tetap ditolak) + step CI; widget test baru *resume → refresh tanpa tunggu polling*. |
+| Verifikasi empiris | **Node script terhadap hosted**: login operator → subscribe `SUBSCRIBED` → submit anon memicu **event INSERT** (payload draft utuh), klaim memicu **event UPDATE** (`PENDING`→`CLAIMED`) — push realtime terbukti sampai ke klien; draft uji dibersihkan. |
+| Live hosted | 0024 diterapkan via psycopg2 & tercatat `supabase_migrations.schema_migrations` (`20261102000024`); terverifikasi: policy `operator_read` (authenticated, `is_operator()`), `qr_drafts` ∈ `supabase_realtime`. Regresi lokal **8 suite / 62 test OK**; Flutter **215/215** + analyze 0 issue. |
+
+### Temuan
+- Penyebab delay: satu-satunya sumber pemberitahuan adalah **polling 10 detik**, dan isolate Flutter berhenti di background — pesanan baru baru terbaca pada siklus berikutnya. Realtime push menghapus jeda itu; polling tetap ada sebagai jaring pengaman.
+- Event pertama setelah publication ditambahkan bisa datang agak telat (realtime membaca keanggotaan publication); sejak itu semua event mengalir — ini sekali jalan saat pemasangan migrasi.
+
+### Sisa pekerjaan
+- Build APK release + sign + install ke Redmi Note 14 (menunggu device terhubung).
+- Pantau CI (2 commit: `ceb5151` migrasi+test, `05f03a7` Flutter).
+
 ## Batch — Pesanan Online via web (form Nama/WA/Alamat + Bayar di tempat/COD)
 Tanggal: 2 November 2026
 Target: permintaan pengguna — pelanggan pesan lewat link web tanpa QR meja & tanpa login, data pelanggan bisa diingat di perangkat, pembayaran Bayar di tempat atau COD.
