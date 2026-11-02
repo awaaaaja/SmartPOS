@@ -1,5 +1,39 @@
 # Sprint Log
 
+## Batch — Pesanan Online via web (form Nama/WA/Alamat + Bayar di tempat/COD)
+Tanggal: 2 November 2026
+Target: permintaan pengguna — pelanggan pesan lewat link web tanpa QR meja & tanpa login, data pelanggan bisa diingat di perangkat, pembayaran Bayar di tempat atau COD.
+Status: **SELESAI (kode + test + live hosted)** — build APK & verifikasi perangkat menyusul.
+
+### Yang dibangun
+| Bagian | Bukti |
+|---|---|
+| Migrasi `0023_online_orders.sql` | `qr_drafts.customer_address` (≤200); CHECK `pay_intent` diperluas `AT_PLACE` (ambil di kasir) \| `COD` (diantar, tunai saat diterima) — nilai lama `PAY_NOW/OPEN_BILL` tetap sah. Meja virtual **self-healing "Pesanan Online"** (`ensure_online_table`): `qr_drafts.table_id NOT NULL` sehingga seluruh alur lama (kartu, banner, Diterima/Diproses/Bayar, tambah item, klaim→checkout) jalan utuh tanpa menyentuh kode lama. `get_online_menu()`: menu publik **tanpa token** (grant anon saja). `qr_online_submit(client_key, nama, WA, alamat, intent, items)`: nama & WA **wajib**, alamat **wajib hanya COD**, 1–30 item, harga **snapshot `pos_line_total`**, idempoten per `client_key`, rate limit 5/nomor WA + 100 global/10 menit, lahir **PENDING** masa aktif **24 jam**, `qr_draft_json` + `customer_address`; grants anon. |
+| Web `apps/qr_web` | Mode **`?mode=online`** memuat `get_online_menu` tanpa token; **tanpa token & tanpa mode tetap "QR tidak valid"** (jujur — dituntut test unit & e2e). Form Nama (wajib) / No. WA (wajib) / Alamat (opsional, wajib saat COD); pilihan **Bayar di tempat** (default) atau **COD (diantar)**; tawaran **"Ingat data saya di perangkat ini"** checkbox **default aktif** → `localStorage` tanpa login + tombol **Hapus data tersimpan** (centang dilepas = tidak disimpan); submit `qr_online_submit` (tanpa `p_table_token`, tanpa metode); konfirmasi jujur "belum dibayar" + alamat COD tampil; pemetaan error `invalid_customer_name/phone/address`. |
+| Flutter | `QrDraft.customerAddress` (+`tableId` null-safe); kartu pesanan: baris **"Alamat: …"** + label `AT_PLACE` → "Bayar di tempat", `COD` → "COD (bayar saat diterima)"; banner **"Pesanan online baru"** untuk meja virtual; `fetchTables` menyembunyikan meja virtual (bukan meja fisik — tidak ikut cetak QR & pemilih pesanan manual). |
+| Test | `test_online_orders.py` **7/7** (role anon: menu tanpa token + self-healing, submit AT_PLACE snapshot harga, COD wajib alamat, 7 validasi input, idempotensi, rate limit, draft muncul di papan operator + RLS anon tertutup) + step CI; regresi **7 suite / 57 test OK**. Web vitest **28/28** (7 baru) & e2e Playwright **6/6** (kasus "QR tidak valid" tetap lulus); build web OK. Flutter **214/214** + analyze 0 issue (3 test baru: kartu online, fromJson alamat, banner online). |
+| Live hosted | 0023 diterapkan via psycopg2 (kredensial dari `Kredensial.md`, tidak dicetak) & tercatat di `supabase_migrations.schema_migrations` (`20261102000023`); smoke REST anon: `get_online_menu` **200** (meja "Pesanan Online", 4 kategori), submit AT_PLACE **200** `Q00058` PENDING (harga server — `price:1` kiriman klien diabaikan), COD tanpa alamat **400** + hint jujur, replay key sama **200** idempoten, papan operator **melihat** draft; draft smoke dibersihkan setelah uji. |
+
+### Keputusan desain
+- **COD = bayar di tempat saat diterima** (jawaban pengguna): "Bayar di tempat" =
+  ambil di kasir (alamat opsional), "COD" = diantar ke alamat (alamat wajib,
+  tunai saat terima).
+- Simpan data pelanggan: **checkbox default aktif**, hanya `localStorage`
+  perangkat, tanpa login/akun, selalu ada tombol hapus.
+- Pesanan online lahir **PENDING** (banner operator aktif) dengan masa aktif
+  24 jam — operator harus sempat membuka papan; lazy expiry tetap sama.
+- Meja virtual disembunyikan dari daftar meja, tetapi seluruh alur lama tetap
+  memakainya (kartu "Pesanan Online · Q000xx", klaim→keranjang→checkout).
+
+### Sisa pekerjaan
+- Build APK release + sign + install ke Redmi Note 14 untuk verifikasi pengguna.
+- Pantau CI (5 commit: `513bf7e` migrasi+test, `2cd58e8` web, `b28a7e4`
+  Flutter, `7cd8d94` filter meja) + deploy GitHub Pages `?mode=online`.
+- Pembersihan data hosted (disetujui pengguna, **sudah dijalankan 2 Nov**):
+  19 meja `UJI-QR-*` + 2 draft uji dihapus, **39 penjualan tidak disentuh**,
+  seed 19 meja: Lesehan 3 / Dalam 6 / Luar 10 (token acak kuat — cetak QR
+  via Putar QR di app).
+
 ## Batch — Fitur Pesanan manual (Buat Pesanan + Tambah item)
 Tanggal: 1 November 2026
 Target: permintaan pengguna — operator bisa membuat pesanan manual di tab Pesanan (nama pelanggan + menu) dan menambah item saat pelanggan minta lagi.
