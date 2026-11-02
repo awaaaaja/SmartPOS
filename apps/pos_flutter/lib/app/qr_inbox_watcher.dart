@@ -2,15 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/notif_sound.dart';
+import '../features/auth/auth_repository.dart';
 import '../features/tables_qr/tables_repository.dart';
 import 'destinations.dart';
 import 'theme.dart';
 
-/// Pemantau draft QR dari shell (§B1): polling 10 detik satu-satunya di
-/// seluruh aplikasi (pindah dari PosPage) + deteksi pesanan PENDING baru
-/// -> banner in-app + nada (bila aktif di Pengaturan).
+/// Pemantau draft QR dari shell (§B1) — 3 lapis supaya pesanan TIDAK delay
+/// (laporan: notifikasi kadang telat, papan harus refresh manual):
+///
+///   1. Realtime push (migrasi 0024): langganan `postgres_changes` pada
+///      `qr_drafts` -> refresh seketika saat pesanan masuk/diubah,
+///      tanpa menunggu siklus polling berikutnya.
+///   2. Refresh saat app kembali ke depan (resume) — isolate sempat berhenti
+///      di background, jadi jangan tunggu timer polling.
+///   3. Polling 10 detik sebagai FALLBACK bila websocket tidak tersedia
+///      (jaringan memblokir, dsb.) — perilaku lama yang tetap menjamin data.
+///
+/// Deteksi pesanan PENDING baru -> banner in-app + nada (bila aktif di
+/// Pengaturan).
 ///
 /// Muat pertama = baseline (sunyi) supaya draft lama yang masih menunggu
 /// tidak diumumkan ulang tiap aplikasi dibuka; deteksi in-memori (restart =
@@ -22,8 +34,11 @@ class QrInboxWatcher extends ConsumerStatefulWidget {
   ConsumerState<QrInboxWatcher> createState() => _QrInboxWatcherState();
 }
 
-class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher> {
+class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher>
+    with WidgetsBindingObserver {
   Timer? _timer;
+  RealtimeChannel? _channel;
+  SupabaseClient? _client; // disimpan untuk lepas channel saat dispose
 
   /// Id draft yang sudah dikenal (baseline + yang sudah diumumkan).
   final Set<int> _knownIds = {};
@@ -32,15 +47,59 @@ class _QrInboxWatcherState extends ConsumerState<QrInboxWatcher> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _timer = Timer.periodic(
       const Duration(seconds: 10),
-      (_) => ref.invalidate(qrDraftsProvider),
+      (_) => _refresh(), // fallback bila realtime mati
     );
+    _subscribeRealtime();
+  }
+
+  /// Muat ulang papan pesanan (dipanggil realtime, resume, & polling).
+  void _refresh() {
+    if (mounted) ref.invalidate(qrDraftsProvider);
+  }
+
+  /// Langganan event `qr_drafts` (INSERT/UPDATE/DELETE) — push seketika.
+  /// Segala kegagalan ditelan: polling fallback tetap menjamin data segar
+  /// (`Supabase.instance` juga melempar pada widget test sebelum init —
+  /// sengaja ditangkap supaya test lama tetap lulus).
+  void _subscribeRealtime() {
+    try {
+      final client = ref.read(supabaseClientProvider);
+      _client = client;
+      _channel = client
+          .channel('qr-inbox-watcher')
+          ..onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'qr_drafts',
+            callback: (_) => _refresh(),
+          )
+          ..subscribe();
+    } catch (_) {
+      _channel = null; // Supabase belum siap (test/startup) -> polling saja.
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refresh();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    final channel = _channel;
+    final client = _client;
+    if (channel != null && client != null) {
+      try {
+        client.removeChannel(channel);
+      } catch (_) {
+        // Supabase sudah dilepas sebelum watcher — channel mati sendiri.
+      }
+    }
     super.dispose();
   }
 

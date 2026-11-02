@@ -87,6 +87,30 @@ void main() {
     expect(find.text('Q00042 · 2 item'), findsOneWidget);
   });
 
+  testWidgets('app kembali ke depan (resume) -> refresh tanpa tunggu polling', (
+    tester,
+  ) async {
+    final box = _DraftBox();
+    await tester.pumpWidget(_harness(() => box.rows));
+    await tester.pumpAndSettle();
+
+    box.rows = [_draft()];
+    // App sempat masuk latar belakang (isolate polling ikut berhenti)...
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pump();
+    // ...lalu kembali ke depan: pesanan yang masuk harus terbaca SEKARANG,
+    // bukan pada tick polling 10 detik berikutnya.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+
+    expect(recorder.calls, hasLength(1));
+    expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
+    // Tanpa satu pun pump 10 detik — itulah bukti refresh saat resume.
+    expect(find.byType(SnackBar), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Pesanan baru dari Meja 3'), findsOneWidget);
+  });
+
   testWidgets('draft pesanan online memicu banner "Pesanan online baru"', (
     tester,
   ) async {
